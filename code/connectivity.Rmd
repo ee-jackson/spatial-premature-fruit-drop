@@ -1,0 +1,146 @@
+---
+title: "Connectivity"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output:
+  html_document:
+    theme: lumen
+    highlight: pygments
+---
+
+I'm going to try two different measures of connectivity, __Hanski’s Connectivity Index (CI)__ (Hanski 1994) and the __Conspecific neighbourhood fecundity index (NFI)__ (Jones & Comita 2008). 
+
+They differ in that Hanski's CI includes an exponential function, meaning that it doesn't weigh short distances as heavily. (e.g if a tree was right next to a trap you'd risk getting an inf value for NFI). CI also needs the average dispersal distance to scale your distances, which I'm just going to take as 100m for now.
+
+I had to alter these equations a little. NFI uses the yearly mean total fruit set per tree to weight individuals - we don't have this, so I just used DBH, which assumes that larger individuals produce more fruit.
+
+__Hanksi's Connectivity Index__\
+
+$CI = \sum exp(-\, \alpha \, dist_{ji}) A_j$ \
+
+__Conspecific neighbourhood fecundity index__\
+
+$NFI = \sum \frac {A_j}{dist_{ij}}$ \
+
+_j_ = conspecific tree within a 100m radius of the trap\
+_dist_ = distance between trap i and tree j\
+$\alpha$ = 1/ avg. dispersal ability\
+_A_ = DBH of tree j\
+
+```{r, warning=FALSE, message=FALSE}
+rm(list = ls())
+
+require(tidyverse)
+library(knitr)
+library(rdist)
+opts_chunk$set(tidy.opts=list(width.cutoff=50), tidy=FALSE, cache.lazy = FALSE,cache = TRUE)
+```
+## Read in and compile the data
+We are going to focus on Cordia bicolour in 2015 to begin with.
+
+```{r, warning=FALSE}
+load("../data/bci.tree/bci.tree8.rdata")
+load("../data/bci.spptable.rdata")
+trapDat <- read.csv("../output/tables/proportionAbscisedPerTrap.csv") 
+RDA <- read.csv("../output/tables/R50.csv") 
+
+# sort out date formating and create a year column
+bci.tree8$date <- as.Date(bci.tree8$date, 
+	origin="1960-01-01", format= "%Y-%m-%d")
+bci.tree8$year <- as.integer(format(as.Date(bci.tree8$date), "%Y"))
+
+bci8 <- left_join(bci.tree8, bci.spptable, by = "sp")
+bci8 <- left_join(bci8, RDA, by = "sp")
+
+# add id tags to id values so they don't just look like numbers
+trapDat$trap <- paste("trap", trapDat$trap, sep="_")
+bci8$treeID <- paste("tree", bci8$treeID, sep="_")
+
+# subset to one year and one species
+bci8 <- subset(bci8, status=="A" & sp=="cordbi" & dbh>R50)
+trapDat <- subset(trapDat, year=="2015" & SP6=="cordbi")
+
+```
+## Calculate euclidean distances
+We will create a matrix with the rdist package to calculate the distance between each tree/trap combo. Will need to make this iterable when we move on to multiple years & sp.
+
+```{r}
+# Create a pairwise distance matrix, element [i (row), j(col)] is distance from tree i to trap j. 
+# i.e. For each trap (col) you want to keep the tree (row) where the distance is within a range
+dists <- cdist(bci8[,c("gx", "gy")], trapDat[,c("X", "Y")], metric="euclidean")
+
+# Align back to bci8 to retain info
+dists.df = as.data.frame(dists)
+rownames(dists.df) <- unlist(bci8$treeID)
+colnames(dists.df) <- unlist(trapDat$trap)
+dists.df[1:5,1:5] #take a look
+
+# merge back to bci8
+bci8.dists = cbind(bci8, dists.df)
+
+```
+## Conspecific neighbourhood fecundity index
+Lets start by calculating NFI, as it's the simpler option. 
+```{r}
+# function to calculate NFI
+calculate_NFI <- function (trap) {
+	subset(bci8.dists, bci8.dists[,trap]<=100) %>% # subset to only trees within a 100m radius of the trap
+	group_by(treeID, year) %>% 
+	mutate(a = dbh / eval(parse(text=trap))) %>% # divide dbh by dist
+	ungroup() %>%
+	dplyr::select(trap,"a") %>%
+	summarise(trap = paste(trap), NFI = sum(a)) # sum over all trees to = 1 value per trap
+}
+
+# create list of trap IDs to pass through the function
+traplist <- unique(trapDat[["trap"]])
+
+# apply function to each trap
+NFIdat <- lapply(traplist, calculate_NFI)
+
+# bind output into one dataframe
+NFIdat.b <- do.call(rbind, NFIdat)
+
+# merge with trap data
+trapConnect <- left_join(trapDat, NFIdat.b, by = "trap")
+head(NFIdat.b) #take a look
+```
+## Hanski's Connectivity index
+Now on to CI using the same format.
+
+```{r}
+# function to calculate HCI
+calculate_CI <- function (trap) {
+	subset(bci8.dists, bci8.dists[,trap]<=100) %>%
+	group_by(treeID, year) %>% 
+	mutate(a = dbh * exp( (-1/100) * eval(parse(text=trap)) ) ) %>% 
+	ungroup() %>%
+	dplyr::select(trap,"a") %>%
+	summarise(trap = paste(trap), CI = sum(a))
+}
+
+CIdat <- lapply(list, calculate_CI)
+CIdat.b <- do.call(rbind, CIdat)
+trapConnect <- left_join(trapConnect, CIdat.b, by = "trap")
+head(CIdat.b) #take a look
+```
+
+## Build and run some models
+
+```{r}
+
+m1 <- glm(cbind(abscised_seeds, viable_seeds) ~ 
+	NFI, family = binomial(logit), 
+	data = trapConnect)
+
+m2 <- glm(cbind(abscised_seeds, viable_seeds) ~ 
+	CI, family = binomial(logit), 
+	data = trapConnect)
+
+# compare
+models <- list(m1, m2)
+purrr::map_dfr(models, broom::tidy, 
+							conf.int = TRUE, .id = "vars")
+
+```
+The model outputs look pretty similar, which is reassuring! I think Hanski's is probably the one to go for. Next steps are to include something to correct for edge effects and extend to multiple species and years.
