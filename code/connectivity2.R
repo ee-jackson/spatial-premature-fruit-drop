@@ -7,10 +7,10 @@
 
 rm(list = ls())
 
-require(tidyverse)
-require(rdist)
-require(parallel)
-require(lme4)
+library("tidyverse")
+library("rdist")
+library("parallel")
+library("lme4")
 
 # load all bci files (they must be in the wd)
 #file_names <- as.list(dir(pattern="bci.tree"))
@@ -26,16 +26,23 @@ RDA <- read.csv("../output/tables/R50.csv")
 #bci <- rbind(file_names)
 bci <- rbind(bci.tree8, bci.tree7)
 
-# sort out date formating and create a year column
-bci$date <- as.Date(bci$date, 
-	origin="1960-01-01", format= "%Y-%m-%d")
+bci.tree <- bind_rows(file_names, .id = "df")
+#add survey year
+bci.tree %>%
+    mutate(year = case_when(df = bci.tree8 ~ "2015",
+                            df = bci.tree7 ~ "2010",
+                            df = bci.tree6 ~ "2005",
+                        	df = bci.tree5 ~ "2000",
+                        	df = bci.tree4 ~ "1995",
+                        	df = bci.tree3 ~ "1990",
+                        	df = bci.tree2 ~ "1985",
+                        	df = bci.tree1 ~ "1982"))
 
-bci$year <- as.integer(format(as.Date(bci$date), "%Y")) # should change this to = census year rather than exact date
 
 bci <- left_join(bci, bci.spptable, by = "sp")
 bci <- left_join(bci, RDA, by = "sp")
 
-# add id tags to id values so they don't just look like numbers
+# add tags to id values so they don't just look like numbers
 trapDat$trap <- paste("trap", trapDat$trap, sep="_")
 bci$treeID <- paste("tree", bci$treeID, sep="_")
 
@@ -50,10 +57,10 @@ year.list <- list("2015", "2010")
 
 calculate_dist <- function (species, yr) {
 	# subset tree data
-	bd <- subset2(bci, (bci[,"status"]=="A") & (bci[,"sp"]==species) & (bci[,"dbh"]>bci[,"R50"]) & (bci[,"year"]==yr))
+	bd <- dplyr::filter(bci, (bci[,"status"]=="A") & (bci[,"sp"]==species) & (bci[,"dbh"]>bci[,"R50"]) & (bci[,"year"]==yr))
 
 	# subset trap data
-	td <- subset2(trapDat, (trapDat[,"year"]==yr) & (trapDat[,"SP6"]==species))
+	td <- dplyr::filter(trapDat, (trapDat[,"year"]==yr) & (trapDat[,"SP6"]==species))
 
 	dists <- cdist(bd[,c("gx", "gy")], td[,c("X", "Y")], metric="euclidean")
 	dists.df <- as.data.frame(dists)
@@ -72,7 +79,7 @@ bci.dists <- bind_rows(all.dists, .id = "df")
 
 # function to calculate NFI
 calculate_NFI <- function (trap) {
-	subset(bci.dists, bci.dists[,trap] <= 100) %>% # subset to only trees within a 100m radius of the trap
+	dplyr::filter(bci.dists, bci.dists[,trap] <= 100) %>% # subset to only trees within a 100m radius of the trap
 	group_by(treeID, year, sp) %>% 
 	mutate(a = dbh / eval(parse(text=trap))) %>% # divide dbh by dist
 	ungroup() %>%
@@ -86,7 +93,8 @@ calculate_NFI <- function (trap) {
 trap.list <- colnames(select(bci.dists, matches("trap_")))
 
 # apply function to each trap
-NFIdat <- mclapply(trap.list, calculate_NFI)
+numCores <- detectCores()
+NFIdat <- mclapply(trap.list, calculate_NFI, mc.cores = numCores)
 
 # bind output into one dataframe
 NFIdat.b <- do.call(rbind, NFIdat)
@@ -101,7 +109,7 @@ head(trapConnect) #take a look
 
 # function to calculate CI
 calculate_CI <- function (trap) {
-	subset(bci.dists, bci.dists[,trap] <= 100) %>%
+	dplyr::filter(bci.dists, bci.dists[,trap] <= 100) %>%
 	group_by(treeID, year, sp) %>% 
 	mutate(a = dbh * exp( (-1/100) * eval(parse(text=trap)) ) ) %>% 
 	ungroup() %>%
