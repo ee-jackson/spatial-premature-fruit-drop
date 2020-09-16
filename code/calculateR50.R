@@ -15,7 +15,7 @@ lapply(file_names, load, environment())
 
 #cd "/Users/eleanorjackson/OneDrive - University of Reading/SpatialPatterns/code"
 
-bci.tree <- bind_rows(bci.tree1,bci.tree2,bci.tree3,bci.tree4,bci.tree5,bci.tree6,bci.tree7,bci.tree8, .id = "id")
+bci.tree <- bind_rows(bci.tree1,bci.tree2,bci.tree3,bci.tree4,bci.tree5,bci.tree6,bci.tree7,bci.tree8, .id = "df")
 
 # Dmax as mean of 6 the individuals with the highest dbh
 bci.tree %>%
