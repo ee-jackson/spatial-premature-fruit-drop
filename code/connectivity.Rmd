@@ -8,13 +8,13 @@ output:
     highlight: pygments
 ---
 
-I'm going to try two different measures of connectivity, __Hanski’s Connectivity Index (CI)__ (Hanski 1994) and the __Conspecific neighbourhood fecundity index (NFI)__ (Jones & Comita 2008). 
+I'm going to try two different measures of connectivity, __Hanski’s Connectivity Index (CI)__ [(Hanski 1994)](https://www.jstor.org/stable/5591) and the __Conspecific neighbourhood fecundity index (NFI)__ [(Jones & Comita 2008)](https://royalsocietypublishing.org/doi/10.1098/rspb.2008.0894#d3e405). 
 
-They differ in that Hanski's CI includes an exponential function, meaning that it doesn't weigh short distances as heavily. (e.g if a tree was right next to a trap you'd risk getting an inf value for NFI). CI also needs the average dispersal distance to scale your distances, which I'm just going to take as 100m for now.
+They differ in that Hanski's CI includes an exponential function. CI also needs the average dispersal distance to scale your distances, which I'm just going to take as 50m for now.
 
-I had to alter these equations a little. NFI uses the yearly mean total fruit set per tree to weight individuals - we don't have this, so I just used DBH, which assumes that larger individuals produce more fruit.
+I had to alter these equations a little. NFI uses the yearly mean total fruit set per tree to weight individuals - we don't have this, so I just used DBH, which assumes that larger individuals produce more fruit [(see here)](https://www.jstor.org/stable/2389015).
 
-__Hanksi's Connectivity Index__\
+__Hanski's Connectivity Index__\
 
 $CI = \sum exp(-\, \alpha \, dist_{ji}) A_j$ \
 
@@ -29,118 +29,192 @@ _A_ = DBH of tree j\
 
 ```{r, warning=FALSE, message=FALSE}
 rm(list = ls())
-
-require(tidyverse)
-library(knitr)
-library(rdist)
+library("tidyverse"); theme_set(theme_bw(base_size=10))
+library("rdist")
+library("lme4")
+library("ggeffects")
+library("knitr")
 opts_chunk$set(tidy.opts=list(width.cutoff=50), tidy=FALSE, cache.lazy = FALSE,cache = TRUE)
 ```
 ## Read in and compile the data
-We are going to focus on Cordia bicolour in 2015 to begin with.
 
-```{r, warning=FALSE}
-load("../data/bci.tree/bci.tree8.rdata")
-load("../data/bci.spptable.rdata")
-trapDat <- read.csv("../output/tables/proportionAbscisedPerTrap.csv") 
-RDA <- read.csv("../output/tables/R50.csv") 
 
-# sort out date formating and create a year column
-bci.tree8$date <- as.Date(bci.tree8$date, 
-	origin="1960-01-01", format= "%Y-%m-%d")
-bci.tree8$year <- as.integer(format(as.Date(bci.tree8$date), "%Y"))
+```{r, warning=FALSE, results="hide"}
+######## TREE DATA ########
+# find and load all bci files in one go
 
-bci8 <- left_join(bci.tree8, bci.spptable, by = "sp")
-bci8 <- left_join(bci8, RDA, by = "sp")
+# on home computer
+file_names <- as.list(dir(
+	path="/Users/eleanorjackson/OneDrive - University of Reading/SpatialPatterns/data/bci.tree", 
+	pattern="bci.tree*"))
+file_paths <- paste("../data/bci.tree/", file_names, sep="")
+
+# on RACC
+file_names <- as.list(dir(
+	path="/home/users/ft840275/SpatialPatterns/data/bci.tree", 
+	pattern="bci.tree*"))
+file_paths <- paste("/home/users/ft840275/SpatialPatterns/data/bci.tree/", file_names, sep="")
+
+lapply(file_paths, load, environment())
+
+# expand the bci survey data so we can match it to nearest years of the trap data
+# basically we are repeating each row of the bci datasets 5 times and assigning 2 years either side
+e.bci.tree3 <- bci.tree3[rep(seq_len(nrow(bci.tree3)), each = 5), ]
+e.bci.tree3$year <- rep(c("1988","1989","1990","1991","1992"))
+
+e.bci.tree4 <- bci.tree4[rep(seq_len(nrow(bci.tree4)), each = 5), ]
+e.bci.tree4$year <- rep(c("1993","1994","1995","1996","1997"))
+
+e.bci.tree5 <- bci.tree5[rep(seq_len(nrow(bci.tree5)), each = 5), ]
+e.bci.tree5$year <- rep(c("2002","2001","2000","1999","1998"))
+
+e.bci.tree6 <- bci.tree6[rep(seq_len(nrow(bci.tree6)), each = 5), ]
+e.bci.tree6$year <- rep(c("2003","2004","2005","2006","2007"))
+
+e.bci.tree7 <- bci.tree7[rep(seq_len(nrow(bci.tree7)), each = 5), ]
+e.bci.tree7$year <- rep(c("2008","2009","2010","2011","2012"))
+
+e.bci.tree8 <- bci.tree8[rep(seq_len(nrow(bci.tree8)), each = 5), ]
+e.bci.tree8$year <- rep(c("2013","2014","2015","2016","2017"))
+
+# bind all the bci datasets together and add column for survey year
+bind_rows(mget(ls(pattern="e.bci.tree*")), .id='df') %>%
+    mutate(survey_year = case_when(df == "e.bci.tree8" ~ "2015",
+                            df == "e.bci.tree7" ~ "2010",
+                            df == "e.bci.tree6" ~ "2005",
+                        	df == "e.bci.tree5" ~ "2000",
+                        	df == "e.bci.tree4" ~ "1995",
+                        	df == "e.bci.tree3" ~ "1990")) -> bci.bind
+
+rm(list = ls(pattern='*bci.tree*')) # remove some of those big files
+
+# read in other data
+load("../data/bci.spptable.rdata") # species data
+RST <- read.csv("../output/tables/R50.csv") # reproductive size threshold
+
+# join bci with sp data and reproductive size threshold data
+bci <- left_join(bci.bind, bci.spptable, by = "sp")
+RST$sp <- tolower(RST$sp)
+bci <- left_join(bci, RST, by = "sp")
+
+# subset to only trees that are alive and are above reproductive size threshold
+bci <- bci[!is.na(bci$R50), ]
+bci <- dplyr::filter(bci, (bci[,"status"]=="A") & 
+		(bci[,"dbh"]>bci[,"R50"]))
 
 # add id tags to id values so they don't just look like numbers
+bci$treeID <- paste("tree", bci$treeID, sep="_")
+
+# will need year to be a character when we merge later
+bci$year <- as.character(bci$year)
+
+######## TRAP DATA ########
+trapDat <- read.csv("../output/tables/proportionAbscisedPerTrap.csv") 
 trapDat$trap <- paste("trap", trapDat$trap, sep="_")
-bci8$treeID <- paste("tree", bci8$treeID, sep="_")
+trapDat$year <- as.character(trapDat$year)
+# Subset to traps where there is more than 1 part per year per sp
+trapDat <- subset(trapDat, sum_parts>5)
 
-# subset to one year and one species
-bci8 <- subset(bci8, status=="A" & sp=="cordbi" & dbh>R50)
-trapDat <- subset(trapDat, year=="2015" & SP6=="cordbi")
-
+# save these so we don't have to do it every time
+save(trapDat, bci, file = "cleanTrapandTree.RData")
+load("cleanTrapandTree.RData")
 ```
 ## Calculate euclidean distances
-We will create a matrix with the rdist package to calculate the distance between each tree/trap combo. Will need to make this iterable when we move on to multiple years & sp.
+We will create a pairwise matrix with the rdist package to calculate the distance between each tree/trap combo. 
 
-```{r}
-# Create a pairwise distance matrix, element [i (row), j(col)] is distance from tree i to trap j. 
-# i.e. For each trap (col) you want to keep the tree (row) where the distance is within a range
-dists <- cdist(bci8[,c("gx", "gy")], trapDat[,c("X", "Y")], metric="euclidean")
+```{r, warning=FALSE}
 
-# Align back to bci8 to retain info
-dists.df = as.data.frame(dists)
-rownames(dists.df) <- unlist(bci8$treeID)
-colnames(dists.df) <- unlist(trapDat$trap)
-dists.df[1:5,1:5] #take a look
+calculate_dist <- function (species, yr) {
+	# subset tree data
+	bd <- dplyr::filter(bci, (bci[,"status"]=="A") & (bci[,"sp"]==species) & 
+		(bci[,"dbh"]>bci[,"R50"]) & (bci[,"year"]==yr))
 
-# merge back to bci8
-bci8.dists = cbind(bci8, dists.df)
+	# subset trap data
+	td <- dplyr::filter(trapDat, (trapDat[,"year"]==yr) & 
+		(trapDat[,"SP6"]==species))
+
+	# create distance matrix using x and y co-ordinates
+	dists <- cdist(bd[,c("gx", "gy")], td[,c("X", "Y")], metric="euclidean")
+	dists.df <- as.data.frame(dists)
+
+	# label col and row names with trap and tree IDs
+	rownames(dists.df) <- unlist(bd$treeID)
+	colnames(dists.df) <- unlist(td$trap)
+
+	# bind with the bci data
+	cbind(bd, dists.df)
+}
+
+# create lists of sp and year to pass to function
+#sp.list <- unique(bci[["sp"]])
+sp.list <- c("cordbi", "mourmy")
+year.list <- unique(bci[["year"]]) 
+
+# apply function to all pairwise combinations of year and species
+all.dists <- outer(sp.list, year.list, FUN = Vectorize(calculate_dist))
+bci.dists <- bind_rows(all.dists)
+
+#or just apply function to one year and one species
+#bci.dists <- calculate_dist("cordbi", "2015")
 
 ```
 ## Conspecific neighbourhood fecundity index
-Lets start by calculating NFI, as it's the simpler option. 
-```{r}
+Lets start by calculating NFI.
+```{r, warning=FALSE}
 # function to calculate NFI
 calculate_NFI <- function (trap) {
-	subset(bci8.dists, bci8.dists[,trap]<=100) %>% # subset to only trees within a 100m radius of the trap
-	group_by(treeID, year) %>% 
+	dplyr::filter(bci.dists, bci.dists[,trap] <= 100) %>% # subset to only trees within a 100m radius of the trap
+	group_by(treeID, year, sp) %>% 
 	mutate(a = dbh / eval(parse(text=trap))) %>% # divide dbh by dist
 	ungroup() %>%
-	dplyr::select(trap,"a") %>%
-	summarise(trap = paste(trap), NFI = sum(a)) # sum over all trees to = 1 value per trap
+	dplyr::select(year, sp, trap, a) %>%
+	group_by(year, sp) %>%
+	summarise(trap = paste(trap), NFI = sum(a), .groups = "drop") # sum over all trees to = 1 value per trap
 }
 
 # create list of trap IDs to pass through the function
-traplist <- unique(trapDat[["trap"]])
+trap.list <- colnames(select(bci.dists, matches("trap_")))
 
-# apply function to each trap
-NFIdat <- lapply(traplist, calculate_NFI)
+# apply function to each trap and parallelize
+numCores <- detectCores()
+NFIdat <- mclapply(trap.list, calculate_NFI, mc.cores = numCores)
 
 # bind output into one dataframe
-NFIdat.b <- do.call(rbind, NFIdat)
+NFIdat.b <- bind_rows(NFIdat)
 
 # merge with trap data
-trapConnect <- left_join(trapDat, NFIdat.b, by = "trap")
-head(NFIdat.b) #take a look
+trapConnect <- left_join(NFIdat.b, trapDat,  
+	by = c("trap", "year", "sp" = "SP6"))
+
+head(NFIdat.b) #take a look at NFI values
 ```
 ## Hanski's Connectivity index
 Now on to CI using the same format.
 
-```{r}
-# function to calculate HCI
+```{r, warning=FALSE}
+# function to calculate CI
 calculate_CI <- function (trap) {
-	subset(bci8.dists, bci8.dists[,trap]<=100) %>%
-	group_by(treeID, year) %>% 
-	mutate(a = dbh * exp( (-1/100) * eval(parse(text=trap)) ) ) %>% 
+	dplyr::filter(bci.dists, bci.dists[,trap] <= 100) %>% 
+	group_by(treeID, year, sp) %>% 
+	mutate(a = dbh * exp( (-1/50) * eval(parse(text=trap)) ) ) %>% 
 	ungroup() %>%
-	dplyr::select(trap,"a") %>%
-	summarise(trap = paste(trap), CI = sum(a))
+	dplyr::select(year, sp, trap, a) %>%
+	group_by(year, sp) %>%
+	summarise(trap = paste(trap), CI = sum(a), .groups = "drop")
 }
 
-CIdat <- lapply(list, calculate_CI)
-CIdat.b <- do.call(rbind, CIdat)
-trapConnect <- left_join(trapConnect, CIdat.b, by = "trap")
-head(CIdat.b) #take a look
+CIdat <- mclapply(trap.list, calculate_CI, mc.cores = numCores)
+CIdat.b <- bind_rows(CIdat)
+trapConnect <- left_join(trapConnect, CIdat.b, by = c("trap", "year", "sp"))
+
+head(CIdat.b) #take a look at CI values
 ```
 
-## Build and run some models
+## Lets see if NFI and CI correlate
+```{r, warning=FALSE}
+ggplot(trapConnect) +
+	geom_point(aes(x= CI, y= NFI))
 
-```{r}
-
-m1 <- glm(cbind(abscised_seeds, viable_seeds) ~ 
-	NFI, family = binomial(logit), 
-	data = trapConnect)
-
-m2 <- glm(cbind(abscised_seeds, viable_seeds) ~ 
-	CI, family = binomial(logit), 
-	data = trapConnect)
-
-# compare
-models <- list(m1, m2)
-purrr::map_dfr(models, broom::tidy, 
-							conf.int = TRUE, .id = "vars")
-
+# save these so we don't have to run this every time
+save(trapConnect, file = "trapConnect.RData")
 ```
-The model outputs look pretty similar, which is reassuring! I think Hanski's is probably the one to go for. Next steps are to include something to correct for edge effects and extend to multiple species and years.
