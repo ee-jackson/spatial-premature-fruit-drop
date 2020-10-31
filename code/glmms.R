@@ -12,7 +12,7 @@ library("lme4")
 library("ggeffects")
 library("gridExtra")
 
-load("trapConnect.RData")
+load("../data/clean/trapConnect2.RData")
 
 ###############################################################################
 ## Build and run some models
