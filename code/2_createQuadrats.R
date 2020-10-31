@@ -10,8 +10,9 @@ rm(list = ls())
 library("tidyverse"); theme_set(theme_bw(base_size=10))
 library("sf")
 
-trapLoc <- read.csv("../output/tables/trapLocations.csv")
+trapLoc <- read.csv("../data/clean/trapLocations.csv")
 
+trapLoc$trap <- formatC(trapLoc$trap, width = 3, format = "d", flag = "0")
 trapLoc$trap <- paste("trap", trapLoc$trap, sep="_")
 
 # convert to sf object
@@ -37,7 +38,7 @@ quads.sf <- quads %>% st_sfc() %>% st_sf(geom=.) %>%
 	mutate(quadratID = paste("quadrat", seq(1:200), sep="_")) 
 
 # calculate what traps are in what quadrats
-joined <- quads.sf  %>% st_intersection(trap.sf)
+joined <- st_intersection(trap.sf, quads.sf)
 
 # plot to check
 ggplot() + geom_sf(data=quads.sf) +
@@ -48,11 +49,17 @@ joined %>%
 	as.data.frame() %>%
 	select(trap, quadratID) -> dat 
 
-#write.csv(dat, "../output/tables/trapQuadrats.csv", row.names=FALSE)
+dat[duplicated(dat$trap),]
+dat <- dat[!duplicated(dat$trap),]
+
+#write.csv(dat, "../data/clean/trapQuadrats.csv", row.names=FALSE)
 
 #join to trap data
-trapDat <- read.csv("../output/tables/proportionAbscisedPerTrap.csv") 
+trapDat <- read.csv("../data/clean/proportionAbscisedPerTrap.csv") 
+
+trapDat$trap <- formatC(trapDat$trap, width = 3, format = "d", flag = "0")
 trapDat$trap <- paste("trap", trapDat$trap, sep="_")
+
 trapData <- left_join(trapDat, dat, by= "trap")
 
-write.csv(trapData, "../output/tables/trapData.csv", row.names=FALSE)
+write.csv(trapData, "../data/clean/trapData.csv", row.names=FALSE)
