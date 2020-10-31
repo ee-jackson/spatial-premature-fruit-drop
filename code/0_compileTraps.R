@@ -11,7 +11,7 @@ require(tidyverse)
 
 seedRain<-read.table("../../PrematureFruitAbscission/data/BCI_TRAP200_20190215_spcorrected.txt", header=TRUE, stringsAsFactors = FALSE)
 
-trapLoc <- read.csv("../output/tables/trapLocations.csv")
+trapLoc <- read.csv("../data/clean/trapLocations.csv")
 
 seedTrait<-read.csv("../../PrematureFruitAbscission/data/20120227_seedsMassForTraits.csv", header=TRUE, stringsAsFactors = FALSE)
 
@@ -23,6 +23,10 @@ seedRain$fecha <- as.character(seedRain$fecha)
 seedRain$fecha <- as.Date(seedRain$fecha, "%Y-%m-%d")
 seedRain$year <- format(as.Date(seedRain$fecha), "%Y")
 
+# only use these 250 traps
+seedRain %>%
+	dplyr::filter(trap <= 200 | trap >=300 & trap <= 349) -> seedRain
+
 seedDat <- left_join(seedRain, seedTrait, by = c("sp" = "SP4"))
 
 seedDat <- subset(seedDat, part==1|part==2|part==5)
@@ -31,6 +35,7 @@ seedDat <- subset(seedDat,LIFEFORM== "LIANA"|LIFEFORM== "MIDSTORY"|LIFEFORM== "S
 seedDat <- seedDat %>% 
 	drop_na("N_SEEDFULL")
 
+# don't have the full data for these years
 seedDat <- subset(seedDat, seedDat$year != "1987" & seedDat$year != "2019")
 
 absdat <- seedDat %>% 
@@ -61,7 +66,7 @@ absdat.a <- subset(absdat, part== 5) %>%
 	ungroup()
 
 # join and calculate proportion abcised
-propDat<- full_join(absdat.a, absdat.v, by= c("sp", "SP6", "year", "trap", "GENUS", "SPECIES"))
+propDat <- full_join(absdat.a, absdat.v, by= c("sp", "SP6", "year", "trap", "GENUS", "SPECIES"))
 
 propDat <- propDat %>%
 	replace(., is.na(.), 0) %>%
@@ -78,4 +83,4 @@ trapDat <- left_join(propDat, trapLoc, by = c("trap" = "trap"))
 trapDat2 <- left_join(trapDat, sumdat, by = c("sp", "year", "trap"))
 trapDat2$SP6 <- tolower(trapDat2$SP6)
 
-write.csv(trapDat2,"../output/tables/proportionAbscisedPerTrap.csv")
+write.csv(trapDat2,"../data/clean/proportionAbscisedPerTrap.csv")
