@@ -9,8 +9,7 @@ rm(list = ls())
 
 library("tidyverse"); theme_set(theme_bw(base_size=10))
 library("rdist")
-library("lme4")
-library("ggeffects")
+library("parallel")
 
 ###############################################################################
 # read in and compile data
@@ -69,13 +68,16 @@ bci <- left_join(bci, RST, by = "sp")
 # subset to only trees that are alive and are above reproductive size threshold
 bci <- bci[!is.na(bci$R50), ]
 bci <- dplyr::filter(bci, (bci[,"status"]=="A") & 
-		(bci[,"dbh"]>bci[,"R50"]))
+		(bci[,"dbh"]>=bci[,"R50"]))
 
 # add id tags to id values so they don't just look like numbers
 bci$treeID <- paste("tree", bci$treeID, sep="_")
 
 # will need year to be a character when we merge later
 bci$year <- as.character(bci$year)
+
+# remove unidentified sp
+bci <- subset(bci, bci$sp != "uniden")
 
 ######## TRAP DATA ########
 trapDat <- read.csv("../data/trapData.csv")
@@ -109,13 +111,14 @@ bci %>%
 	distinct() %>%
 	as.data.frame() -> treeSummary
 
+# I think the NAs in the summary happen if a sp is in bci but not in trapDat and vice versa... but why would this happen?
 summary <- full_join(trapSummary, treeSummary, by= c("SP6" = "sp"))
 
 subset(summary, median_trees >15 & median_traps >15) %>%
-	pull(SP6) -> sp.list # this gives 41 species
+	pull(SP6) -> sp.list # this gives 40 species
 
 # Subset to traps where there is more than 10 parts per year per sp
-trapDat <- subset(trapDat, sum_parts>10)
+#trapDat <- subset(trapDat, sum_parts>10)
 
 ###############################################################################
 ## Calculate euclidean distances
@@ -123,19 +126,17 @@ trapDat <- subset(trapDat, sum_parts>10)
 
 calculate_dist <- function (species, yr) {
 	# subset tree data
-	bd <- dplyr::filter(bci, (bci[,"status"]=="A") & (bci[,"sp"]==species) & 
-		(bci[,"dbh"]>bci[,"R50"]) & (bci[,"year"]==yr))
+	bd <- dplyr::filter(bci, (bci[,"sp"]==species) & (bci[,"year"]==yr))
 
 	# subset trap data
-	td <- dplyr::filter(trapDat, (trapDat[,"year"]==yr) & 
-		(trapDat[,"SP6"]==species))
+	td <- dplyr::filter(trapDat, (trapDat[,"SP6"]==species) & 
+		(trapDat[,"year"]==yr) )
 
 	# create distance matrix using x and y co-ordinates
 	dists <- cdist(bd[,c("gx", "gy")], td[,c("X", "Y")], metric="euclidean")
 	dists.df <- as.data.frame(dists)
 
-	# label col and row names with trap and tree IDs
-	rownames(dists.df) <- unlist(bd$treeID)
+	# label col names with trap IDs
 	colnames(dists.df) <- unlist(td$trap)
 
 	# bind with the bci data
@@ -148,8 +149,10 @@ calculate_dist <- function (species, yr) {
 year.list <- unique(bci[["year"]]) 
 
 # apply function to all pairwise combinations of year and species
+# will return list of dfs
 all.dists <- outer(sp.list, year.list, FUN = Vectorize(calculate_dist))
-bci.dists <- bind_rows(all.dists)
+
+bci.dists <- dplyr::bind_rows(all.dists)
 
 ###############################################################################
 ## Conspecific neighbourhood fecundity index
@@ -157,8 +160,8 @@ bci.dists <- bind_rows(all.dists)
 
 # function to calculate NFI
 calculate_NFI <- function (trap) {
-	dplyr::filter(bci.dists, bci.dists[,trap] <= 100) %>% # subset to only trees within a 100m radius of the trap
-	group_by(treeID, year, sp) %>% 
+	dplyr::filter(bci.dists, bci.dists[,trap] <= 50) %>% # subset to only trees within a 50m radius of the trap
+	group_by(treeID, year) %>% 
 	mutate(a = dbh / eval(parse(text=trap))) %>% # divide dbh by dist
 	ungroup() %>%
 	dplyr::select(year, sp, trap, a) %>%
@@ -167,20 +170,21 @@ calculate_NFI <- function (trap) {
 }
 
 # create list of trap IDs to pass through the function
-trap.list <- colnames(select(bci.dists, matches("trap_")))
+#trap.list <- colnames(select(bci.dists, matches("trap_")))
+trap.list <- unique(trapDat$trap)
 
 # apply function to each trap and parallelize
 numCores <- detectCores()
-NFIdat <- mclapply(trap.list, calculate_NFI, mc.cores = numCores)
+NFIdat <- mclapply(trap.list, calculate_NFI, mc.cores = 4)
 
 # bind output into one dataframe
 NFIdat.b <- bind_rows(NFIdat)
 
+head(NFIdat.b) #take a look at NFI values
+
 # merge with trap data
 trapConnect <- left_join(NFIdat.b, trapDat,  
 	by = c("trap", "year", "sp" = "SP6"))
-
-head(NFIdat.b) #take a look at NFI values
 
 ###############################################################################
 ## Hanski's Connectivity index
@@ -188,14 +192,18 @@ head(NFIdat.b) #take a look at NFI values
 
 # function to calculate CI
 calculate_CI <- function (trap) {
-	dplyr::filter(bci.dists, bci.dists[,trap] <= 100) %>% 
-	group_by(treeID, year, sp) %>% 
-	mutate(a = dbh * exp( (-1/50) * eval(parse(text=trap)) ) ) %>% 
+	drop_na(bci.dists, trap) %>%
+	group_by(treeID, year) %>% 
+	mutate(a = dbh * exp( (-0.02) * eval(parse(text=trap)) ) ) %>% 
 	ungroup() %>%
 	dplyr::select(year, sp, trap, a) %>%
 	group_by(year, sp) %>%
 	summarise(trap = paste(trap), CI = sum(a), .groups = "drop")
 }
+
+CIdat <- mclapply(trap.list, calculate_CI, mc.cores = 4)
+
+CIdat.b <- bind_rows(CIdat)
 
 head(CIdat.b) #take a look at CI values
 
@@ -204,9 +212,9 @@ head(CIdat.b) #take a look at CI values
 ###############################################################################
 
 # merge together into one big dataset
-CIdat <- mclapply(trap.list, calculate_CI, mc.cores = numCores)
-CIdat.b <- bind_rows(CIdat)
 trapConnect <- left_join(trapConnect, CIdat.b, by = c("trap", "year", "sp"))
+trapConnect$X.1 <- NULL
+rename(trapConnect, SP4 = sp.y) ->trapConnect
 
 # save it
-save(trapConnect, file = "trapConnect.RData")
+save(trapConnect, file = "trapConnect2.RData")
