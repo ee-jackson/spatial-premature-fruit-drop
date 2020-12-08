@@ -7,17 +7,25 @@
 
 rm(list = ls())
 
-require(tidyverse)
+require("tidyverse")
 
-seedRain<-read.table("../../PrematureFruitAbscission/data/BCI_TRAP200_20190215_spcorrected.txt", header=TRUE, stringsAsFactors = FALSE)
+# seed rain data
+seedRain <- read.table("../data/raw/BCI_TRAP200_20190215_spcorrected.txt",
+ header=TRUE, stringsAsFactors = FALSE)
 
-trapLoc <- read.csv("../data/clean/trapLocations.csv")
+# seed traits 
+seedTrait <- read.csv("../data/raw/20120227_seedsMassForTraits.csv", 
+	header=TRUE, stringsAsFactors = FALSE)
 
-seedTrait<-read.csv("../../PrematureFruitAbscission/data/20120227_seedsMassForTraits.csv", header=TRUE, stringsAsFactors = FALSE)
+
+#trap locations
+trap_loc <- read.csv("../data/clean/trapLocations.csv")
+
+## sort out names
+seedRain <- rename(seedRain, SP4 = sp)
 
 seedTrait <- seedTrait %>%
-   select(LIFEFORM, N_SEEDFULL, SP4, SP6, GENUS, SPECIES)
-
+   select(LIFEFORM, N_SEEDFULL, SP4, GENUS, SPECIES)
 
 seedRain$fecha <- as.character(seedRain$fecha)
 seedRain$fecha <- as.Date(seedRain$fecha, "%Y-%m-%d")
@@ -27,10 +35,11 @@ seedRain$year <- format(as.Date(seedRain$fecha), "%Y")
 seedRain %>%
 	dplyr::filter(trap <= 200 | trap >=300 & trap <= 349) -> seedRain
 
-seedDat <- left_join(seedRain, seedTrait, by = c("sp" = "SP4"))
+seedDat <- left_join(seedRain, seedTrait, by = c("SP4"))
 
-seedDat <- subset(seedDat, part==1|part==2|part==5)
-seedDat <- subset(seedDat,LIFEFORM== "LIANA"|LIFEFORM== "MIDSTORY"|LIFEFORM== "SHRUB"|LIFEFORM== "TREE"|LIFEFORM=="UNDERSTORY")
+seedDat <- subset(seedDat, part == 1|part == 2|part == 5)
+
+seedDat <- subset(seedDat, LIFEFORM != "EPIPHYTE"|LIFEFORM != "HEMIEPIPHYTE"|LIFEFORM != "HERB"|LIFEFORM != "VINE")
 
 seedDat <- seedDat %>% 
 	drop_na("N_SEEDFULL")
@@ -39,48 +48,50 @@ seedDat <- seedDat %>%
 seedDat <- subset(seedDat, seedDat$year != "1987" & seedDat$year != "2019")
 
 absdat <- seedDat %>% 
-	group_by(part, sp, SP6, year, trap, N_SEEDFULL, GENUS, SPECIES) %>%
+	group_by(part, SP4, year, trap, N_SEEDFULL, GENUS, SPECIES) %>%
 	summarise(quantity_sum= sum(quantity, na.rm = TRUE)) %>%
 	ungroup()
 
 # Viable seeds
 
-absdat.v <- subset(absdat, part== 1 | part== 2) %>% 
+absdat_v <- subset(absdat, part == 1 | part == 2) %>% 
 	replace(., is.na(.), 0) %>%
 	rowwise() %>% 
 	mutate(viable_seeds = ifelse(part==1, quantity_sum*N_SEEDFULL, quantity_sum)) %>%
 	ungroup() %>%
-	group_by(sp, SP6, year, trap, GENUS, SPECIES) %>%
+	group_by(SP4, year, trap, GENUS, SPECIES) %>%
 	summarise(viable_seeds= sum(viable_seeds, na.rm = TRUE)) %>%
 	ungroup()
 
 # Abscised seeds
 
-absdat.a <- subset(absdat, part== 5) %>% 
+absdat_a <- subset(absdat, part == 5) %>% 
 	replace(., is.na(.), 0) %>%
 	rowwise() %>% 
 	mutate(abscised_seeds = quantity_sum*N_SEEDFULL) %>%
 	ungroup() %>%
-	group_by(sp, SP6, year, trap,GENUS, SPECIES) %>%
+	group_by(SP4, year, trap,GENUS, SPECIES) %>%
 	summarise(abscised_seeds= sum(abscised_seeds, na.rm = TRUE)) %>%
 	ungroup()
 
 # join and calculate proportion abcised
-propDat <- full_join(absdat.a, absdat.v, by= c("sp", "SP6", "year", "trap", "GENUS", "SPECIES"))
+propdat <- full_join(absdat_a, absdat_v, by= c("SP4", "year", "trap", "GENUS", "SPECIES"))
 
-propDat <- propDat %>%
+propdat <- propdat %>%
 	replace(., is.na(.), 0) %>%
 	rowwise() %>% 
 	mutate(total_seeds = sum(abscised_seeds, viable_seeds, na.rm = TRUE), proportion_abscised = abscised_seeds / total_seeds) %>%
 	ungroup()
 
 sumdat <- absdat %>% 
-	group_by(sp, year, trap) %>%
+	group_by(SP4, year, trap) %>%
 	summarise(sum_parts= sum(quantity_sum, na.rm = TRUE)) %>%
 	ungroup()
 
-trapDat <- left_join(propDat, trapLoc, by = c("trap" = "trap"))
-trapDat2 <- left_join(trapDat, sumdat, by = c("sp", "year", "trap"))
-trapDat2$SP6 <- tolower(trapDat2$SP6)
+propdat_loc <- left_join(propdat, trap_loc, by = c("trap" = "trap"))
+trapDat <- left_join(propdat_loc, sumdat, by = c("SP4", "year", "trap"))
 
-write.csv(trapDat2,"../data/clean/proportionAbscisedPerTrap.csv")
+trapDat$trap <- formatC(trapDat$trap, width = 3, format = "d", flag = "0")
+trapDat$trap <- paste("trap", trapDat$trap, sep="_")
+
+save(trapDat, file = "../data/clean/trapData.RData")
