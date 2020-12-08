@@ -7,7 +7,7 @@
 
 rm(list = ls())
 
-require(tidyverse)
+require("tidyverse")
 
 # cd "/Users/eleanorjackson/OneDrive - University of Reading/SpatialPatterns/data/bci.tree"
 file_names = as.list(dir(pattern = "bci.tree*"))
@@ -28,4 +28,4 @@ bci.tree %>%
 	mutate(R50 = dbh/2) %>%
 	rename(dmax="dbh") -> tree.max
 
-write.csv(tree.max, "../output/tables/R50.csv")
+write.csv(tree.max, "../data/clean/R50.csv", row.names=FALSE)
