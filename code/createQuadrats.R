@@ -19,7 +19,7 @@ trapLoc$trap <- paste("trap", trapLoc$trap, sep="_")
 trap.sf <- st_as_sf(trapLoc, coords = c("X", "Y"))
 
 # change bounding box
-new_bb = c(0, 0, 1000, 500)
+new_bb <- c(0, 0, 1000, 500)
 names(new_bb) = c("xmin", "ymin", "xmax", "ymax")
 attr(new_bb, "class") = "bbox"
 attr(st_geometry(trap.sf), "bbox") = new_bb
