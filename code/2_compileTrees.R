@@ -59,7 +59,8 @@ bci <- left_join(bci, RST, by = "sp")
 
 # subset to only trees that are alive and are above reproductive size threshold
 bci <- bci[!is.na(bci$R50), ]
-bci <- dplyr::filter(bci, (bci[,"status"]=="A") & 
+bci <- dplyr::filter(bci, (bci[,"status"]=="A") | 
+		(bci[,"status"]=="AD") & # when a tree was noted as dead in one census but was found alive in a later census
 		(bci[,"dbh"]>=bci[,"R50"]))
 
 # add id tags to id values so they don't just look like numbers
