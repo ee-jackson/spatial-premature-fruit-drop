@@ -9,11 +9,9 @@ rm(list = ls())
 
 require("tidyverse")
 
-# cd "/Users/eleanorjackson/OneDrive - University of Reading/SpatialPatterns/data/bci.tree"
-file_names = as.list(dir(pattern = "bci.tree*"))
+# load all bci files
+file_names = as.list(dir(path="../data/bci.tree", pattern = "bci.tree*"))
 lapply(file_names, load, environment())
-
-#cd "/Users/eleanorjackson/OneDrive - University of Reading/SpatialPatterns/code"
 
 bci.tree <- bind_rows(bci.tree3,bci.tree4,bci.tree5,bci.tree6,bci.tree7,bci.tree8, .id = "df")
 

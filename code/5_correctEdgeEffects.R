@@ -7,7 +7,7 @@
 
 rm(list = ls())
 
-library("tidyverse"); theme_set(theme_bw(base_size=10))
+library("tidyverse"); theme_set(theme_bw(base_size=8))
 library("sf")
 load("../data/clean/trapConnect.RData")
 
@@ -53,7 +53,8 @@ edgeTraps_adjusted_b <- bind_rows(edgeTraps_adjusted)
 as.data.frame(edgeTraps_adjusted_b) %>%
 	select(year, SP4, trap, CI_pred) -> edgeTraps_adjusted_s
 
+# CI_pred for non-edge traps are NA -> fill with CI_obs
 left_join(trapConnect, edgeTraps_adjusted_s, by = c("year", "SP4", "trap")) %>%
 	mutate(CI_pred = coalesce(CI_pred, CI_obs)) -> trapConnect
 
-save(trapConnect, sp.list, file = "../data/clean/trapConnect.RData")
+save(trapConnect, sp.list, file = "../data/clean/cleanData.RData")

@@ -13,13 +13,12 @@ require("tidyverse")
 seedRain <- read.table("../data/raw/BCI_TRAP200_20190215_spcorrected.txt",
  header=TRUE, stringsAsFactors = FALSE)
 
-# seed traits 
+# seed traits from joe
 seedTrait <- read.csv("../data/raw/20120227_seedsMassForTraits.csv", 
 	header=TRUE, stringsAsFactors = FALSE)
 
-
-#trap locations
-trap_loc <- read.csv("../data/clean/trapLocations.csv")
+# trap locations
+load("../data/clean/trapLocations.RData")
 
 ## sort out names
 seedRain <- rename(seedRain, SP4 = sp)
@@ -30,10 +29,6 @@ seedTrait <- seedTrait %>%
 seedRain$fecha <- as.character(seedRain$fecha)
 seedRain$fecha <- as.Date(seedRain$fecha, "%Y-%m-%d")
 seedRain$year <- format(as.Date(seedRain$fecha), "%Y")
-
-# only use these 250 traps
-seedRain %>%
-	dplyr::filter(trap <= 200 | trap >=300 & trap <= 349) -> seedRain
 
 seedDat <- left_join(seedRain, seedTrait, by = c("SP4"))
 
@@ -46,6 +41,10 @@ seedDat <- seedDat %>%
 
 # don't have the full data for these years
 seedDat <- subset(seedDat, seedDat$year != "1987" & seedDat$year != "2019")
+
+# format trap id
+seedDat$trap <- formatC(seedDat$trap, width = 3, format = "d", flag = "0")
+seedDat$trap <- paste("trap", seedDat$trap, sep="_")
 
 absdat <- seedDat %>% 
 	group_by(part, SP4, year, trap, N_SEEDFULL, GENUS, SPECIES) %>%
@@ -88,10 +87,10 @@ sumdat <- absdat %>%
 	summarise(sum_parts= sum(quantity_sum, na.rm = TRUE)) %>%
 	ungroup()
 
-propdat_loc <- left_join(propdat, trap_loc, by = c("trap" = "trap"))
-trapDat <- left_join(propdat_loc, sumdat, by = c("SP4", "year", "trap"))
+propdat_loc <- left_join(trap_loc_quad, propdat, by = c("trap" = "trap"))
 
-trapDat$trap <- formatC(trapDat$trap, width = 3, format = "d", flag = "0")
-trapDat$trap <- paste("trap", trapDat$trap, sep="_")
+propdat_loc %>%
+	left_join(sumdat, by = c("SP4", "year", "trap")) %>%
+	filter(!sum_parts == 0) -> trapDat
 
 save(trapDat, file = "../data/clean/trapData.RData")

@@ -7,13 +7,13 @@
 
 rm(list = ls())
 
-library("tidyverse"); theme_set(theme_bw(base_size=10))
+library("tidyverse"); theme_set(theme_bw(base_size = 8))
 library("rdist")
 library("parallel")
 
 ######## LOAD DATA ########
-load("../data/trapData.RData")
-load("../data/treeData.RData")
+load("../data/clean/trapData.RData")
+load("../data/clean/treeData.RData")
 
 trapDat$year <- as.character(trapDat$year)
 
@@ -25,7 +25,7 @@ trapDat %>%
 	arrange(desc(n_traps)) %>%
 	ungroup() %>%
 	group_by(SP4) %>%
-	mutate(median_traps = median(n_traps,na.rm = TRUE)) %>%
+	mutate(median_traps = median(n_traps, na.rm = TRUE)) %>%
 	select(SP4, median_traps) %>%
 	distinct() %>%
 	as.data.frame() -> trapSummary
@@ -37,7 +37,7 @@ bci %>%
 	arrange(desc(n_trees)) %>%
 	ungroup() %>%
 	group_by(SP4) %>%
-	mutate(median_trees = median(n_trees,na.rm = TRUE)) %>%
+	mutate(median_trees = median(n_trees, na.rm = TRUE)) %>%
 	select(median_trees, SP4) %>%
 	distinct() %>%
 	as.data.frame() -> treeSummary
@@ -47,9 +47,6 @@ summary <- full_join(trapSummary, treeSummary, by= "SP4")
 
 subset(summary, median_trees >15 & median_traps >15) %>%
 	pull(SP4) -> sp.list # this gives 40 species
-
-# Subset to traps where there is more than 10 parts per year per sp
-#trapDat <- subset(trapDat, sum_parts>10)
 
 ###############################################################################
 ## Calculate euclidean distances
@@ -142,4 +139,4 @@ head(CIdat.b) #take a look at CI values
 trapConnect <- left_join(trapConnect, CIdat.b, by = c("trap", "year", "SP4"))
 
 # save it
-save(trapConnect, sp.list, file = "../data/trapConnect.RData")
+save(trapConnect, sp.list, file = "../data/clean/trapConnect.RData")
