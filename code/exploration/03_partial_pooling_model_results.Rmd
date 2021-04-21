@@ -1,13 +1,15 @@
- ---
+---
 title: "Explore results from partial pooling models"
 author: "Eleanor Jackson"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: github_document
+output: 
+  html_document: 
+    keep_md: yes
 ---
 
 A partial pooling model has species as a random effect. I fit a ZOIB and  a ZIB
 
-```{r, message = FALSE, warning = FALSE}
+```{r, warning=FALSE, message=FALSE}
 library("tidyverse"); theme_set(theme_bw(base_size=10))
 library("broom.mixed")
 library("brms")
