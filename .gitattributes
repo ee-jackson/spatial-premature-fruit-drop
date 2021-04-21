@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# exclude Rmd file html outputs
+code/exploration/*.html linguist-documentation

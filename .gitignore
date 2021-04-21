@@ -4,6 +4,7 @@ data/
 output/
 code/graveyard
 dummyrun/
+code/exploration/*.html
 
 # General
 .DS_Store
