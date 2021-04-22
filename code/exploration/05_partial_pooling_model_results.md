@@ -1,15 +1,12 @@
----
-title: "Explore results from partial pooling models"
-author: "Eleanor Jackson"
-date: '`r format(Sys.time(), "%d %B, %Y")`'
-output: 
-  html_document: 
-    keep_md: yes
----
+Explore results from partial pooling models
+================
+Eleanor Jackson
+22 April, 2021
 
-A partial pooling model has species as a random effect. I fit a ZOIB and  a ZIB
+A partial pooling model has species as a random effect. I fit a ZOIB and
+a ZIB
 
-```{r, warning=FALSE, message=FALSE}
+``` r
 library("tidyverse"); theme_set(theme_bw(base_size=10))
 library("broom.mixed")
 library("brms")
@@ -23,7 +20,7 @@ part_pool_models <- all_models
 
 Compare the results of both models
 
-```{r}
+``` r
 part_pool_models %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x, pars = c("b_CI_pred.sc")))) %>%
   select(model, posterior) %>%
@@ -37,11 +34,15 @@ part_pool_models %>%
   ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3))
 ```
 
-Both models estimate a negative correlation between connectivity and proportion of seeds prematurely abscised.
+![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
-We can compare which model is better with leave-one-out cross validation (loo).
+Both models estimate a negative correlation between connectivity and
+proportion of seeds prematurely abscised.
 
-```{r, eval = FALSE}
+We can compare which model is better with leave-one-out cross validation
+(loo).
+
+``` r
 # can only run this on the cluster - don't have enough memory - crashes macbook
 zib_loo <- add_criterion(part_pool_models$fit[[1]], "loo", moment_match = TRUE)
 zoib_loo <- add_criterion(part_pool_models$fit[[2]], "loo", moment_match = TRUE)
@@ -51,9 +52,9 @@ loo(zib_loo)
 loo(zoib_loo) # zoib looks better!
 ```
 
-Let's take a look at the species random effects. 
+Let’s take a look at the species random effects.
 
-```{r}
+``` r
 part_pool_models %>%
   filter(model == "ZOIB") %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x))) %>%
@@ -72,7 +73,9 @@ ggplot(part_pool_plot_dat, aes(x = reorder(SP4, value), y = as.numeric(value))) 
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-```{r}
+![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
 load("../../output/models/mods_4sp.RData")
 single_sp_models <- all_models
 
@@ -99,12 +102,13 @@ part_pool_plot_dat %>%
   xlim(c(-1.5, 2)) -> p2
 
 p1 + p2
-
 ```
+
+![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 Is there a pattern with pre-dispersal predator attack?
 
-```{r}
+``` r
 read.csv("../../../premature-fruit-drop/data/raw/TidyTrait.csv") %>% 
   rename(SP4 = Codigo) -> tidytraits
 
@@ -115,7 +119,10 @@ left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   labs(y = "Estimate ± CI [95%]", x = "") +
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
-```{r}
+
+![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+``` r
 left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   ggplot(aes(x = reorder(SP4, value), y = as.numeric(value), colour = SeedPred_pres)) +
   ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3)) +
@@ -124,11 +131,13 @@ left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25) 
 ```
 
-Doesn't look like it.
+![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+Doesn’t look like it.
 
 What about year random effects?
 
-```{r}
+``` r
 part_pool_models %>%
   filter(model == "ZOIB") %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x))) %>%
@@ -146,4 +155,7 @@ part_pool_models %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-Some interesting patterns.. I know that 2016 was an el Nino year. Could look into rainfall for BCI.
+![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+
+Some interesting patterns.. I know that 2016 was an el Nino year. Could
+look into rainfall for BCI.
