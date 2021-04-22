@@ -3,6 +3,10 @@ Explore results from partial pooling models
 Eleanor Jackson
 22 April, 2021
 
+``` r
+knitr::opts_chunk$set(fig.path="figures/05_partial_pooling_model_results/")
+```
+
 A partial pooling model has species as a random effect. I fit a ZOIB and
 a ZIB
 
@@ -34,7 +38,7 @@ part_pool_models %>%
   ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3))
 ```
 
-![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+![](figures/05_partial_pooling_model_results/unnamed-chunk-2-1.png)<!-- -->
 
 Both models estimate a negative correlation between connectivity and
 proportion of seeds prematurely abscised.
@@ -73,7 +77,7 @@ ggplot(part_pool_plot_dat, aes(x = reorder(SP4, value), y = as.numeric(value))) 
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](figures/05_partial_pooling_model_results/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 load("../../output/models/mods_4sp.RData")
@@ -104,7 +108,7 @@ part_pool_plot_dat %>%
 p1 + p2
 ```
 
-![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](figures/05_partial_pooling_model_results/unnamed-chunk-5-1.png)<!-- -->
 
 Is there a pattern with pre-dispersal predator attack?
 
@@ -120,7 +124,7 @@ left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](figures/05_partial_pooling_model_results/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
@@ -131,7 +135,7 @@ left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25) 
 ```
 
-![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](figures/05_partial_pooling_model_results/unnamed-chunk-7-1.png)<!-- -->
 
 Doesn’t look like it.
 
@@ -155,7 +159,7 @@ part_pool_models %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-![](05_partial_pooling_model_results_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](figures/05_partial_pooling_model_results/unnamed-chunk-8-1.png)<!-- -->
 
 Some interesting patterns.. I know that 2016 was an el Nino year. Could
 look into rainfall for BCI.

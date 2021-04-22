@@ -4,6 +4,9 @@ author: "Eleanor Jackson"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: github_document
 ---
+```{r setup}
+knitr::opts_chunk$set(fig.path="figures/05_partial_pooling_model_results/")
+```
 
 A partial pooling model has species as a random effect. I fit a ZOIB and  a ZIB
 
