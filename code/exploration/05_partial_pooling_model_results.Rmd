@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(fig.path="figures/05_partial_pooling_model_results/")
 ```
 
-A partial pooling model has species as a random effect. I fit a ZOIB and  a ZIB
+My partial pooling models have species as a random effect. My previous models have been for a single species only. Here I will compare and look at the output of, 4 partial pooling models: Zero Inflated Binomial (ZIB) and Zero and One Inflated Beta Binomial (ZOIB) models, with and without quadrat as a random effect.
 
 ```{r, warning=FALSE, message=FALSE}
 library("tidyverse"); theme_set(theme_bw(base_size=10))
@@ -19,10 +19,55 @@ library("loo")
 library("patchwork")
 
 load("../../output/models/full_mods/mods_full.RData")
-part_pool_models <- all_models
+load("../../output/models/full_mods/part_pool_quad_models.RData") # same models as above but with quadrat as a random effect
 ```
 
-Compare the results of both models
+## Posterior predictive checks
+Compare our observed data to data predicted by the model. If our model is a good fit, we should be able to use it to generate a dataset that resembles the observed data.
+
+```{r}
+pp_check(part_pool_models$fit[[1]], type = "dens_overlay", nsamples = 50) -> p1
+pp_check(part_pool_models$fit[[2]], type = "dens_overlay", nsamples = 50) -> p2
+pp_check(part_pool_quad_models$fit[[1]], type = "dens_overlay", nsamples = 50) -> p3
+pp_check(part_pool_quad_models$fit[[2]], type = "dens_overlay", nsamples = 50) -> p4
+
+(p1 + p2) / (p3 + p4)
+```
+
+Here, y rep are samples from the posterior distribution and y is the observed data. The binomial plots aren't that informative. Let's look at how well the models predict the proportion of zeros.
+
+```{r}
+prop_zero <- function(x) mean(x == 0)
+pp_check(part_pool_models$fit[[1]], type = "stat", stat = "prop_zero", nsamples = 50) -> p5
+pp_check(part_pool_models$fit[[2]], type = "stat", stat = "prop_zero", nsamples = 50) -> p6
+pp_check(part_pool_quad_models$fit[[1]], type = "stat", stat = "prop_zero", nsamples = 50) -> p7
+pp_check(part_pool_quad_models$fit[[2]], type = "stat", stat = "prop_zero", nsamples = 50) -> p8
+
+(p5 + p6) / (p7 + p8)
+```
+
+The ZIB models are predicting a much lower proportion of zeros than are found in the data, whereas the ZOIB's look bang-on. Not sure why the ZIBs look so bad...
+
+## Compare the predictive accuracy of the models using LOO-CV
+Leave-one-out cross validation (LOO-CV) works by estimating the predictive accuracy at each point, using data without that point. We will estimate elpd_loo, which is the LOO expected log pointwise predictive density. The bigger the value, the better we are at predicting the left out point.
+Pareto k estimates give an indication of how ‘influential’ each point is. The higher the value of 
+k, the more influential the point. Values of k over 0.7 are not good - indicates potential model misspecification.
+
+```{r loo compare}
+comp <- loo_compare(part_pool_quad_models$fit[[1]], part_pool_quad_models$fit[[2]],
+                    part_pool_models$fit[[1]], part_pool_models$fit[[2]])
+print(comp, digits = 3)  # [[1]] are ZIB, [[2]] are ZOIB
+
+plot(loo(part_pool_quad_models$fit[[1]]), main = "ZIB w quadrats")
+plot(loo(part_pool_quad_models$fit[[2]]), main = "ZOIB w quadrats")
+plot(loo(part_pool_models$fit[[1]]), main = "ZIB w/o quadrats")
+plot(loo(part_pool_models$fit[[2]]), main = "ZOIB w/o quadrats")
+
+```
+
+Do the binomial models look weird because of the observation-level random effects I added to account for overdispersion? Why are there 2 bands?
+
+# Model Results
 
 ```{r}
 part_pool_models %>%
@@ -35,27 +80,30 @@ part_pool_models %>%
   labs(y = "Estimate ± CI [95%]", x = "") +
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)  +
   scale_y_continuous(limits = c(-0.5, 0.5)) +
-  ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3))
+  ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3)) -> p9
+
+part_pool_quad_models %>%
+  mutate(posterior = map(fit, ~brms::posterior_samples(.x, pars = c("b_CI_pred.sc")))) %>%
+  select(model, posterior) %>%
+  unnest(posterior) %>% 
+  pivot_longer(b_CI_pred.sc, names_to="mu" ) %>%
+  ggplot(aes(x = as.factor(model), y = as.numeric(value))) +
+  coord_flip() +
+  labs(y = "Estimate ± CI [95%]", x = "") +
+  geom_hline(yintercept = 0, linetype = 2, size = 0.25)  +
+  scale_y_continuous(limits = c(-0.5, 0.5)) +
+  ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3)) +
+  ggtitle("with quadrat as a random effect") -> p10
+
+p9 + p10
 ```
 
-Both models estimate a negative correlation between connectivity and proportion of seeds prematurely abscised.
-
-We can compare which model is better with leave-one-out cross validation (loo).
-
-```{r, eval = FALSE}
-# can only run this on the cluster - don't have enough memory - crashes macbook
-zib_loo <- add_criterion(part_pool_models$fit[[1]], "loo", moment_match = TRUE)
-zoib_loo <- add_criterion(part_pool_models$fit[[2]], "loo", moment_match = TRUE)
-comp <- loo_compare(zib_loo, zoib_loo)
-print(comp)
-loo(zib_loo)
-loo(zoib_loo) # zoib looks better!
-```
+All models estimate a negative correlation between connectivity and proportion of seeds prematurely abscised - opposite of what we predicted!
 
 Let's take a look at the species random effects. 
 
 ```{r}
-part_pool_models %>%
+part_pool_quad_models %>%
   filter(model == "ZOIB") %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x))) %>%
   select(model, posterior) %>%
@@ -73,6 +121,8 @@ ggplot(part_pool_plot_dat, aes(x = reorder(SP4, value), y = as.numeric(value))) 
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
+Lots of variation, how do they compare to the single-species models?
+
 ```{r}
 load("../../output/models/mods_4sp.RData")
 single_sp_models <- all_models
@@ -88,7 +138,7 @@ single_sp_models %>%
   geom_vline(xintercept= 0, linetype=2, colour="grey50") +
   labs(x="Estimate ± CI [75%, 95%]", y="") +
   ggtitle("partial pooling model") +
-  xlim(c(-1.5, 2)) -> p1
+  xlim(c(-1.5, 2)) -> p11
 
 part_pool_plot_dat %>%
   filter(SP4 == "JACC" | SP4 == "HYBP" | SP4 == "FARO"| SP4 == "BEIP" ) %>%
@@ -96,12 +146,14 @@ part_pool_plot_dat %>%
   ggdist::stat_halfeye(.width=c(0.75, 0.95), normalize = "xy", limits = c(-3, 3)) +
   geom_vline(xintercept= 0, linetype=2, colour="grey50") +
   labs(x="Estimate ± CI [75%, 95%]", y="") +
-  ggtitle("single species model") +
-  xlim(c(-1.5, 2)) -> p2
+  ggtitle("single species models") +
+  xlim(c(-1.5, 2)) -> p12
 
-p1 + p2
+p11 + p12
 
 ```
+
+Quite different! I think we expect that they will be pulled toward the group mean, but how much is too much? [This](https://towardsdatascience.com/when-mixed-effects-hierarchical-models-fail-pooling-and-uncertainty-77e667823ae8) is useful.
 
 Is there a pattern with pre-dispersal predator attack?
 
@@ -130,7 +182,7 @@ Doesn't look like it.
 What about year random effects?
 
 ```{r}
-part_pool_models %>%
+part_pool_quad_models %>%
   filter(model == "ZOIB") %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x))) %>%
   select(model, posterior) %>%
@@ -147,4 +199,4 @@ part_pool_models %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-Some interesting patterns.. I know that 2016 was an el Nino year. Could look into rainfall for BCI.
+Some interesting patterns.. I know that 2015/16 was a big el Niño year. Could look into rainfall for BCI.
