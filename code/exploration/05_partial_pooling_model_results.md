@@ -270,9 +270,9 @@ print(comp, digits = 3)
     ## part_pool_quad_models$fit[[1]] -16735.250    194.229
     ## part_pool_models$fit[[1]]      -16747.662    194.244
 
-We have quite low percentages of bad (&gt;0.7) pareto k values, which is
+We have quite low percentages of bad (&gt;0.7) pareto k values for the ZOIBs, which is
 good! `loo_compare()` is telling us that the ZOIB w/ quadrat model has
-the best predictive accuracy.
+the best predictive accuracy. The ZIBs look really bad - think something has gone wrong there.
 
 LOO probability integral transform (PIT) plots are often used to see
 where each point falls in its predictive distribution. But LOO-PIT
