@@ -2,13 +2,22 @@
 title: "Explore results from partial pooling models"
 author: "Eleanor Jackson"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: github_document
+output: 
+  github_document:
+    keep_html: true
 ---
-```{r setup}
+```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.path="figures/05_partial_pooling_model_results/")
 ```
 
-My partial pooling models have species as a random effect. My previous models have been for a single species only. Here I will compare and look at the output of, 4 partial pooling models: Zero Inflated Binomial (ZIB) and Zero and One Inflated Beta Binomial (ZOIB) models, with and without quadrat as a random effect.
+My partial pooling models have species as a random effect. My previous models have been for a single species only. Here I will compare, and look at the output of, 4 partial pooling models: Zero Inflated Binomial (ZIB) and Zero and One Inflated Beta Binomial (ZOIB) models, with and without quadrat as a random effect.
+
+Pooling works a bit like this:
+```{r, eval=FALSE}
+complete_pooling <- lm(y ~ 1)
+      no_pooling <- lm(y ~ group)
+ partial_pooling <- lmer(y ~ 1 + (1|group))
+```
 
 ```{r, warning=FALSE, message=FALSE}
 library("tidyverse"); theme_set(theme_bw(base_size=10))
@@ -17,15 +26,18 @@ library("brms")
 library("ggdist")
 library("loo")
 library("patchwork")
+options(mc.cores = 4)
 
 load("../../output/models/full_mods/mods_full.RData")
-load("../../output/models/full_mods/part_pool_quad_models.RData") # same models as above but with quadrat as a random effect
+part_pool_models
+load("../../output/models/full_mods/part_pool_quad_models.RData")
+part_pool_quad_models
 ```
 
-## Posterior predictive checks
+## Posterior predictive checks (PPC)
 Compare our observed data to data predicted by the model. If our model is a good fit, we should be able to use it to generate a dataset that resembles the observed data.
 
-```{r}
+```{r dens-pp_checks}
 pp_check(part_pool_models$fit[[1]], type = "dens_overlay", nsamples = 50) -> p1
 pp_check(part_pool_models$fit[[2]], type = "dens_overlay", nsamples = 50) -> p2
 pp_check(part_pool_quad_models$fit[[1]], type = "dens_overlay", nsamples = 50) -> p3
@@ -36,7 +48,7 @@ pp_check(part_pool_quad_models$fit[[2]], type = "dens_overlay", nsamples = 50) -
 
 Here, y rep are samples from the posterior distribution and y is the observed data. The binomial plots aren't that informative. Let's look at how well the models predict the proportion of zeros.
 
-```{r}
+```{r stat-pp_checks}
 prop_zero <- function(x) mean(x == 0)
 pp_check(part_pool_models$fit[[1]], type = "stat", stat = "prop_zero", nsamples = 50) -> p5
 pp_check(part_pool_models$fit[[2]], type = "stat", stat = "prop_zero", nsamples = 50) -> p6
@@ -46,30 +58,74 @@ pp_check(part_pool_quad_models$fit[[2]], type = "stat", stat = "prop_zero", nsam
 (p5 + p6) / (p7 + p8)
 ```
 
-The ZIB models are predicting a much lower proportion of zeros than are found in the data, whereas the ZOIB's look bang-on. Not sure why the ZIBs look so bad...
+The ZIB models are predicting a much lower proportion of zeros than are found in the data, whereas the ZOIB's look bang-on. 
+
+So, I think these functions don't work for binomial models. `posterior_predict()` will predict values for `abscised_seeds` which range from 41 to 24031 seeds - rather than the proportion of abscised to total seeds.
+
+I'm going to try some PPC's that are [geared towards discrete outcomes](https://mc-stan.org/bayesplot/reference/PPC-discrete.html) - namely rootograms. Which are useful for diagnosing problems in count data models such as overdispersion or excess zeros. They consist of a histogram of y with the expected counts based on yrep overlaid as a line. The y-axis represents the square roots of the counts to approximately adjust for scale differences and thus ease comparison between observed and expected counts. See [here](https://doi.org/10.1080/00031305.2016.1173590).
+
+Building them myself rather than using `bayesplot::ppc_rootogram`, to account for the `posterior_predict()` / binomial problem. I will run this on the cluster and paste the plots into the markdown beacuse `posterior_predict()` takes forever on my macbook.
+
+```{r rootograms, eval = FALSE}
+load("../../data/clean/cleanData.RData") # load trapConnect
+
+# ZOIB
+# have to make the tranformations here as I did them in my model-fitting script
+yrep_zoib <- trapConnect %>% 
+  mutate(CI_pred.sc = scale(CI_pred)) %>%
+  filter(sum_parts > 10) %>%
+  tidybayes::add_predicted_draws(part_pool_quad_models$fit[[2]], draws = 50)
+
+ggplot(yrep_zoib) +
+  geom_histogram(aes(x = proportion_abscised, y=..density.., fill="white"), colour="black") +
+  geom_density(aes(x = .prediction, fill="#FF6666"), alpha=.2) + 
+  coord_trans(y = "sqrt") +
+  scale_fill_identity(guide = "legend", breaks = c("white", "#FF6666"),labels = c("observed", "predicted")) +
+  labs(title="ZOIB", y = "sqrt(density)")
+
+# ZIB
+yrep_zib <- trapConnect %>% 
+  mutate(CI_pred.sc = scale(CI_pred), 
+    OLRE = seq_len(nrow(trapConnect)), 
+    abscised_seeds = as.integer(abscised_seeds), 
+    total_seeds = as.integer(total_seeds) ) %>%
+  filter(sum_parts > 10) %>%
+  tidybayes::add_predicted_draws(part_pool_quad_models$fit[[1]], allow_new_levels=TRUE, draws = 50)
+
+ggplot(yrep_zib) +
+  geom_histogram(aes(x = proportion_abscised, y=..density.., fill="white"), colour="black") +
+  geom_density(aes(x = .prediction/total_seeds, fill="#FF6666"), alpha=.2) + 
+  coord_trans(y = "sqrt") +
+  scale_fill_identity(guide = "legend", breaks = c("white", "#FF6666"),labels = c("observed", "predicted")) +
+  labs(title="ZIB", y = "sqrt(density)")
+
+```
+![](figures/05_partial_pooling_model_results/ppc_rootogram_ZOIB.png)
+![](figures/05_partial_pooling_model_results/ppc_rootogram_ZIB.png)
+
+Looks like they both over predict zeros, but in the `prop_zero` plots above they look like they're doing a pretty good job (the ZOIBs at least). Maybe just a problem with my hand-made rootograms? `bayesplot::ppc_rootogram` produces plots with uncertainty intervals which would be useful, could try and do this somehow...? The ZIB is quite spiky in the middle, maybe something to do with how I calculated proportion_abscised?
 
 ## Compare the predictive accuracy of the models using LOO-CV
 Leave-one-out cross validation (LOO-CV) works by estimating the predictive accuracy at each point, using data without that point. We will estimate elpd_loo, which is the LOO expected log pointwise predictive density. The bigger the value, the better we are at predicting the left out point.
-Pareto k estimates give an indication of how ‘influential’ each point is. The higher the value of 
-k, the more influential the point. Values of k over 0.7 are not good - indicates potential model misspecification.
+Pareto k estimates give an indication of how ‘influential’ each point is. The higher the value of k, the more influential the point. Values of k over 0.7 are not good - indicates potential model misspecification.
 
-```{r loo compare}
+```{r loo_compare}
+loo(part_pool_quad_models$fit[[1]]) # ZIB w/ quadrat
+loo(part_pool_quad_models$fit[[2]]) # ZOIB w/ quadrat
+loo(part_pool_models$fit[[1]]) # ZIB w/o quadrat
+loo(part_pool_models$fit[[2]]) # ZOIB w/o quadrat
+
 comp <- loo_compare(part_pool_quad_models$fit[[1]], part_pool_quad_models$fit[[2]],
                     part_pool_models$fit[[1]], part_pool_models$fit[[2]])
-print(comp, digits = 3)  # [[1]] are ZIB, [[2]] are ZOIB
-
-plot(loo(part_pool_quad_models$fit[[1]]), main = "ZIB w quadrats")
-plot(loo(part_pool_quad_models$fit[[2]]), main = "ZOIB w quadrats")
-plot(loo(part_pool_models$fit[[1]]), main = "ZIB w/o quadrats")
-plot(loo(part_pool_models$fit[[2]]), main = "ZOIB w/o quadrats")
-
+print(comp, digits = 3)
 ```
+We have quite low percentages of bad (>0.7) pareto k values, which is good! `loo_compare()` is telling us that the ZOIB w/ quadrat model has the best predictive accuracy. 
 
-Do the binomial models look weird because of the observation-level random effects I added to account for overdispersion? Why are there 2 bands?
+LOO probability integral transform (PIT) plots are often used to see where each point falls in its predictive distribution. But LOO-PIT graphs aren't valid for zero-inflated models. See [here](https://discourse.mc-stan.org/t/worst-loo-pit-plots-ever-pp-checks-great/18789). I could try a randomised LOO PIT...
 
-# Model Results
+## Model Results
 
-```{r}
+```{r compare-results}
 part_pool_models %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x, pars = c("b_CI_pred.sc")))) %>%
   select(model, posterior) %>%
@@ -102,7 +158,7 @@ All models estimate a negative correlation between connectivity and proportion o
 
 Let's take a look at the species random effects. 
 
-```{r}
+```{r sp-re}
 part_pool_quad_models %>%
   filter(model == "ZOIB") %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x))) %>%
@@ -123,7 +179,7 @@ ggplot(part_pool_plot_dat, aes(x = reorder(SP4, value), y = as.numeric(value))) 
 
 Lots of variation, how do they compare to the single-species models?
 
-```{r}
+```{r compare-non-pooled}
 load("../../output/models/mods_4sp.RData")
 single_sp_models <- all_models
 
@@ -137,7 +193,7 @@ single_sp_models %>%
   stat_halfeye(.width=c(0.75, 0.95), normalize = "xy", limits = c(-3, 3)) +
   geom_vline(xintercept= 0, linetype=2, colour="grey50") +
   labs(x="Estimate ± CI [75%, 95%]", y="") +
-  ggtitle("partial pooling model") +
+  ggtitle("single species models") +
   xlim(c(-1.5, 2)) -> p11
 
 part_pool_plot_dat %>%
@@ -146,18 +202,18 @@ part_pool_plot_dat %>%
   ggdist::stat_halfeye(.width=c(0.75, 0.95), normalize = "xy", limits = c(-3, 3)) +
   geom_vline(xintercept= 0, linetype=2, colour="grey50") +
   labs(x="Estimate ± CI [75%, 95%]", y="") +
-  ggtitle("single species models") +
+  ggtitle("partial pooling model") +
   xlim(c(-1.5, 2)) -> p12
 
 p11 + p12
 
 ```
 
-Quite different! I think we expect that they will be pulled toward the group mean, but how much is too much? [This](https://towardsdatascience.com/when-mixed-effects-hierarchical-models-fail-pooling-and-uncertainty-77e667823ae8) is useful.
+Quite different! Whether we use partial or complete pooling is going to be a decision we make based on the question we want to answer/ what makes sense ecologically. [This](https://towardsdatascience.com/when-mixed-effects-hierarchical-models-fail-pooling-and-uncertainty-77e667823ae8) is useful.
 
 Is there a pattern with pre-dispersal predator attack?
 
-```{r}
+```{r plot-seedpred-rate}
 read.csv("../../../premature-fruit-drop/data/raw/TidyTrait.csv") %>% 
   rename(SP4 = Codigo) -> tidytraits
 
@@ -168,7 +224,7 @@ left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   labs(y = "Estimate ± CI [95%]", x = "") +
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
-```{r}
+```{r plot-seedpred-pres}
 left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   ggplot(aes(x = reorder(SP4, value), y = as.numeric(value), colour = SeedPred_pres)) +
   ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3)) +
@@ -181,7 +237,7 @@ Doesn't look like it.
 
 What about year random effects?
 
-```{r}
+```{r year-re}
 part_pool_quad_models %>%
   filter(model == "ZOIB") %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x))) %>%
@@ -200,3 +256,72 @@ part_pool_quad_models %>%
 ```
 
 Some interesting patterns.. I know that 2015/16 was a big el Niño year. Could look into rainfall for BCI.
+
+Let's try out `conditional_effects` for visualizing effects of connectivity. There are a few different `methods` you can use. Let's try them all.
+
+```{r conditional_effects, fig.dim = c(12, 12)}
+conditional_effects(part_pool_quad_models$fit[[2]],
+                    spaghetti = T, 
+                    re_formula = NULL,
+                    method = "posterior_epred",
+                    nsamples = 200) %>% 
+  plot(points = T, plot = FALSE,
+       point_args = c(alpha = 1/2, size = 0.5),
+       line_args = c(colour = "black")) -> p13
+
+conditional_effects(part_pool_quad_models$fit[[2]],
+                    spaghetti = T, 
+                    method = "fitted",
+                    re_formula = NULL,
+                    nsamples = 200) %>% 
+  plot(points = T, plot = FALSE,
+       point_args = c(alpha = 1/2, size = 0.5),
+       line_args = c(colour = "black")) -> p14
+
+conditional_effects(part_pool_quad_models$fit[[2]],
+                    spaghetti = T, 
+                    method = "posterior_linpred",
+                    re_formula = NULL,
+                    nsamples = 200) %>% 
+  plot(points = T, plot = FALSE,
+       point_args = c(alpha = 1/2, size = 0.5),
+       line_args = c(colour = "black")) -> p15
+
+conditional_effects(part_pool_quad_models$fit[[2]],
+                    spaghetti = T, 
+                    re_formula = NA,
+                    method = "posterior_epred",
+                    nsamples = 200) %>% 
+  plot(points = T, plot = FALSE,
+       point_args = c(alpha = 1/2, size = 0.5),
+       line_args = c(colour = "black")) -> p16
+
+conditional_effects(part_pool_quad_models$fit[[2]],
+                    spaghetti = T, 
+                    method = "fitted",
+                    re_formula = NA,
+                    nsamples = 200) %>% 
+  plot(points = T, plot = FALSE,
+       point_args = c(alpha = 1/2, size = 0.5),
+       line_args = c(colour = "black")) -> p17
+
+conditional_effects(part_pool_quad_models$fit[[2]],
+                    spaghetti = T, 
+                    method = "posterior_linpred",
+                    re_formula = NA,
+                    nsamples = 200) %>% 
+  plot(points = T, plot = FALSE,
+       point_args = c(alpha = 1/2, size = 0.5),
+       line_args = c(colour = "black")) -> p18
+
+ggpubr::ggarrange(plotlist = c(p13, p14, p15, p16, p17, p18), 
+                  ncol = 3, nrow = 2, 
+                  labels = c("predict w/ random effects", "fitted w/ random effects", 
+                             "lin_pred w/ random effects", "predict w/o random effects", 
+                             "fitted w/o random effects", "lin_pred w/o random effects"))
+
+```
+
+Weird that the fitted and predicted w/o random effects look like positive trends. Help for `posterior_epred` says: "Compute posterior samples of the expected value/mean of the posterior predictive distribution" whereas for `posterior_linpred` it's: "Compute posterior samples of the linear predictor, that is samples before applying any link functions or other transformations". So maybe it's the link functions and transformations that make it look like that.
+
+Thinking about whether I should let species have random slopes as well as random intercepts? A random intercept assumes that species are allowed to have their own baseline values (and these are normally distributed around the average intercept). Despite these different starting points, species may not respond to connectivity in exactly the same way - which would need to be accounted for by random slopes... However, this would make the model more complex, could counteract with slightly stronger priors?
