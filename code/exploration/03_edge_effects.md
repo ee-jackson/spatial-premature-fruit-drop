@@ -221,7 +221,7 @@ ggplot(plotting_data) +
 (p1 + p2) / (p3 + p4)
 ```
 
-![](03_edge_effects_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](figures/03_edge_effects/unnamed-chunk-5-1.png)<!-- -->
 
 Correcting for edge effects using this method gives a lower median error
 than using the observed value. The radii giving the lowest median errors

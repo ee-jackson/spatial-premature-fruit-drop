@@ -6,6 +6,9 @@ output:
   github_document:
     keep_html: true
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/03_edge_effects/")
+```
 
 When a trap is close to the edge of the forest dynamics plot (FDP), we do not get a complete picture of the connectivity of that trap. One method to correct for this effect would be to scale the _observed_ connectivity index to a larger area - _predicting_ connectivity. This assumes that connectivity is homogeneous across a certain radius.
 
