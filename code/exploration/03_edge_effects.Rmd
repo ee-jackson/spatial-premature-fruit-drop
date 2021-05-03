@@ -1,14 +1,13 @@
 ---
-title: "testing edge effect mitigation method"
+title: "Testing edge effect mitigation method"
 author: "Eleanor Jackson"
 date: '`r format(Sys.time(), "%d %B, %Y")`'
-output:
-  html_document:
-    theme: lumen
-    highlight: pygments
+output: 
+  github_document:
+    keep_html: true
 ---
 
-When a trap is close to the edge of the forest dynamics plot (FDP), we do not get a complete picture of the connectivity of that trap. One method to correct for this effect would be to scale the _observed_ connectivity index to a larger area - _predicting_ connectivity. This assumes that connectivity is homogenous across a certain radius.
+When a trap is close to the edge of the forest dynamics plot (FDP), we do not get a complete picture of the connectivity of that trap. One method to correct for this effect would be to scale the _observed_ connectivity index to a larger area - _predicting_ connectivity. This assumes that connectivity is homogeneous across a certain radius.
 
 A potential problem with this method is the choice of radius to scale to. At what point is our predicted value closest to the true value?
 
@@ -19,16 +18,17 @@ In this document I'm going to try and answer the following questions:
 
 
 ```{r, warning=FALSE, message=FALSE}
-rm(list = ls())
-
 library("tidyverse"); theme_set(theme_bw(base_size=10))
 library("sf")
 library("rdist")
 library("knitr")
+library("patchwork")
+library("here")
 
-load("../data/clean/cleanTrapandTree.RData")
-load("../data/clean/trapConnect2.RData")
+load(here::here("data", "clean", "treeData.RData"))
+load(here::here("data", "clean", "trapConnect.RData"))
 ```
+
 ## Sample the data
 
 So that I can compare predicted values to true values, I'm going to take traps from the middle of the FDP, for which we already have "true" measures of connectivity, and artificially place them at the edge. To do this I will cut the FDP in half and discard all trees in that half. This will mean that some of the traps which were in the middle of the plot are now on the edge.
@@ -40,36 +40,37 @@ So that I can compare predicted values to true values, I'm going to take traps f
 # and not near the 'real' edges
 centreTraps <- subset(trapConnect, X < 500 & X > 100 & Y < 400 & Y > 100)
 
-# subset to species which fulfill inclusion criteria
-testTraps <- subset(centreTraps, sp %in% sp.list) 
+# subset to species which fulfil inclusion criteria
+testTraps <- subset(centreTraps, SP4 %in% sp.list) 
 
 # randomly select 1000 of these traps
 testTraps <- sample_n(centreTraps, 1000)
 
-testTraps %>% rename(CI.truth = CI) -> testTraps
+testTraps %>% rename(CI_truth = CI) -> testTraps
 
 ## TREE DATA
 
 # subset to species which fulfill inclusion criteria
-subset(bci, sp %in% sp.list) -> bci50
+subset(bci, SP4 %in% sp.list) -> bci50
 
 # subset tree data to only include trees on the LHS of the plot
 subset(bci50, gx < 500) -> bci50
 
 ```
+
 ## Observed connectivity
 
-Re- calculate connectivity for each trap in the sample dataset, imagining the plot is half as big. This will give us the _observed_ connectivity.
+Re-calculate connectivity for each trap in the sample dataset, imagining the plot is half as big. This will give us the _observed_ connectivity.
 
 ```{r, warning=FALSE, message=FALSE}
 ## First claculate eulcidian distances
 
 calculate_dist <- function (species, yr) {
 	# subset tree data
-	bd <- dplyr::filter(bci50, (bci50[,"sp"]==species) & (bci50[,"year"]==yr))
+	bd <- dplyr::filter(bci50, (bci50[,"SP4"]==species) & (bci50[,"year"]==yr))
 
 	# subset trap data
-	td <- dplyr::filter(testTraps, (testTraps[,"sp"]==species) & 
+	td <- dplyr::filter(testTraps, (testTraps[,"SP4"]==species) & 
 		(testTraps[,"year"]==yr) )
 
 	# create distance matrix using x and y co-ordinates
@@ -86,11 +87,11 @@ calculate_dist <- function (species, yr) {
 
 # pull out every combo of yr and sp in edgeTraps to pass through function
 testTraps %>% 
-	count(year, sp) %>% 
-	select(sp, year) %>% 
-	rename(species = sp, yr = year) -> dist_keys
+	count(year, SP4) %>% 
+	select(SP4, year) %>% 
+	rename(species = SP4, yr = year) -> dist_keys
 
-# run function to calculate eulcidian distances
+# run function to calculate euclidean distances
 dists <- pmap(dist_keys, calculate_dist)
 
 # bind output dfs together
@@ -103,9 +104,9 @@ calculate_CI <- function (trap) {
 	group_by(treeID, year) %>% 
 	mutate(a = dbh * exp( (-0.02) * eval(parse(text=trap)) ) ) %>% 
 	ungroup() %>%
-	dplyr::select(year, sp, trap, a) %>%
-	group_by(year, sp) %>%
-	summarise(trap = paste(trap), CI.obs = sum(a), .groups = "drop")
+	dplyr::select(year, SP4, trap, a) %>%
+	group_by(year, SP4) %>%
+	summarise(trap = paste(trap), CI_obs = sum(a), .groups = "drop")
 }
 
 # list of every trap to pass to function
@@ -118,14 +119,15 @@ CIdat <- lapply(trap_list, calculate_CI)
 CIdat_b <- bind_rows(CIdat)
 
 # join our values of observed CI back to our values of true CI
-left_join(CIdat_b, testTraps, by= c("year", "sp", "trap")) -> sample
+left_join(CIdat_b, testTraps, by= c("year", "SP4", "trap")) -> sample
 
 ```
+
 ## Predict connectivity
 
 Now we try and predict connectivity based on our observed values. I've written a function to calculate the area of the intersection between the radius around a trap and the FDP. It then calculates _predicted_ CI by dividing the _observed_ CI by the area of the intersection and then multiplying this by the area of the complete radius around the trap.
 
-I run the function for 10 different values for 'radius' ranging from 10 to 100.
+I run the function for 10 different values for 'radius' ranging from 20 to 200.
 
 ```{r, warning=FALSE}
 correct_for_edge <- function(species, yr, radius){
@@ -135,7 +137,7 @@ correct_for_edge <- function(species, yr, radius){
 	fdplot.sf <- sf::st_polygon(list(fdplot))
 	# subset edgeTraps to sp i and yr i
 	dplyr::filter(sample, 
-		(.data[["sp"]]==species) & (.data[["year"]]==yr)) %>%
+		(.data[["SP4"]]==species) & (.data[["year"]]==yr)) %>%
 	# make traps sf points
 	sf::st_as_sf(coords = c("X", "Y")) %>% 
 	# create a radius around the traps
@@ -146,14 +148,14 @@ correct_for_edge <- function(species, yr, radius){
 	# subset to traps that have an intersection / are on the edge
 	filter(area > 0 & area < ( (pi * radius^2) - 1) ) %>%
 	# calculate our prediction
-	mutate(CI.pred = (CI.obs/area) * (pi * radius^2), radius = radius )
+	mutate(CI_pred = (CI_obs/area) * (pi * radius^2), radius = radius )
 }
 
 # create df of every combination of year sp and radius
 sample %>% 
-	count(year, sp) %>% 
-	select(sp, year) %>% 
-	rename(species = sp, yr = year)	-> sample_keys
+	count(year, SP4) %>% 
+	select(SP4, year) %>% 
+	rename(species = SP4, yr = year)	-> sample_keys
 
 radius_keys <- tibble(radius = c(20, 40, 60, 80, 100, 120, 140, 160, 180, 200))
 
@@ -161,30 +163,48 @@ sample_radius_keys <- merge(sample_keys, radius_keys)
 
 # pass to function
 testTraps_adjusted <- pmap(sample_radius_keys, correct_for_edge)
-
 ```
+
 ## Compare radii
 
 Let's take a look at how good our predictions are. I'm going to calculate error as the difference between the _truth_ and our _prediction_. I'm also going to use the difference between the _truth_ and the _observed_ connectivity as a control i.e. what would the error be if we did nothing to correct for edge effects?
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, fig.width=10, fig.height=10}
 # bind output dfs and calculate error
 bind_rows(testTraps_adjusted)%>%
-	mutate(CI.error = CI.pred - CI.truth, radius = as.factor(radius)) -> output
+	mutate(CI_error = CI_pred - CI_truth, radius = as.factor(radius)) -> output
 
 # add a 'control' 
 sample %>%
-	mutate(CI.error = CI.obs - CI.truth, radius = as.factor("control")) %>%
-	select(year, sp, trap, CI.error, radius)  -> control
+	mutate(CI_error = CI_obs - CI_truth, radius = as.factor("control")) %>%
+	select(year, SP4, trap, CI_error, radius)  -> control
 
 bind_rows(output, control) -> plotting_data
 
-# plot error, ordered from worst to best
+# plot error as jitter
 ggplot(plotting_data) +
-	geom_violin(aes(x = reorder(radius, CI.error, median), 
-		y = abs(CI.error))) +
-	labs(x = "radius", y = "error")
+  geom_jitter(aes(x = radius, y = CI_error)) +
+	labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p1
 
+# as violins
+ggplot(plotting_data) +
+  geom_violin(aes(x = radius, y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p2
+
+# with x-axis ordered by decreasing median error
+ggplot(plotting_data) +
+  geom_jitter(aes(x = reorder(radius, abs(CI_error), median), y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p3
+
+ggplot(plotting_data) +
+  geom_violin(aes(x = reorder(radius, abs(CI_error), median), y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p4
+
+(p1 + p2) / (p3 + p4)
 ```
 
-The x-axis here is ordered by decreasing median error. The good news is that correcting for edge effects is better than doing nothing. The bad news is that the error seems to get smaller as we increase the radius. This doesn't really help to inform us on what radius we should use. How do we choose a value?
+Correcting for edge effects using this method gives a lower median error than using the observed value. The radii giving the lowest median errors are between 100 - 140 m (the difference in error between these is negligible).
