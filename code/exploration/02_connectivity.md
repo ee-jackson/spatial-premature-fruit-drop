@@ -167,7 +167,7 @@ ggplot(trapConnect) +
   ggtitle("Cordia bicolor, 2015")
 ```
 
-![](figures/03_edge_effects/CI-NFI-1.png)<!-- -->
+![](figures/02_connectivity/CI-NFI-1.png)<!-- -->
 
 They do, but less so towards larger values which makes sense when you
 look at the equations. Interesting wedge shape going on. Let’s see what
@@ -183,7 +183,7 @@ ggplot() +
   ggtitle("Cordia bicolor, 2015")
 ```
 
-![](figures/03_edge_effects/CORB-2015-connectivity-1.png)<!-- -->
+![](figures/02_connectivity/CORB-2015-connectivity-1.png)<!-- -->
 
 ``` r
 ggplot() +
@@ -193,6 +193,6 @@ ggplot() +
   ggtitle("Cordia bicolor, 2015")
 ```
 
-![](figures/03_edge_effects/CORB-2015-connectivity-2.png)<!-- -->
+![](figures/02_connectivity/CORB-2015-connectivity-2.png)<!-- -->
 
 Lots of zeros!

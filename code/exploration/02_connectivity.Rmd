@@ -7,7 +7,7 @@ output:
     keep_html: true
 ---
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(fig.path="figures/03_edge_effects/")
+knitr::opts_chunk$set(fig.path="figures/02_connectivity/")
 ```
 
 We are going to use "connectivity" as a measure of conspecific density at each trap location. I'm going to try two different measures of connectivity, __Hanski’s Connectivity Index (CI)__ [(Hanski 1994)](https://www.jstor.org/stable/5591) and the __Conspecific neighbourhood fecundity index (NFI)__ [(Jones & Comita 2008)](https://royalsocietypublishing.org/doi/10.1098/rspb.2008.0894#d3e405). 
