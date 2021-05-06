@@ -46,7 +46,7 @@ plot(
 )
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/correlogram-1.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/correlogram-1.png)<!-- -->
 
 ## Moran’s I
 
@@ -62,7 +62,7 @@ plot(
 )
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/morans-i-1.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/morans-i-1.png)<!-- -->
 
 Here, Moran’s I is close to zero, and there is no pattern in the
 autocorrelations (i.e. no consistent upward or downward pattern as you
@@ -90,14 +90,14 @@ MI
     ## weights: lw  
     ## number of simulations + 1: 600 
     ## 
-    ## statistic = -0.078301, observed rank = 29, p-value = 0.9517
+    ## statistic = -0.078301, observed rank = 20, p-value = 0.9667
     ## alternative hypothesis: greater
 
 ``` r
 plot(MI) 
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/morans-i-mc-1.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/morans-i-mc-1.png)<!-- -->
 
 In the plot, the observed Moran’s I (vertical line) is lower than
 predicted by the simulated distribution but still relatively close to
@@ -110,7 +110,7 @@ We can also do a Moran scatterplot.
 spdep::moran.plot(trapConnect_TRI3$proportion_abscised, lw)
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/morans-i-scatter-1.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/morans-i-scatter-1.png)<!-- -->
 
 This shows proportion\_abscised against its spatially lagged values.
 There’s a line showing the linear relationship between the data and the
@@ -133,7 +133,7 @@ plot(
 )
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/semivariogram-1.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/semivariogram-1.png)<!-- -->
 
 Looking at this, I’d say the range was \~15 meters. But the data doesn’t
 look like it shows much autocorrelation - the y axis is quite narrow.
@@ -148,7 +148,7 @@ plot(
 )
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/semivariogram-map-1.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/semivariogram-map-1.png)<!-- -->
 
 ## Apply to more species
 
@@ -183,7 +183,7 @@ ggplot(output, aes(x = dist, y = gamma)) +
     scale_x_continuous(minor_breaks= seq(0, 100, 5))
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/multi-sp-variogram-1.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/multi-sp-variogram-1.png)<!-- -->
 
 ``` r
 # coloured by year
@@ -193,7 +193,7 @@ ggplot(output, aes(x = dist, y = gamma)) +
     scale_x_continuous(minor_breaks= seq(0, 100, 5))
 ```
 
-![](04_test_spatial_autocorrelation_files/figure-gfm/multi-sp-variogram-2.png)<!-- -->
+![](figures/04_test_spatial_autocorrelation/multi-sp-variogram-2.png)<!-- -->
 
 Looking at these plots, I think we can say that there isn’t any evidence
 of spatial autocorrelation, or if there is, it is only in effect over

@@ -6,6 +6,9 @@ output:
   github_document:
     keep_html: true
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/04_test_spatial_autocorrelation/")
+```
 
 This is a quick investigation into spatial autocorrelation - can we detect it in our data? What methods are generally used for detecting spatial autocorrelation?
 
