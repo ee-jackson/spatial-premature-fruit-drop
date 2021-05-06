@@ -1,7 +1,7 @@
 Testing edge effect mitigation method
 ================
 Eleanor Jackson
-03 May, 2021
+06 May, 2021
 
 When a trap is close to the edge of the forest dynamics plot (FDP), we
 do not get a complete picture of the connectivity of that trap. One
@@ -56,7 +56,7 @@ testTraps %>% rename(CI_truth = CI) -> testTraps
 
 ## TREE DATA
 
-# subset to species which fulfill inclusion criteria
+# subset to species which fulfil inclusion criteria
 subset(bci, SP4 %in% sp.list) -> bci50
 
 # subset tree data to only include trees on the LHS of the plot
@@ -221,9 +221,57 @@ ggplot(plotting_data) +
 (p1 + p2) / (p3 + p4)
 ```
 
-![](figures/03_edge_effects/unnamed-chunk-5-1.png)<!-- -->
+![](figures/03_edge_effects/plot-1.png)<!-- -->
 
 Correcting for edge effects using this method gives a lower median error
 than using the observed value. The radii giving the lowest median errors
-are between 100 - 140 m (the difference in error between these is
-negligible).
+are around 120 - 140 m. Lets zoom in to 100 - 150 m.
+
+``` r
+radius_keys <- tibble(radius = c(100, 110, 120, 130, 140, 150))
+
+sample_radius_keys_zoom <- merge(sample_keys, radius_keys)
+
+# pass to function
+testTraps_adjusted_zoom <- pmap(sample_radius_keys_zoom, correct_for_edge)
+
+# bind output dfs and calculate error
+bind_rows(testTraps_adjusted_zoom)%>%
+    mutate(CI_error = CI_pred - CI_truth, radius = as.factor(radius)) -> output_zoom
+
+# add a 'control' 
+sample %>%
+    mutate(CI_error = CI_obs - CI_truth, radius = as.factor("control")) %>%
+    select(year, SP4, trap, CI_error, radius)  -> control_zoom
+
+bind_rows(output_zoom, control_zoom) -> plotting_data_zoom
+
+# plot error as jitter
+ggplot(plotting_data_zoom) +
+  geom_jitter(aes(x = radius, y = CI_error)) +
+    labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p5
+
+# as violins
+ggplot(plotting_data_zoom) +
+  geom_violin(aes(x = radius, y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p6
+
+# with x-axis ordered by decreasing median error
+ggplot(plotting_data_zoom) +
+  geom_jitter(aes(x = reorder(radius, abs(CI_error), median), y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p7
+
+ggplot(plotting_data_zoom) +
+  geom_violin(aes(x = reorder(radius, abs(CI_error), median), y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p8
+
+(p5 + p6) / (p7 + p8)
+```
+
+![](figures/03_edge_effects/plot-zoom-in-1.png)<!-- -->
+
+I think 120 m is the winner!

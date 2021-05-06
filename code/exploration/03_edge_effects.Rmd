@@ -36,7 +36,7 @@ load(here::here("data", "clean", "trapConnect.RData"))
 
 So that I can compare predicted values to true values, I'm going to take traps from the middle of the FDP, for which we already have "true" measures of connectivity, and artificially place them at the edge. To do this I will cut the FDP in half and discard all trees in that half. This will mean that some of the traps which were in the middle of the plot are now on the edge.
 
-```{r, warning=FALSE}
+```{r random-sampling, warning=FALSE}
 ## TRAP DATA
 
 # subset to traps which are on the LHS of the plot 
@@ -53,7 +53,7 @@ testTraps %>% rename(CI_truth = CI) -> testTraps
 
 ## TREE DATA
 
-# subset to species which fulfill inclusion criteria
+# subset to species which fulfil inclusion criteria
 subset(bci, SP4 %in% sp.list) -> bci50
 
 # subset tree data to only include trees on the LHS of the plot
@@ -65,7 +65,7 @@ subset(bci50, gx < 500) -> bci50
 
 Re-calculate connectivity for each trap in the sample dataset, imagining the plot is half as big. This will give us the _observed_ connectivity.
 
-```{r, warning=FALSE, message=FALSE}
+```{r observed-connectivity, warning=FALSE, message=FALSE}
 ## First claculate eulcidian distances
 
 calculate_dist <- function (species, yr) {
@@ -132,7 +132,7 @@ Now we try and predict connectivity based on our observed values. I've written a
 
 I run the function for 10 different values for 'radius' ranging from 20 to 200.
 
-```{r, warning=FALSE}
+```{r predict-connectivity, warning=FALSE}
 correct_for_edge <- function(species, yr, radius){
 	# draw the fdp
 	fdplot <- rbind(c(0,0), c(0, 500), c(500, 500), c(500, 0), c(0,0))
@@ -172,7 +172,7 @@ testTraps_adjusted <- pmap(sample_radius_keys, correct_for_edge)
 
 Let's take a look at how good our predictions are. I'm going to calculate error as the difference between the _truth_ and our _prediction_. I'm also going to use the difference between the _truth_ and the _observed_ connectivity as a control i.e. what would the error be if we did nothing to correct for edge effects?
 
-```{r, warning=FALSE, fig.width=10, fig.height=10}
+```{r plot, warning=FALSE, fig.width=10, fig.height=10}
 # bind output dfs and calculate error
 bind_rows(testTraps_adjusted)%>%
 	mutate(CI_error = CI_pred - CI_truth, radius = as.factor(radius)) -> output
@@ -210,4 +210,52 @@ ggplot(plotting_data) +
 (p1 + p2) / (p3 + p4)
 ```
 
-Correcting for edge effects using this method gives a lower median error than using the observed value. The radii giving the lowest median errors are between 100 - 140 m (the difference in error between these is negligible).
+Correcting for edge effects using this method gives a lower median error than using the observed value. The radii giving the lowest median errors are around 120 - 140 m. Lets zoom in to 100 - 150 m.
+
+```{r plot-zoom-in, warning=FALSE, fig.width=10, fig.height=10}
+radius_keys <- tibble(radius = c(100, 110, 120, 130, 140, 150))
+
+sample_radius_keys_zoom <- merge(sample_keys, radius_keys)
+
+# pass to function
+testTraps_adjusted_zoom <- pmap(sample_radius_keys_zoom, correct_for_edge)
+
+# bind output dfs and calculate error
+bind_rows(testTraps_adjusted_zoom)%>%
+	mutate(CI_error = CI_pred - CI_truth, radius = as.factor(radius)) -> output_zoom
+
+# add a 'control' 
+sample %>%
+	mutate(CI_error = CI_obs - CI_truth, radius = as.factor("control")) %>%
+	select(year, SP4, trap, CI_error, radius)  -> control_zoom
+
+bind_rows(output_zoom, control_zoom) -> plotting_data_zoom
+
+# plot error as jitter
+ggplot(plotting_data_zoom) +
+  geom_jitter(aes(x = radius, y = CI_error)) +
+	labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p5
+
+# as violins
+ggplot(plotting_data_zoom) +
+  geom_violin(aes(x = radius, y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p6
+
+# with x-axis ordered by decreasing median error
+ggplot(plotting_data_zoom) +
+  geom_jitter(aes(x = reorder(radius, abs(CI_error), median), y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p7
+
+ggplot(plotting_data_zoom) +
+  geom_violin(aes(x = reorder(radius, abs(CI_error), median), y = CI_error)) +
+  labs(x = "radius", y = "error") +
+  geom_hline(yintercept  = 0, colour = "red", linetype = 2) -> p8
+
+(p5 + p6) / (p7 + p8)
+
+```
+
+I think 120 m is the winner!
