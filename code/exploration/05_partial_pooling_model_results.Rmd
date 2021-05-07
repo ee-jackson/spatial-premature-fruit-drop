@@ -26,11 +26,13 @@ library("brms")
 library("ggdist")
 library("loo")
 library("patchwork")
+library("here")
 options(mc.cores = 4)
 
-load("../../output/models/full_mods/mods_full.RData")
+load(here::here("output", "models", "full_mods", "mods_full.RData"))
 part_pool_models
-load("../../output/models/full_mods/part_pool_quad_models.RData")
+
+load(here::here("output", "models", "full_mods", "part_pool_quad_models.RData"))
 part_pool_quad_models
 ```
 
@@ -67,7 +69,7 @@ I'm going to try some PPC's that are [geared towards discrete outcomes](https://
 Building them myself rather than using `bayesplot::ppc_rootogram`, to account for the `posterior_predict()` / binomial problem. I will run this on the cluster and paste the plots into the markdown beacuse `posterior_predict()` takes forever on my macbook.
 
 ```{r rootograms, eval = FALSE}
-load("../../data/clean/cleanData.RData") # load trapConnect
+load(here::here("data", "clean", "cleanData.RData")) # load trapConnect
 
 # ZOIB
 # have to make the tranformations here as I did them in my model-fitting script
@@ -180,7 +182,7 @@ ggplot(part_pool_plot_dat, aes(x = reorder(SP4, value), y = as.numeric(value))) 
 Lots of variation, how do they compare to the single-species models?
 
 ```{r compare-non-pooled}
-load("../../output/models/mods_4sp.RData")
+load(here::here("output", "models", "mods_4sp.RData"))
 single_sp_models <- all_models
 
 single_sp_models %>%
