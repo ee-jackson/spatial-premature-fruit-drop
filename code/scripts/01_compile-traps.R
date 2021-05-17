@@ -1,24 +1,24 @@
 #!/usr/bin/env Rscript
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
-## Script: 0_compileTraps.R
+## Script: compile-traps.R
 ## Desc: create dataset of proportion of seeds abscised per trap per sp per year
-## Date: August 2020 
-
-rm(list = ls())
+## Date created: 2020-08-05
 
 require("tidyverse")
 
 # seed rain data
-seedRain <- read.table("../data/raw/BCI_TRAP200_20190215_spcorrected.txt",
- header=TRUE, stringsAsFactors = FALSE)
+seedRain <- read.table(here::here("data", "raw", 
+	"BCI_TRAP200_20190215_spcorrected.txt"),
+	header=TRUE, stringsAsFactors = FALSE)
 
 # seed traits from joe
-seedTrait <- read.csv("../data/raw/20120227_seedsMassForTraits.csv", 
+seedTrait <- read.csv(here:here("data", "raw",
+	"20120227_seedsMassForTraits.csv"), 
 	header=TRUE, stringsAsFactors = FALSE)
 
 # trap locations
-load("../data/clean/trapLocations.RData")
+load(here:here("data", "clean", "trapLocations.RData"))
 
 ## sort out names
 seedRain <- rename(seedRain, SP4 = sp)
@@ -93,4 +93,4 @@ propdat_loc %>%
 	left_join(sumdat, by = c("SP4", "year", "trap")) %>%
 	filter(!sum_parts == 0) -> trapDat
 
-save(trapDat, file = "../data/clean/trapData.RData")
+save(trapDat, file = here:here("data", "clean", "trapData.RData"))

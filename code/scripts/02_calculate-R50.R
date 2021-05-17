@@ -1,11 +1,9 @@
 #!/usr/bin/env Rscript
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
-## Script: calculateR50.R
+## Script: calculate-R50.R
 ## Desc: Calculate the reproductive size threshold (50%) for each sp. R 50 =  1/2 dmax 
-## Date: August 2020
-
-rm(list = ls())
+## Date created: 2020-08-10
 
 require("tidyverse")
 
@@ -26,4 +24,4 @@ bci.tree %>%
 	mutate(R50 = dbh/2) %>%
 	rename(dmax="dbh") -> tree.max
 
-write.csv(tree.max, "../data/clean/R50.csv", row.names=FALSE)
+write.csv(tree.max, here:here("data", "clean", "R50.csv"), row.names=FALSE)

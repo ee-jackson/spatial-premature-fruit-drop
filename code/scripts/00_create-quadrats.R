@@ -1,20 +1,18 @@
 #!/usr/bin/env Rscript
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
-## Script: createQuadrats
+## Script: create-quadrats
 ## Desc: assign each trap to a 50m2 quadrat
-## Date: 20201007
-
-rm(list = ls())
+## Date created: 2020-10-07
 
 library("tidyverse"); theme_set(theme_bw(base_size = 8))
 library("sf")
 
 # co-ordinates of the original 200 traps
-trap_loc <- read.csv("../data/raw/trapLocations.csv") 
+trap_loc <- read.csv(here::here("data", "raw", "trapLocations.csv")) 
 
 # paired traps - angles at 2m from the original traps
-pair_traps <- read.csv("../data/raw/pairedTraps.csv")
+pair_traps <- read.csv(here::here("data", "raw", "pairedTraps.csv"))
 
 # format trap ids
 trap_loc$trap <- formatC(trap_loc$trap, width = 3, format = "d", flag = "0")
@@ -89,4 +87,4 @@ trap_loc_quad$quadrat <- paste("quadrat", trap_loc_quad$quadrat, sep="_")
 trap_loc_quad[duplicated(trap_loc_quad$trap),]
 trap_loc_quad <- trap_loc_quad[!duplicated(trap_loc_quad$trap),]
 
-save(trap_loc_quad, file = "../data/clean/trapLocations.RData")
+save(trap_loc_quad, file = here:here("data", "clean", "trapLocations.RData"))

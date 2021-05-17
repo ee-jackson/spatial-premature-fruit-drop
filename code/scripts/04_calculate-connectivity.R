@@ -1,19 +1,17 @@
 #!/usr/bin/env Rscript
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
-## Script: calculateConnectivity.R
+## Script: calculate-connectivity.R
 ## Desc: Script used to calculate connectivity indicies for each trap in every year
-## Date: October 2020
-
-rm(list = ls())
+## Date created: 2020-09-30
 
 library("tidyverse"); theme_set(theme_bw(base_size = 8))
 library("rdist")
 library("parallel")
 
 ######## LOAD DATA ########
-load("../data/clean/trapData.RData")
-load("../data/clean/treeData.RData")
+load(here:here("data", "clean", "trapData.RData"))
+load(here:here("data", "clean", "treeData.RData"))
 
 trapDat$year <- as.character(trapDat$year)
 
@@ -139,4 +137,5 @@ head(CIdat.b) #take a look at CI values
 trapConnect <- left_join(trapConnect, CIdat.b, by = c("trap", "year", "SP4"))
 
 # save it
-save(trapConnect, sp.list, file = "../data/clean/trapConnect.RData")
+save(trapConnect, sp.list, 
+	file = here:here("data", "clean", "trapConnect.RData"))

@@ -1,19 +1,18 @@
 #!/usr/bin/env Rscript
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
-## Script: 1_compileTrees.R
-## Desc: create treeDat
-## Date: December 2020 
-
-rm(list = ls())
+## Script: compile-trees.R
+## Desc: create treeData
+## Date created: 2020-12-08
 
 library("tidyverse")
 
 # find and load all bci files in one go
 
-file_names <- as.list(dir(path="../data/bci.tree", pattern="bci.tree*"))
+file_names <- as.list(dir(path = here:here("data", "raw", "bci.tree"),
+	pattern="bci.tree*"))
 
-file_paths <- paste("../data/bci.tree/", file_names, sep="")
+file_paths <- paste(here:here("data", "raw", "bci.tree"), file_names, sep="")
 
 lapply(file_paths, load, environment())
 
@@ -79,4 +78,4 @@ colnames(nomenclature) <- c("SP4", "sp")
 nomenclature$sp <- tolower(nomenclature$sp)
 bci <- left_join(bci, nomenclature, by = c("sp"))
 
-save(bci, file = "../data/treeData.RData")
+save(bci, file = here:here("data", "clean", "treeData.RData"))

@@ -1,15 +1,13 @@
 #!/usr/bin/env Rscript
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
-## Script: CorrectEdgeEffects
+## Script: correct-edge-effects
 ## Desc: adjust values of CI for traps that are at the edge
-## Date: November 2020
-
-rm(list = ls())
+## Date created: 2020-11-05
 
 library("tidyverse"); theme_set(theme_bw(base_size=8))
 library("sf")
-load("../data/clean/trapConnect.RData")
+load(here:here("data", "clean", "trapConnect.RData"))
 
 trapConnect %>% rename(CI_obs = CI) -> trapConnect
 
@@ -57,4 +55,4 @@ as.data.frame(edgeTraps_adjusted_b) %>%
 left_join(trapConnect, edgeTraps_adjusted_s, by = c("year", "SP4", "trap")) %>%
 	mutate(CI_pred = coalesce(CI_pred, CI_obs)) -> trapConnect
 
-save(trapConnect, sp.list, file = "../data/clean/cleanData.RData")
+save(trapConnect, sp.list, here:here("data", "clean", "cleanData.RData"))
