@@ -62,7 +62,7 @@ pp_check(part_pool_quad_models$fit[[2]], type = "dens_overlay", nsamples = 50) -
 (p1 + p2) / (p3 + p4)
 ```
 
-![](figures/05_partial_pooling_model_results/dens-pp_checks-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/dens-pp_checks-1.png)<!-- -->
 
 Here, y rep are samples from the posterior distribution and y is the
 observed data. The binomial plots aren’t that informative. Let’s look at
@@ -83,7 +83,7 @@ pp_check(part_pool_quad_models$fit[[2]], type = "stat", stat = "prop_zero", nsam
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](figures/05_partial_pooling_model_results/stat-pp_checks-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/stat-pp_checks-1.png)<!-- -->
 
 The ZIB models are predicting a much lower proportion of zeros than are
 found in the data, whereas the ZOIB’s look bang-on.
@@ -142,8 +142,8 @@ ggplot(yrep_zib) +
   labs(title="ZIB", y = "sqrt(density)")
 ```
 
-![](figures/05_partial_pooling_model_results/ppc_rootogram_ZOIB.png)
-![](figures/05_partial_pooling_model_results/ppc_rootogram_ZIB.png)
+![](figures/05_partial-pooling-model-results/ppc_rootogram_ZOIB.png)
+![](figures/05_partial-pooling-model-results/ppc_rootogram_ZIB.png)
 
 Looks like they both over predict zeros, but in the `prop_zero` plots
 above they look like they’re doing a pretty good job (the ZOIBs at
@@ -311,7 +311,7 @@ part_pool_quad_models %>%
 p9 + p10
 ```
 
-![](figures/05_partial_pooling_model_results/compare-results-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/compare-results-1.png)<!-- -->
 
 All models estimate a negative correlation between connectivity and
 proportion of seeds prematurely abscised - opposite of what we
@@ -338,7 +338,7 @@ ggplot(part_pool_plot_dat, aes(x = reorder(SP4, value), y = as.numeric(value))) 
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-![](figures/05_partial_pooling_model_results/sp-re-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/sp-re-1.png)<!-- -->
 
 Lots of variation, how do they compare to the single-species models?
 
@@ -371,7 +371,7 @@ part_pool_plot_dat %>%
 p11 + p12
 ```
 
-![](figures/05_partial_pooling_model_results/compare-non-pooled-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/compare-non-pooled-1.png)<!-- -->
 
 Quite different! Whether we use partial or complete pooling is going to
 be a decision we make based on the question we want to answer/ what
@@ -393,7 +393,7 @@ left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-![](figures/05_partial_pooling_model_results/plot-seedpred-rate-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/plot-seedpred-rate-1.png)<!-- -->
 
 ``` r
 left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
@@ -404,7 +404,7 @@ left_join(part_pool_plot_dat, tidytraits, by = "SP4") %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25) 
 ```
 
-![](figures/05_partial_pooling_model_results/plot-seedpred-pres-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/plot-seedpred-pres-1.png)<!-- -->
 
 Doesn’t look like it.
 
@@ -428,7 +428,7 @@ part_pool_quad_models %>%
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-![](figures/05_partial_pooling_model_results/year-re-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/year-re-1.png)<!-- -->
 
 Some interesting patterns.. I know that 2015/16 was a big el Niño year.
 Could look into rainfall for BCI.
@@ -507,7 +507,7 @@ ggpubr::ggarrange(plotlist = c(p13, p14, p15, p16, p17, p18),
     ##   dfbeta.influence.merMod         lme4
     ##   dfbetas.influence.merMod        lme4
 
-![](figures/05_partial_pooling_model_results/conditional_effects-1.png)<!-- -->
+![](figures/05_partial-pooling-model-results/conditional_effects-1.png)<!-- -->
 
 Weird that the fitted and predicted w/o random effects look like
 positive trends. Help for `posterior_epred` says: “Compute posterior

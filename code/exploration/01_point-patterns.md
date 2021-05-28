@@ -108,7 +108,7 @@ unitname(CORB_2015_ppp) <- c("meter","meter")
 plot(CORB_2015_ppp, maxsize=25)
 ```
 
-![](figures/01_point_patterns/density-maps-1.png)<!-- -->
+![](figures/01_point-patterns/density-maps-1.png)<!-- -->
 
 ``` r
 # get tree density
@@ -119,7 +119,7 @@ plot(CORB_2015_density, main="Cordia bicolor, 2015", add=FALSE, las=1,legend=FAL
 plot.ppp(CORB_2015_ppp, add=TRUE, maxsize=25, cols="white")
 ```
 
-![](figures/01_point_patterns/density-maps-2.png)<!-- -->
+![](figures/01_point-patterns/density-maps-2.png)<!-- -->
 
 ``` r
 # contour lines for density
@@ -127,7 +127,7 @@ plot.ppp(CORB_2015_ppp, main="Cordia bicolor, 2015", add=FALSE, maxsize=25, lege
 contour(CORB_2015_density, add=TRUE)
 ```
 
-![](figures/01_point_patterns/density-maps-3.png)<!-- -->
+![](figures/01_point-patterns/density-maps-3.png)<!-- -->
 
 After doing much reading and messing around with spatial point patterns
 I think that I can’t actually use them for the question I want to
@@ -139,7 +139,7 @@ point pattern) as opposed to how the points are distributed relative to
 the study extent (the overall pattern in space, a first-order or density
 based analysis).
 
-![](figures/01_point_patterns/point-pattern-orders.png)<!-- -->
+![](figures/01_point-patterns/point-pattern-orders.png)<!-- -->
 
 Image is from
 [here](https://mgimond.github.io/Spatial/chp11-0.html#first-and-second-order-effects)

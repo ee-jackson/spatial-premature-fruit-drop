@@ -221,7 +221,7 @@ ggplot(plotting_data) +
 (p1 + p2) / (p3 + p4)
 ```
 
-![](figures/03_edge_effects/plot-1.png)<!-- -->
+![](figures/03_edge-effects/plot-1.png)<!-- -->
 
 Correcting for edge effects using this method gives a lower median error
 than using the observed value. The radii giving the lowest median errors
@@ -272,6 +272,6 @@ ggplot(plotting_data_zoom) +
 (p5 + p6) / (p7 + p8)
 ```
 
-![](figures/03_edge_effects/plot-zoom-in-1.png)<!-- -->
+![](figures/03_edge-effects/plot-zoom-in-1.png)<!-- -->
 
 I think 120 m is the winner!
