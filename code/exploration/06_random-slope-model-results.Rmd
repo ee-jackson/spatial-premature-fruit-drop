@@ -32,7 +32,7 @@ part_pool_quad_models
 
 ## Posterior predictive checks (PPC)
 
-```{r dens-pp_checks}
+```{r dens-pp_checks, fig.height=4, fig.width=7}
 pp_check(all_models_quad_rslope$fit[[1]], type = "dens_overlay", nsamples = 50) -> p1
 pp_check(all_models_quad_rslope$fit[[2]], type = "dens_overlay", nsamples = 50) -> p2
 
@@ -94,7 +94,7 @@ The posterior distribution is much more spread out now! I think this was to be e
 
 Let's take a quick look at the species random effects from the new ZOIB.
 
-```{r fig.height=8, fig.width=5}
+```{r species-re, fig.height=8, fig.width=5}
 all_models_quad_rslope %>%
   filter(model == "ZOIB") %>%
   mutate(posterior = map(fit, ~brms::posterior_samples(.x))) %>%
@@ -129,6 +129,32 @@ http://mc-stan.org/misc/warnings.html#tail-ess "
 
 I did not get these warnings with the ZOIB. Stan recommends running for more iterations - I will try this if I decide to take the ZIB model further, but perhaps now is the time to drop it. The ZOIB has performed better in every iteration so far.
 
-Next steps:
+## Try nesting trap inside quadrat, added 21-06-07
+I have run a model which has nested random effects: intercept varying among quadrats and among traps within quadrats.
 
-* try nesting trap inside quadrat
+```{r nest-result, fig.height=4, fig.width=10}
+quad_rslope_nest <- readRDS(here::here("output", "models", "full_sp_quad_rslope_nest_ZOIB.rds"))
+
+brms::posterior_samples(quad_rslope_nest, pars = c("b_CI_pred.sc")) %>% 
+  pivot_longer(b_CI_pred.sc, names_to="model") %>%
+  mutate(model = recode(model, b_CI_pred.sc = "ZOIB")) %>%
+  ggplot(aes(x = as.factor(model), y = as.numeric(value))) +
+  coord_flip() +
+  labs(y = "Estimate ± CI [95%]", x = "") +
+  scale_y_continuous(limits = c(-1, 1)) +
+  ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3)) +
+  geom_hline(yintercept = 0, linetype = 2, size = 0.25)  +
+  ggtitle("(1 | quadrat/trap) + (1 | year) +\n(1 + connectivity | species)") -> p5
+
+p3 + p4 + p5
+```
+
+Estimate looks similar to the non-nested ZOIB!
+
+```{r loo2}
+comp2 <- loo_compare(part_pool_quad_models$fit[[2]], all_models_quad_rslope$fit[[2]], quad_rslope_nest)
+
+print(comp2, digits = 3)
+```
+
+Nesting trap within quadrat has not improved the model fit compared to the random slope ZOIB. `quad_rslope_nest` is very slightly worse.

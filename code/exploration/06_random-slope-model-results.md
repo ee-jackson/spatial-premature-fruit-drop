@@ -1,7 +1,7 @@
 Explore results from models which include a random slope for species
 ================
 Eleanor Jackson
-04 June, 2021
+07 June, 2021
 
 In these models (`all_models_quad_rslope`), I have let species have
 random slopes as well as random intercepts. A random intercept assumes
@@ -148,7 +148,7 @@ ggplot(rslope_ZOIB_plot_dat, aes(x = reorder(SP4, value), y = as.numeric(value))
   geom_hline(yintercept = 0, linetype = 2, size = 0.25)
 ```
 
-![](figures/06_random-slope-model-results/unnamed-chunk-2-1.png)<!-- -->
+![](figures/06_random-slope-model-results/species-re-1.png)<!-- -->
 
 From a quick eyeball they don’t look different from the old models, the
 species seem to be in the same order.
@@ -172,6 +172,42 @@ more iterations - I will try this if I decide to take the ZIB model
 further, but perhaps now is the time to drop it. The ZOIB has performed
 better in every iteration so far.
 
-Next steps:
+## Try nesting trap inside quadrat, added 21-06-07
 
--   try nesting trap inside quadrat
+I have run a model which has nested random effects: intercept varying
+among quadrats and among traps within quadrats.
+
+``` r
+quad_rslope_nest <- readRDS(here::here("output", "models", "full_sp_quad_rslope_nest_ZOIB.rds"))
+
+brms::posterior_samples(quad_rslope_nest, pars = c("b_CI_pred.sc")) %>% 
+  pivot_longer(b_CI_pred.sc, names_to="model") %>%
+  mutate(model = recode(model, b_CI_pred.sc = "ZOIB")) %>%
+  ggplot(aes(x = as.factor(model), y = as.numeric(value))) +
+  coord_flip() +
+  labs(y = "Estimate ± CI [95%]", x = "") +
+  scale_y_continuous(limits = c(-1, 1)) +
+  ggdist::stat_halfeye(.width = c(.90, .5), normalize = "xy", limits = c(-3, 3)) +
+  geom_hline(yintercept = 0, linetype = 2, size = 0.25)  +
+  ggtitle("(1 | quadrat/trap) + (1 | year) +\n(1 + connectivity | species)") -> p5
+
+p3 + p4 + p5
+```
+
+![](figures/06_random-slope-model-results/nest-result-1.png)<!-- -->
+
+Estimate looks similar to the non-nested ZOIB!
+
+``` r
+comp2 <- loo_compare(part_pool_quad_models$fit[[2]], all_models_quad_rslope$fit[[2]], quad_rslope_nest)
+
+print(comp2, digits = 3)
+```
+
+    ##                                 elpd_diff se_diff 
+    ## all_models_quad_rslope$fit[[2]]    0.000     0.000
+    ## quad_rslope_nest                  -0.625     0.707
+    ## part_pool_quad_models$fit[[2]]  -110.820    14.913
+
+Nesting trap within quadrat has not improved the model fit compared to
+the random slope ZOIB. `quad_rslope_nest` is very slightly worse.
