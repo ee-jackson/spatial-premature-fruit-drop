@@ -5,16 +5,16 @@
 ## Desc: create dataset of proportion of seeds abscised per trap per sp per year
 ## Date created: 2020-08-05
 
-require("tidyverse")
+library("tidyverse")
 
 # seed rain data
-seedRain <- read.table(here::here("data", "raw", 
+seedRain <- read.table(here::here("data", "raw",
 	"BCI_TRAP200_20190215_spcorrected.txt"),
 	header=TRUE, stringsAsFactors = FALSE)
 
 # seed traits from joe
 seedTrait <- read.csv(here:here("data", "raw",
-	"20120227_seedsMassForTraits.csv"), 
+	"20120227_seedsMassForTraits.csv"),
 	header=TRUE, stringsAsFactors = FALSE)
 
 # trap locations
@@ -36,7 +36,7 @@ seedDat <- subset(seedDat, part == 1|part == 2|part == 5)
 
 seedDat <- subset(seedDat, LIFEFORM != "EPIPHYTE"|LIFEFORM != "HEMIEPIPHYTE"|LIFEFORM != "HERB"|LIFEFORM != "VINE")
 
-seedDat <- seedDat %>% 
+seedDat <- seedDat %>%
 	drop_na("N_SEEDFULL")
 
 # don't have the full data for these years
@@ -46,16 +46,16 @@ seedDat <- subset(seedDat, seedDat$year != "1987" & seedDat$year != "2019")
 seedDat$trap <- formatC(seedDat$trap, width = 3, format = "d", flag = "0")
 seedDat$trap <- paste("trap", seedDat$trap, sep="_")
 
-absdat <- seedDat %>% 
+absdat <- seedDat %>%
 	group_by(part, SP4, year, trap, N_SEEDFULL, GENUS, SPECIES) %>%
 	summarise(quantity_sum= sum(quantity, na.rm = TRUE)) %>%
 	ungroup()
 
 # Viable seeds
 
-absdat_v <- subset(absdat, part == 1 | part == 2) %>% 
+absdat_v <- subset(absdat, part == 1 | part == 2) %>%
 	replace(., is.na(.), 0) %>%
-	rowwise() %>% 
+	rowwise() %>%
 	mutate(viable_seeds = ifelse(part==1, quantity_sum*N_SEEDFULL, quantity_sum)) %>%
 	ungroup() %>%
 	group_by(SP4, year, trap, GENUS, SPECIES) %>%
@@ -64,9 +64,9 @@ absdat_v <- subset(absdat, part == 1 | part == 2) %>%
 
 # Abscised seeds
 
-absdat_a <- subset(absdat, part == 5) %>% 
+absdat_a <- subset(absdat, part == 5) %>%
 	replace(., is.na(.), 0) %>%
-	rowwise() %>% 
+	rowwise() %>%
 	mutate(abscised_seeds = quantity_sum*N_SEEDFULL) %>%
 	ungroup() %>%
 	group_by(SP4, year, trap,GENUS, SPECIES) %>%
@@ -78,11 +78,11 @@ propdat <- full_join(absdat_a, absdat_v, by= c("SP4", "year", "trap", "GENUS", "
 
 propdat <- propdat %>%
 	replace(., is.na(.), 0) %>%
-	rowwise() %>% 
+	rowwise() %>%
 	mutate(total_seeds = sum(abscised_seeds, viable_seeds, na.rm = TRUE), proportion_abscised = abscised_seeds / total_seeds) %>%
 	ungroup()
 
-sumdat <- absdat %>% 
+sumdat <- absdat %>%
 	group_by(SP4, year, trap) %>%
 	summarise(sum_parts= sum(quantity_sum, na.rm = TRUE)) %>%
 	ungroup()

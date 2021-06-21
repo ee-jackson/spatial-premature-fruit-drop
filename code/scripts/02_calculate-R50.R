@@ -2,10 +2,10 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: calculate-R50.R
-## Desc: Calculate the reproductive size threshold (50%) for each sp. R 50 =  1/2 dmax 
+## Desc: Calculate the reproductive size threshold (50%) for each sp. R 50 =  1/2 dmax
 ## Date created: 2020-08-10
 
-require("tidyverse")
+library("tidyverse")
 
 # load all bci files
 file_names = as.list(dir(path="../data/bci.tree", pattern = "bci.tree*"))
@@ -19,7 +19,7 @@ bci.tree %>%
 	slice_max(dbh, n = 1) %>% # use the largest dbh for each treeID
 	ungroup() %>%
 	group_by(sp) %>%
-	slice_max(dbh, n = 6) %>% 
+	slice_max(dbh, n = 6) %>%
 	summarise(dbh=mean(dbh, na.rm = TRUE)) %>%
 	mutate(R50 = dbh/2) %>%
 	rename(dmax="dbh") -> tree.max
