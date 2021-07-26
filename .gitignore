@@ -6,6 +6,8 @@ code/graveyard
 dummyrun/
 code/exploration/*.html
 
+job_script*
+
 # General
 .DS_Store
 .AppleDouble
