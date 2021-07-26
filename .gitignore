@@ -103,7 +103,7 @@ vignettes/*.pdf
 *.mtc1
 *.out
 *.synctex.gz
-docs/*.pdf
+*.pdf
 
 # Mac IDE files
 *.swp
