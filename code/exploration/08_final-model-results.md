@@ -1,7 +1,7 @@
 Explore and visualise final model results
 ================
 Eleanor Jackson
-26 July, 2021
+27 July, 2021
 
 ``` r
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
@@ -217,13 +217,13 @@ testdat %>%
   unique() %>%
   right_join(sp_ests) -> sp_ests_n
  
-pdf("sp_ests.pdf", width = 3.15, height = 3.15)
+png("sp_ests.png", width = 3.15, height = 3.15, units = "in", res=600)
 ggplot(sp_ests_n, aes(y = reorder(taxa, value), x = as.numeric(value))) +
   ggdist::stat_gradientinterval(.width = 0.95, fill = "forestgreen", 
                                 interval_size =0.005, stroke = 0.5,
                                 shape = 21, 
                                 point_fill = "white") +
-  labs(x = "Estimate ± CI [95%]", y = "") +
+  labs(x = expression(paste(Beta, " slope estimate ± CI [95%]")), y = "") +
   geom_vline(xintercept = 0, linetype = 1, size = 0.25, colour = "blue") +
   coord_cartesian(xlim = c(-1, 1), expand = FALSE) +
   theme_classic(base_size = 7 ) +
@@ -232,9 +232,7 @@ ggplot(sp_ests_n, aes(y = reorder(taxa, value), x = as.numeric(value))) +
 dev.off()
 ```
 
-<figure>
-<embed src="figures/08_final-model-results/sp_ests.pdf" height="350" /><figcaption aria-hidden="true">species_slope_estimates</figcaption>
-</figure>
+![species\_slope\_estimates](figures/08_final-model-results/sp_ests.png)
 
 ``` r
 testdat %>% 
@@ -252,14 +250,12 @@ test_fit_na %>%
   scale_y_continuous(expand = c(0.001, 0.001)) +
   scale_fill_brewer(palette = "Greens") -> fitted2
 
-pdf("fitted2.pdf", width = 3.15, height = 3.15)
+png("epred_draws.png", width = 3.15, height = 3.15, units = "in", res=600)
 fitted2
 dev.off()
 ```
 
-<figure>
-<embed src="figures/08_final-model-results/fitted2.pdf" height="350" /><figcaption aria-hidden="true">fitted_draws</figcaption>
-</figure>
+![fitted\_draws](figures/08_final-model-results/epred_draws.png)
 
 ``` r
 model %>%
@@ -270,7 +266,7 @@ model %>%
                              b_zoi_CI_pred.sc = "zoi", b_phi_CI_pred.sc = "phi")) %>%
   mutate(parameters = as.character(parameters)) -> posterior_slope_params
 
-pdf("post_params.pdf", width = 3.15, height = 3.15)
+png("post_params.png", width = 3.15, height = 3.15, units = "in", res=600)
 ggplot(posterior_slope_params, aes(y = reorder(parameters, abs(value)), x = as.numeric(value))) +
   ggdist::stat_halfeye(normalize = "xy", .width = 0.95, fill = "forestgreen", 
                                 interval_size =0.005, stroke = 0.5,
@@ -287,6 +283,4 @@ ggplot(posterior_slope_params, aes(y = reorder(parameters, abs(value)), x = as.n
 dev.off()
 ```
 
-<figure>
-<embed src="figures/08_final-model-results/post_params.pdf" height="350" /><figcaption aria-hidden="true">parameter_estimates</figcaption>
-</figure>
+![parameter\_estimates](figures/08_final-model-results/post_params.png)
