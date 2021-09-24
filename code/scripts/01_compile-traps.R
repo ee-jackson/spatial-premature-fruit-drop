@@ -93,4 +93,4 @@ propdat_loc %>%
 	left_join(sumdat, by = c("SP4", "year", "trap")) %>%
 	filter(!sum_parts == 0) -> trapDat
 
-save(trapDat, file = here:here("data", "clean", "trapData.RData"))
+save(trapDat, file = here::here("data", "clean", "trapData.RData"))

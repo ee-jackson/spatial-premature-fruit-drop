@@ -7,14 +7,15 @@
 
 library("tidyverse"); theme_set(theme_bw(base_size = 8))
 library("rdist")
-library("parallel")
 
 # Load data ---------------------------
-load(here:here("data", "clean", "trapData.RData"))
-load(here:here("data", "clean", "treeData.RData"))
+load(here::here("data", "clean", "trapData.RData"))
+load(here::here("data", "clean", "treeData.RData"))
+
+trapDat %>%
+  mutate(SP4 = tolower(SP4)) -> trapDat
 
 trapDat$year <- as.character(trapDat$year)
-
 
 # Select species ---------------------------
 trapDat %>%
@@ -40,8 +41,8 @@ bci %>%
 	distinct() %>%
 	as.data.frame() -> treeSummary
 
-# I think the NAs in the summary happen if a sp is in bci but not in trapDat and vice versa... but why would this happen?
-summary <- full_join(trapSummary, treeSummary, by= "SP4")
+# inner join  = sp only included if occur in both lists
+summary <- inner_join(trapSummary, treeSummary, by= "SP4")
 
 subset(summary, median_trees >15 & median_traps >15) %>%
 	pull(SP4) -> sp.list # this gives 40 species
@@ -102,4 +103,4 @@ trapConnect <- left_join(trapConnect, CIdat.b, by = c("trap", "year", "SP4"))
 
 # save it
 save(trapConnect, sp.list,
-	file = here:here("data", "clean", "trapConnect.RData"))
+	file = here::here("data", "clean", "trapConnect.RData"))

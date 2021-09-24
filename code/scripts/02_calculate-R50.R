@@ -24,4 +24,4 @@ bci.tree %>%
 	mutate(R50 = dbh/2) %>%
 	rename(dmax="dbh") -> tree.max
 
-write.csv(tree.max, here:here("data", "clean", "R50.csv"), row.names=FALSE)
+write.csv(tree.max, here::here("data", "clean", "R50.csv"), row.names=FALSE)
