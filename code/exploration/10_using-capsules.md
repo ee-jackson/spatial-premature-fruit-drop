@@ -119,14 +119,14 @@ read.csv(here::here("data", "clean", "species_list.csv")) %>%
 ### Calculate viable seeds
 
 if capsule = TRUE, viable seeds = (mature fruits \* avg seeds per fruit)
-+ ( (capsules \* avg seeds per fruit) **OR** single diaspores)
++ ( (capsules \* avg seeds per fruit) **OR** single diaspores)
 
-part 1 + part 2 **OR** part 1 + part 3
+`part 1` + `part 2` **OR** `part 1` + `part 3`
 
 if capsule = FALSE, viable seeds = (mature fruits \* avg seeds per
 fruit) + single diaspores
 
-part 1 + part 2
+`part 1` + `part 2`
 
 ``` r
 abs_dat_comb %>%
@@ -243,23 +243,23 @@ for(i in 1:n_pages){
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](figures/09_using-capsules/compare-capsule-method-1.png)<!-- -->
+![](figures/10_using-capsules/compare-capsule-method-1.png)<!-- -->
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](figures/09_using-capsules/compare-capsule-method-2.png)<!-- -->
+![](figures/10_using-capsules/compare-capsule-method-2.png)<!-- -->
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](figures/09_using-capsules/compare-capsule-method-3.png)<!-- -->
+![](figures/10_using-capsules/compare-capsule-method-3.png)<!-- -->
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](figures/09_using-capsules/compare-capsule-method-4.png)<!-- -->
+![](figures/10_using-capsules/compare-capsule-method-4.png)<!-- -->
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
 
-![](figures/09_using-capsules/compare-capsule-method-5.png)<!-- -->
+![](figures/10_using-capsules/compare-capsule-method-5.png)<!-- -->
 
 For many species there is little difference between the proportion
 abscised calculated using the capsules method and the original method.
@@ -279,10 +279,10 @@ species, you only have the reasonable inference that enemies cause
 immature fruit fall. Results for the handful of species with part=7
 will, hopefully, substantiate this inference."*
 
-I‘ll have a look at the data for species with part 7 counts to see how
+I‘ll have a look at the data for species with `part 7` counts to see how
 many fruits were dropped immaturely without insect emergence holes VS.
 fruits with insect emergence holes. I think Joe’s idea was that if the
-proportion of part 7 looked similar to the proportion of part 5
+proportion of `part 7` looked similar to the proportion of `part 5`
 (immature fruits) then it will back-up our assumption that seed enemies
 are causing premature fruit drop.
 
@@ -290,7 +290,7 @@ We aren’t actually going to be using *Faramea occidentalis* in the model
 because it’s animal dispersed and it’s seeds cannot be estimated from
 capsules.
 
-How many other species have a part 7?
+How many other species have a `part 7`?
 
 ``` r
 abs_dat_comb %>%
@@ -318,7 +318,7 @@ abs_dat_comb %>%
     ## # … with 69 more rows
 
 79 is more species than I was expecting. Let’s look at `thim` (*Thinouia
-myriantha*) as it has the highest count of part 7.
+myriantha*) as it has the highest count of `part 7`.
 
 ``` r
 # calculate proportion part 7
@@ -379,7 +379,7 @@ p1 + p2 + plot_annotation(
 
     ## Warning: Removed 2 rows containing missing values (geom_bar).
 
-![](figures/09_using-capsules/fruits-with-insect-holes-1.png)<!-- -->
+![](figures/10_using-capsules/fruits-with-insect-holes-1.png)<!-- -->
 
 The distributions look kind of similar, can we measure this
 quantitatively?
@@ -440,4 +440,4 @@ a location shift of mu and the alternative is that they differ by some
 other location shift. We have p &lt; 0.05 which means we reject the null
 hypothesis - the two samples came from different distributions.
 
-**To do:** Repeat for species with highest counts of part 7, top 10?
+**To do:** Repeat for species with highest counts of `part 7`, top 10?
