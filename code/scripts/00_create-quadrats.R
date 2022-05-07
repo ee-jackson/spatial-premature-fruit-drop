@@ -92,5 +92,7 @@ trap_loc_quad <- trap_loc_quad[!duplicated(trap_loc_quad$trap),]
 
 trap_loc_quad %>%
   arrange(trap) %>%
+  rename_at(c("X", "Y"),
+            .funs = tolower) %>%
   write.csv(file = here::here("data", "clean", "trap_locations.csv"),
           row.names = FALSE)

@@ -5,13 +5,17 @@
 ## Desc: Calculate the reproductive size threshold (50%) for each sp. R 50 =  1/2 dmax
 ## Date created: 2020-08-10
 
-library("tidyverse")
+library("tidyverse") # v 1.3.1
+library("here") # v 1.0.1
 
 # load all bci files
-file_names = as.list(dir(path="../data/bci.tree", pattern = "bci.tree*"))
+file_names <- as.list(dir(path = here::here("data", "raw", "bci.tree"),
+                         pattern = "bci.tree*", full.names = TRUE))
+
 lapply(file_names, load, environment())
 
-bci.tree <- bind_rows(bci.tree3,bci.tree4,bci.tree5,bci.tree6,bci.tree7,bci.tree8, .id = "df")
+bci.tree <- bind_rows(bci.tree3, bci.tree4, bci.tree5, bci.tree6,
+                      bci.tree7, bci.tree8, .id = "df")
 
 # Dmax as mean of 6 the individuals with the highest dbh
 bci.tree %>%
@@ -20,8 +24,9 @@ bci.tree %>%
 	ungroup() %>%
 	group_by(sp) %>%
 	slice_max(dbh, n = 6) %>%
-	summarise(dbh=mean(dbh, na.rm = TRUE)) %>%
-	mutate(R50 = dbh/2) %>%
-	rename(dmax="dbh") -> tree.max
+	summarise(dbh = mean(dbh, na.rm = TRUE), .groups = "drop") %>%
+	mutate(r50 = dbh/2) %>%
+	rename(dmax = "dbh") -> tree_max
 
-write.csv(tree.max, here::here("data", "clean", "R50.csv"), row.names=FALSE)
+write.csv(tree_max, here::here("data", "clean", "R50.csv"),
+          row.names = FALSE)
