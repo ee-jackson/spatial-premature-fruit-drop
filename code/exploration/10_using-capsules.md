@@ -1,7 +1,7 @@
 Using capsules to estimate fruit drop for vertebrate dispersed species
 ================
 Eleanor Jackson
-02 May, 2022
+06 May, 2022
 
 For the analysis thus far we have assumed that the probability of a
 fruit or seed falling into a trap is the same for mature and immature
@@ -155,7 +155,7 @@ abs_dat_comb %>%
       .groups = "drop") %>%
   
   # if fruits + seeds estimate is larger, use that rather than fruits + capsules
-  mutate(fruits_capsules = 
+  mutate(capsules_seeds = 
            ifelse(fruits_seeds > capsules_seeds, fruits_seeds, capsules_seeds)) %>%
   
   # if we can't estimate fruits from capsules for a species, use fruits + seeds
