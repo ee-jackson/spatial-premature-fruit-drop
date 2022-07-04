@@ -18,9 +18,13 @@ T.O.: *If it is not too computationally intensive, I would be tempted to pick a 
 
 Lets do 20m, 30m, 40m, 50m, 60m, 70m. So alpha = 0.05, 0.033, 0.025, 0.016, 0.014.
 
+*Edited to add 5m and 10m*
+
 ## Compare the predictive accuracy of the models using LOO-CV
 
 ```{r message=FALSE}
+model_05m <- readRDS(here::here("output", "models", "zoib_capsules_05m.rds"))
+model_10m <- readRDS(here::here("output", "models", "zoib_capsules_10m.rds"))
 model_20m <- readRDS(here::here("output", "models", "zoib_capsules_20m.rds"))
 model_30m <- readRDS(here::here("output", "models", "zoib_capsules_30m.rds"))
 model_40m <- readRDS(here::here("output", "models", "zoib_capsules_40m.rds"))
@@ -40,28 +44,47 @@ options(mc.cores = 3)
 
 ## Compare the predictive accuracy of the models using Leave-One-Out Cross Validation
 
+Leave-one-out cross-validation (LOO-CV) is a popular method for comparing Bayesian models based on their estimated predictive performance on new/unseen data.
+
+Expected log predictive density (ELPD): If new observations are well-accounted by the posterior predictive distribution, then the density of the posterior predictive distribution is high and so is its logarithm. So higher ELPD = better predictive performance.
+
 ```{r loo-compare}
-comp <- loo_compare(model_20m, model_30m, model_40m, model_50m, model_60m, model_70m)
+comp <- loo_compare(model_05m, model_10m, model_20m, model_30m, 
+                    model_40m, model_50m, model_60m, model_70m)
 
 print(comp, digits = 3)
 
 comp %>% 
   data.frame() %>% 
   rownames_to_column(var = "model_name") %>% 
-  ggplot(aes(x    = model_name, 
-             y    = elpd_loo, 
-             ymin = elpd_loo - se_elpd_loo, 
-             ymax = elpd_loo + se_elpd_loo)) +
+  ggplot(aes(x    = reorder(model_name, elpd_diff), 
+             y    = elpd_diff, 
+             ymin = elpd_diff - se_diff, 
+             ymax = elpd_diff + se_diff)) +
   geom_pointrange(shape = 21, fill = "white") +
   coord_flip() +
-  labs(x = NULL, title = "expected log predictive density (ELPD)") 
+  geom_hline(yintercept = 0, colour = "blue", linetype = 2) +
+  labs(x = NULL, y = "difference from model with the largest ELPD", 
+       title = "expected log predictive density (ELPD)") 
+
 
 ```
 
+In the [loo package documentation](https://mc-stan.org/loo/articles/online-only/faq.html#how-to-use-cross-validation-for-model-selection-) they say:
+
+"If elpd difference (`elpd_diff` in loo package) is less than 4, the difference is small [(Sivula, Magnusson and Vehtari, 2020)](https://doi.org/10.48550/arXiv.2008.10296)). If elpd difference (`elpd_diff` in loo package) is larger than 4, then compare that difference to standard error of `elpd_diff` (provided e.g. by loo package) [(Sivula, Magnusson and Vehtari, 2020)](https://doi.org/10.48550/arXiv.2008.10296)."
+
+The `elpd_diff` between `model_10m` and `model_20m` is -2.658, this is less than 4 so we can say that the difference in predictive accuracy between these two models is negligible. But, the difference between our original model (`model_50m`) and `model_10m` is -42.370 and the standard error of `elpd_diff`, (`se_diff`) doesn't overlap. I think this means that `model_10m` and `model_20m` have better predictive accuracy than `model_50m`.
+
+A 10 m dispersal distance is lower than we predicted, but we are modelling the realised dispersal distance rather than the potential dispersal distance. In a dense forest, perhaps a mean of 10 m is typical?
+
 ## Compare estimates
 
+Has changing alpha changed the results of our model?
+
 ```{r estimate-compare, warning=FALSE}
-tibble(model = c("model_20m", "model_30m", "model_40m", "model_50m", "model_60m", "model_70m")) %>% 
+tibble(model = c("model_05m", "model_10m", "model_20m", "model_30m", 
+                 "model_40m", "model_50m", "model_60m", "model_70m")) %>% 
   mutate(fit   = purrr::map(model, get)) %>% 
   mutate(tidy  = purrr::map(fit, tidy)) %>% 
   unnest(tidy) %>% 
@@ -70,8 +93,10 @@ tibble(model = c("model_20m", "model_30m", "model_40m", "model_50m", "model_60m"
 my_coef_tab
 
 my_coef_tab %>% 
-  mutate(term = recode(term, connectivity_pred_sc = "mu", coi_connectivity_pred_sc = "coi",
-                             zoi_connectivity_pred_sc = "zoi", phi_connectivity_pred_sc = "phi")) %>% 
+  mutate(term = recode(term, connectivity_pred_sc = "mu", 
+                       coi_connectivity_pred_sc = "coi",
+                       zoi_connectivity_pred_sc = "zoi", 
+                       phi_connectivity_pred_sc = "phi")) %>% 
   ggplot(aes(x = model, y = estimate, ymin = conf.low, ymax = conf.high)) +
   geom_pointrange(shape = 21, fill = "white") +
   labs(x = NULL,
@@ -83,3 +108,4 @@ my_coef_tab %>%
 
 ```
 
+Confidence intervals are all overlapping - no real change in the model's parameter estimates.
