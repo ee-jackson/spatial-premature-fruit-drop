@@ -112,7 +112,7 @@ abs_dat_comb %>%
 abs_dat_comb %>%
   subset(part == 5) %>%
   rowwise() %>%
-  mutate(abscised_seeds = quantity_sum*n_seedfull) %>%
+  mutate(abscised_seeds = quantity_sum * n_seedfull) %>%
   group_by(sp4, year, trap) %>%
   summarise(abscised_seeds = sum(abscised_seeds, na.rm = TRUE),
             .groups = "drop") -> abs_dat_abscised
@@ -120,7 +120,7 @@ abs_dat_comb %>%
 # calculate proportion abscised -------------------------------------------
 
 # join abscised and viable seeds data, where there is no match will = NA, change to zero
-full_join(abs_dat_abscised, abs_dat_viable, by= c("sp4", "year", "trap")) %>%
+full_join(abs_dat_abscised, abs_dat_viable, by = c("sp4", "year", "trap")) %>%
   mutate_at(vars(viable_seeds, abscised_seeds), ~replace(., is.na(.), 0)) -> abs_dat_abscised_viable
 
 # calculate proportion abscised
@@ -128,6 +128,8 @@ abs_dat_abscised_viable %>%
   rowwise() %>%
   mutate(total_seeds = sum(abscised_seeds, viable_seeds, na.rm = TRUE),
          proportion_abscised = abscised_seeds / total_seeds) %>%
+  # there is one NaN where 2 capsules collected but capsules = FALSE and no other parts found
+  filter(!is.na(proportion_abscised)) %>%
   ungroup() -> prop_dat
 
 abs_dat %>%

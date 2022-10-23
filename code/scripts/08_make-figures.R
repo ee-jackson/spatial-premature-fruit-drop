@@ -14,22 +14,22 @@ library("tidybayes")
 
 # load data ---------------------------------------------------------------
 
-load("data/cleanData.RData")
+data <- readRDS(here::here("data", "data_for_model.rds"))
+model <- readRDS(here::here("output", "models", "zoib_capsules_quad_rslope_nest.rds"))
+sp_data <- read.csv(here::here("data", "species_list.csv"))
+
 model <- readRDS("output/models/full_sp_quad_rslope_ZOIB.rds")
+model <- readRDS("output/models/zoib_capsules_quad_rslope_nest.rds")
 
 # format / transform data -------------------------------------------------
 
-trapConnect$abscised_seeds <- as.integer(trapConnect$abscised_seeds)
-trapConnect$total_seeds <- as.integer(trapConnect$total_seeds)
-trapConnect$year <- as.factor(trapConnect$year)
-trapConnect$trap <- as.factor(trapConnect$trap)
-
-trapConnect <- transform(trapConnect,
-                         CI_pred.sc = scale(CI_pred)
-)
-
-testdat <- subset(trapConnect, sum_parts > 10)
-
+data %>%
+  mutate(abscised_seeds = as.integer(abscised_seeds),
+         total_seeds = as.integer(total_seeds),
+         year = as.factor(year),
+         trap = as.factor(trap)) %>%
+  mutate(connectivity_pred_sc = scale(connectivity_pred)) %>%
+  filter(sum_parts >= 3) -> testdat
 
 # plot posterior prediction -----------------------------------------------
 
@@ -37,11 +37,11 @@ testdat <- subset(trapConnect, sum_parts > 10)
 # giving posterior draws from the expectation of the posterior predictive; i.e. posterior distributions of conditional means
 
 testdat %>%
-  add_epred_draws(model, ndraws = 1000, re_formula = NA) -> test_fit_na
+  tidybayes::add_epred_draws(model, ndraws = 100, re_formula = NA) -> test_fit_na
 
 
 test_fit_na %>%
-  ggplot(aes(x = CI_pred.sc)) +
+  ggplot(aes(x = connectivity_pred_sc)) +
   geom_point(data = testdat, aes(y = proportion_abscised, size = total_seeds),
              colour = "black", alpha = 0.4, pch = 16, size = 0.5) +
   stat_lineribbon(aes(y = .epred), alpha = 0.7, size = 0.25, colour = "darkgreen", show.legend = FALSE) +
@@ -56,16 +56,32 @@ pdf("epred_draws.pdf", width = 3.15, height = 3.15)
 fitted
 dev.off()
 
+test_fit_na %>%
+  ggplot(aes(x = connectivity_pred_sc)) +
+  geom_point(data = testdat, aes(y = proportion_abscised, size = total_seeds),
+             colour = "black", alpha = 0.4, pch = 16, size = 0.5) +
+  geom_line(aes(y = .epred, group = .draw), alpha = 0.7, colour = "darkgreen", show.legend = FALSE) +
+  theme_classic(base_size = 7) +
+  xlab("Connectivity") +
+  ylab("Rate of premature seed abscission") +
+  scale_x_continuous(expand = c(0 , 0)) +
+  scale_y_continuous(expand = c(0.001, 0.001)) +
+  scale_fill_brewer(palette = "Greens") -> fitted2
+
+pdf("epred_draws_spag.pdf", width = 3.15, height = 3.15)
+fitted2
+dev.off()
+
 # plot parameter estimates ------------------------------------------------
 
 # Extract posterior samples of specified parameters
 
 model %>%
   brms::posterior_samples() %>%
-  select(b_CI_pred.sc, b_coi_CI_pred.sc, b_zoi_CI_pred.sc, b_phi_CI_pred.sc) %>%
-  pivot_longer(cols = contains("CI_pred.sc"), names_to = "parameters") %>%
-  mutate(parameters = recode(parameters, b_CI_pred.sc = "mu", b_coi_CI_pred.sc = "coi",
-                             b_zoi_CI_pred.sc = "zoi", b_phi_CI_pred.sc = "phi")) %>%
+  select(b_connectivity_pred_sc, b_coi_connectivity_pred_sc, b_zoi_connectivity_pred_sc, b_phi_connectivity_pred_sc) %>%
+  pivot_longer(cols = contains("connectivity_pred_sc"), names_to = "parameters") %>%
+  mutate(parameters = recode(parameters, b_connectivity_pred_sc = "mu", b_coi_connectivity_pred_sc = "coi",
+                             b_zoi_connectivity_pred_sc = "zoi", b_phi_connectivity_pred_sc = "phi")) %>%
   mutate(parameters = as.character(parameters)) -> posterior_slope_params
 
 pdf("post_params_epred.pdf", width = 3.15, height = 3.15)
@@ -92,19 +108,19 @@ dev.off()
 
 model %>%
   brms::posterior_samples() %>%
-  select(contains("r_SP4[")) %>%
-  select(contains(",CI_pred.sc]")) %>%
-  pivot_longer(cols = contains("r_SP4["), names_to = "SP4") %>%
-  mutate(SP4 = as.character(SP4)) %>%
-  mutate(SP4 = gsub("r_SP4[", "", SP4, fixed = TRUE)) %>%
-  mutate(SP4 = gsub(",CI_pred.sc]", "", SP4, fixed = TRUE)) -> sp_ests
+  select(contains("r_sp4[")) %>%
+  select(contains(",connectivity_pred_sc]")) %>%
+  pivot_longer(cols = contains("r_sp4["), names_to = "sp4") %>%
+  mutate(sp4 = as.character(sp4)) %>%
+  mutate(sp4 = gsub("r_sp4[", "", sp4, fixed = TRUE)) %>%
+  mutate(sp4 = gsub(",connectivity_pred_sc]", "", sp4, fixed = TRUE)) -> sp_ests
 
 # add species  names
-testdat %>%
-  mutate(taxa = paste(GENUS, SPECIES, sep = " ")) -> testdat
+sp_data %>%
+  mutate(taxa = paste(genus, species, sep = " ")) -> sp_data
 
-testdat %>%
-  select(SP4, taxa) %>%
+sp_data %>%
+  select(sp4, taxa) %>%
   unique() %>%
   right_join(sp_ests) -> sp_ests_n
 
@@ -112,7 +128,7 @@ testdat %>%
 pdf("sp_ests.pdf", width = 3.15, height = 3.15)
 ggplot(sp_ests_n, aes(y = reorder(taxa, value), x = as.numeric(value))) +
   ggdist::stat_gradientinterval(.width = 0.95, fill = "forestgreen",
-                                interval_size =0.005, stroke = 0.5,
+                                interval_size = 0.005, stroke = 0.5,
                                 shape = 21,
                                 point_fill = "white") +
   labs(x = expression(paste("Effect of connectivity on\nmean rate of premature seed abscission, ", Beta)), y = "") +
