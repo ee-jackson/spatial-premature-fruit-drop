@@ -84,7 +84,7 @@ abs_dat_comb %>%
     part == 2 ~ quantity_sum,
 
     # capsules
-    part == 3 ~ (quantity_sum / capsules_per_fruit) * n_seedfull)) %>%
+    part == 3 ~ quantity_sum * n_seedfull)) %>%
 
   # estimate number of mature fruits based on fruits + capsules, and based on fruits + seeds
   group_by(sp4, year, trap, capsules) %>%
