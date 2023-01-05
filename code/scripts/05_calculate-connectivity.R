@@ -14,37 +14,6 @@ trap_data <- readRDS(here::here("data", "clean", "trap_data.rds"))
 
 tree_data <- readRDS(here::here("data", "clean", "tree_data.rds"))
 
-# Select species ---------------------------
-# trap_data %>%
-# 	group_by(sp4, year) %>%
-# 	mutate(n_traps = length(unique(trap))) %>%
-# 	arrange(desc(n_traps)) %>%
-# 	ungroup() %>%
-# 	group_by(sp4) %>%
-# 	mutate(median_traps = median(n_traps, na.rm = TRUE)) %>%
-# 	select(sp4, median_traps) %>%
-# 	distinct() %>%
-# 	as.data.frame() -> trap_summary
-#
-#
-# tree_data %>%
-# 	group_by(sp4, survey_year) %>%
-# 	mutate(n_trees = length(unique(tree))) %>%
-# 	arrange(desc(n_trees)) %>%
-# 	ungroup() %>%
-# 	group_by(sp4) %>%
-# 	mutate(median_trees = median(n_trees, na.rm = TRUE)) %>%
-# 	select(median_trees, sp4) %>%
-# 	distinct() %>%
-# 	as.data.frame() -> tree_summary
-#
-# # inner join  = sp only included if occur in both lists
-# summary <- inner_join(trap_summary, tree_summary, by = "sp4")
-#
-# summary %>%
-#   filter(median_trees >15 & median_traps >15) %>%
-# 	pull(sp4) -> sp_list
-
 # Calculate euclidean distances ---------------------------
 
 calculate_dist <- function (species, yr) {
