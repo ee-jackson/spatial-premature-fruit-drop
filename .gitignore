@@ -1,4 +1,4 @@
-#ignore these folders
+## Project specific ignores:
 docs/
 data/
 output/
@@ -8,40 +8,15 @@ code/exploration/*.html
 
 job_script*
 
-# General
-.DS_Store
-.AppleDouble
-.LSOverride
+## R + RStudio ignores:
 
-# Icon must end with two \r
-Icon
-
-# Thumbnails
-._*
-
-# Files that might appear in the root of a volume
-.DocumentRevisions-V100
-.fseventsd
-.Spotlight-V100
-.TemporaryItems
-.Trashes
-.VolumeIcon.icns
-.com.apple.timemachine.donotpresent
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# R ignores
 # History files
 .Rhistory
 .Rapp.history
 
 # Session Data files
 .RData
+.RDataTmp
 
 # User-specific files
 .Ruserdata
@@ -73,37 +48,44 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 
+# R Environment Variables
+.Renviron
 
-# Latex files
+# translation temp files
+po/*~
 
-*.aux
-*.glo
-*.idx
-*.log
-*.toc
-*.ist
-*.acn
-*.acr
-*.alg
-*.bbl
-*.blg
-*.tui
-*.top
-*.tmp
-*.mp
-*.dvi
-*.glg
-*.gls
-*.ilg
-*.ind
-*.lof
-*.lot
-*.maf
-*.mtc
-*.mtc1
-*.out
-*.synctex.gz
-*.pdf
+# RStudio Connect folder
+rsconnect/
+
+
+## Mac OS ignores:
+
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon?
+
+# Thumbnails
+._*
+
+# Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Directories potentially created on remote AFP share
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
 
 # Mac IDE files
 *.swp
