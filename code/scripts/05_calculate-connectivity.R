@@ -59,7 +59,7 @@ bci_dists <- dplyr::bind_rows(all_dists)
 calculate_CI <- function (trap) {
 	drop_na(bci_dists, trap) %>%
 	group_by(tree, year) %>%
-	mutate(a = dbh * exp( (-0.02) * eval(parse(text = trap)) ) ) %>%
+	mutate(a = exp( (-1/20) * eval(parse(text = trap)) ) * dbh^(0.5) ) %>%
 	ungroup() %>%
 	dplyr::select(year, sp4, trap, a) %>%
 	group_by(year, sp4) %>%
@@ -80,4 +80,4 @@ CI_data_b  %>%
   left_join(trap_data, by = c("trap", "year", "sp4")) -> trap_connect
 
 saveRDS(trap_connect,
-	file = here::here("data", "clean", "trap_connect.rds"))
+	file = here::here("data", "clean", "trap_connect_20m.rds"))
