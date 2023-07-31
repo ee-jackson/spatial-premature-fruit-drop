@@ -84,17 +84,24 @@ abs_dat_comb %>%
     part == 2 ~ quantity_sum,
 
     # capsules
-    part == 3 ~ quantity_sum * n_seedfull)) %>%
+    part == 3 ~ quantity_sum * n_seedfull)) -> seed_sums
 
-  # estimate number of mature fruits based on fruits + capsules, and based on fruits + seeds
+# estimate number of mature fruits based on fruits + capsules, and based on fruits + seeds
+seed_sums %>%
+  filter(part == 1 | part == 3) %>%
   group_by(sp4, year, trap, capsules) %>%
-  summarise(capsules_seeds = ifelse(
-    part == 1 | part == 3, sum(parts_avgseeds, na.rm = TRUE), 0),
+  summarise(capsules_seeds = sum(parts_avgseeds, na.rm = TRUE),
+            .groups = "drop") -> sum_caps_seeds
 
-    fruits_seeds = ifelse(
-      part == 1 | part == 2, sum(parts_avgseeds, na.rm = TRUE), 0),
-    .groups = "drop") %>%
+seed_sums %>%
+  filter(part == 1 | part == 2) %>%
+  group_by(sp4, year, trap, capsules) %>%
+  summarise(fruits_seeds = sum(parts_avgseeds, na.rm = TRUE),
+            .groups = "drop") -> sum_fruits_seeds
 
+full_join(sum_caps_seeds, sum_fruits_seeds) %>%
+  mutate(capsules_seeds = replace_na(capsules_seeds, 0),
+         fruits_seeds = replace_na(fruits_seeds, 0)) %>%
   # if fruits + seeds estimate is larger, use that rather than fruits + capsules
   mutate(capsules_seeds =
            ifelse(fruits_seeds > capsules_seeds, fruits_seeds, capsules_seeds)) %>%
@@ -120,8 +127,9 @@ abs_dat_comb %>%
 # calculate proportion abscised -------------------------------------------
 
 # join abscised and viable seeds data, where there is no match will = NA, change to zero
-full_join(abs_dat_abscised, abs_dat_viable, by = c("sp4", "year", "trap")) %>%
-  mutate_at(vars(viable_seeds, abscised_seeds), ~replace(., is.na(.), 0)) -> abs_dat_abscised_viable
+full_join(abs_dat_abscised, abs_dat_viable) %>%
+  mutate(viable_seeds = replace_na(viable_seeds, 0),
+         abscised_seeds = replace_na(abscised_seeds, 0)) -> abs_dat_abscised_viable
 
 # calculate proportion abscised
 abs_dat_abscised_viable %>%
@@ -129,7 +137,7 @@ abs_dat_abscised_viable %>%
   mutate(total_seeds = sum(abscised_seeds, viable_seeds, na.rm = TRUE),
          proportion_abscised = abscised_seeds / total_seeds) %>%
   # there is one NaN where 2 capsules collected but capsules = FALSE and no other parts found
-  filter(!is.na(proportion_abscised)) %>%
+  drop_na(proportion_abscised) %>%
   ungroup() -> prop_dat
 
 abs_dat %>%
