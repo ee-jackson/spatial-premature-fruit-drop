@@ -36,7 +36,7 @@ seed_rain %>%
   left_join(seed_trait, by = c("sp" = "SP4")) %>%
 
   # don't have the full data for these years
-  filter(year != "1987" & year != "2019") %>%
+  filter(year != "1987" & year != "2019" & year != "2018") %>%
 
   # keep only woody stems
   filter(
