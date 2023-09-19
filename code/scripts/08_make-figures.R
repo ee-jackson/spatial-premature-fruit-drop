@@ -15,27 +15,108 @@ library("patchwork")
 
 # load data ---------------------------------------------------------------
 
-data <- readRDS(here::here("data", "clean", "data_for_model_20m.rds"))
-model <- readRDS(here::here("output", "models", "202307","zoib_capsules_20m.rds"))
+data <- readRDS(here::here("data", "clean", "trap_connect_20m.rds"))
+model <- readRDS(here::here("output", "models", "202308", "zoib_20m.rds"))
+
+data_t <- readRDS(here::here("data", "clean", "total_trap_connect_20m.rds"))
+model_t <- readRDS(here::here("output", "models", "202308", "zoib_total_c_20m.rds"))
+
+data_h <- readRDS(here::here("data", "clean", "hetero_trap_connect_20m.rds"))
+model_h <- readRDS(here::here("output", "models", "202308", "zoib_hetero_20m.rds"))
+
 sp_data <- read.csv(here::here("data", "clean", "species_list.csv"))
 
 
 # format / transform data -------------------------------------------------
 
+edge_traps <- subset(data, x > 980 | x < 20 | y > 480 | y < 20)
+
+edge_traps %>%
+  select(trap) %>%
+  distinct() -> edge_traps_list
+
 data %>%
-  mutate(abscised_seeds = as.integer(abscised_seeds),
-         total_seeds = as.integer(total_seeds),
+  filter(!trap %in% edge_traps_list$trap) %>%
+  select(- x, - y, - capsules) %>%
+  transform(connectivity_sc = scale(connectivity)) %>%
+  filter(sum_parts >= 3) -> testdat_20m
+
+testdat_20m %>%
+  mutate(
          year = as.factor(year),
          trap = as.factor(trap)) %>%
-  mutate(connectivity_sc = scale(connectivity_pred)) %>%
+  mutate(connectivity_sc = scale(connectivity)) %>%
   filter(sum_parts >= 3) -> testdat
 
-# plot posterior prediction -----------------------------------------------
+##
 
-# Compute posterior samples of the expected value/mean of the posterior predictive distribution
-# giving posterior draws from the expectation of the posterior predictive; i.e. posterior distributions of conditional means
+data_t %>%
+  filter(!trap %in% edge_traps_list$trap) %>%
+  select(- x, - y, - capsules) %>%
+  transform(connectivity_sc = scale(connectivity)) %>%
+  filter(sum_parts >= 3) -> testdat_20m
 
-conditional_effects(model, re_formula = NA)-> cond_ef
+testdat_20m %>%
+  mutate(
+    year = as.factor(year),
+    trap = as.factor(trap)) %>%
+  mutate(connectivity_sc = scale(connectivity)) %>%
+  filter(sum_parts >= 3) -> testdat_t
+
+##
+
+data_h %>%
+  filter(!trap %in% edge_traps_list$trap) %>%
+  select(- x, - y, - capsules) %>%
+  transform(connectivity_sc = scale(connectivity)) %>%
+  filter(sum_parts >= 3) -> testdat_20m
+
+testdat_20m %>%
+  mutate(
+    year = as.factor(year),
+    trap = as.factor(trap)) %>%
+  mutate(connectivity_sc = scale(connectivity)) %>%
+  filter(sum_parts >= 3) -> testdat_h
+
+
+# -------------------------------------------------------------------------
+# get predictions
+
+testdat %>%
+  modelr::data_grid(
+    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
+  ) %>%
+  add_epred_draws(model, ndraws = 1000, re_formula = NA) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat$connectivity_sc, 'scaled:scale') +
+      attr(testdat$connectivity_sc, 'scaled:center')
+  ) -> repro_mod
+
+testdat %>%
+  modelr::data_grid(
+    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
+  ) %>%
+  add_epred_draws(model_t, ndraws = 1000, re_formula = NA) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat$connectivity_sc, 'scaled:scale') +
+      attr(testdat$connectivity_sc, 'scaled:center')
+  ) -> total_mod
+
+testdat %>%
+  modelr::data_grid(
+    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
+  ) %>%
+  add_epred_draws(model_h, ndraws = 1000, re_formula = NA) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat$connectivity_sc, 'scaled:scale') +
+      attr(testdat$connectivity_sc, 'scaled:center')
+  ) -> hetro_mod
+
+# -------------------------------------------------------------------------
+# big 4 panel plot
 
 testdat %>%
   modelr::data_grid(
@@ -52,61 +133,133 @@ testdat %>%
     y = .epred,
     fill_ramp = after_stat(.width)
   )) +
-  stat_lineribbon(.width = ppoints(50), fill = "forestgreen") +
-  scale_fill_ramp_continuous(range = c(1, 0), guide = guide_rampbar(to = "forestgreen")) +
+  ggdist::stat_lineribbon(.width = ppoints(50), fill = "#E69F00", linewidth = 0.5) +
+  scale_fill_ramp_continuous(range = c(1, 0), guide = guide_rampbar(to = "#E69F00")) +
   geom_point(
     data = testdat,
     aes(
-      x = connectivity_pred,
+      x = connectivity,
       y = proportion_abscised
     ),
     inherit.aes = FALSE,
-    alpha = 0.7, size = 2.5,
+    alpha = 0.6, size = 1,
     shape = 16, colour = "grey25"
   ) +
-  theme_classic(base_size = 30) +
+  theme_classic(base_size = 25) +
   scale_x_continuous(expand = c(0.003, 0.003)) +
-  scale_y_continuous(expand = c(0.003, 0.003)) +
+  scale_y_continuous(expand = c(0.003, 0.003), breaks = c(0,1)) +
+  xlab("") +
+  ylab("") +
+  theme(legend.position = "none") -> p1
+
+testdat_t %>%
+  modelr::data_grid(
+    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
+  ) %>%
+  add_epred_draws(model_t, ndraws = 1000, re_formula = NA) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat_t$connectivity_sc, 'scaled:scale') +
+      attr(testdat_t$connectivity_sc, 'scaled:center')
+  ) %>%
+  ggplot(aes(
+    x = connectivity_us,
+    y = .epred,
+    fill_ramp = after_stat(.width)
+  )) +
+  ggdist::stat_lineribbon(.width = ppoints(50), fill = "#56B4E9", linewidth = 0.5) +
+  scale_fill_ramp_continuous(range = c(1, 0), guide = guide_rampbar(to = "#56B4E9")) +
+  geom_point(
+    data = testdat_t,
+    aes(
+      x = connectivity,
+      y = proportion_abscised
+    ),
+    inherit.aes = FALSE,
+    alpha = 0.6, size = 1,
+    shape = 16, colour = "grey25"
+  ) +
+  theme_classic(base_size = 25) +
+  scale_x_continuous(expand = c(0.003, 0.003)) +
+  scale_y_continuous(expand = c(0.003, 0.003), breaks = c(0,1)) +
   xlab("Connectivity") +
-  ylab("Rate of premature seed abscission") +
-  theme(legend.position = "none") -> fig
+  ylab("Proportion of immature seeds") +
+  xlab("") +
+  ylab("") +
+  theme(legend.position = "none") -> p2
+
+testdat_h %>%
+  modelr::data_grid(
+    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
+  ) %>%
+  add_epred_draws(model_h, ndraws = 1000, re_formula = NA) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat_h$connectivity_sc, 'scaled:scale') +
+      attr(testdat_h$connectivity_sc, 'scaled:center')
+  ) %>%
+  ggplot(aes(
+    x = connectivity_us,
+    y = .epred,
+    fill_ramp = after_stat(.width)
+  )) +
+  ggdist::stat_lineribbon(.width = ppoints(50), fill = "#009E73", linewidth = 0.5) +
+  scale_fill_ramp_continuous(range = c(1, 0), guide = guide_rampbar(to = "#009E73")) +
+  geom_point(
+    data = testdat_h,
+    aes(
+      x = connectivity,
+      y = proportion_abscised
+    ),
+    inherit.aes = FALSE,
+    alpha = 0.6, size = 1,
+    shape = 16, colour = "grey25"
+  ) +
+  theme_classic(base_size = 25) +
+  scale_x_continuous(expand = c(0.003, 0.003)) +
+  scale_y_continuous(expand = c(0.003, 0.003), breaks = c(0,1)) +
+  xlab("Connectivity") +
+  ylab("Proportion of immature seeds") +
+  theme(legend.position = "none",
+        axis.title.y = element_text(hjust = 0),
+        axis.title.x = element_text(hjust = 0)) -> p3
+
+
+
+bind_rows(repro_mod, total_mod, hetro_mod,  .id = "dataset") %>%
+  ggplot(aes(x = connectivity_us, y = .epred, color = dataset, fill = dataset)) +
+  stat_lineribbon(.width = .95, alpha = 0.5) +
+  scale_fill_manual(values = c("#E69F00", "#56B4E9", "#009E73"),
+                    labels = c("Reproductive conspecifics",
+                               "All conspecifics",
+                               "Reproductive heterospecifics")) +
+  scale_colour_manual(values = c("#E69F00", "#56B4E9", "#009E73")) +
+  stat_lineribbon(.width = 0, alpha = 1) +
+  theme_classic(base_size = 30) +
+  scale_x_continuous(expand = c(0, 0)) +
+  scale_y_continuous(limits= c(0,1), expand = c(0, 0)) +
+  xlab("Connectivity") +
+  ylab("Proportion of immature seeds") +
+  guides(colour = FALSE,
+         fill = guide_legend(override.aes = list(alpha = 1))) +
+  theme(legend.title = element_blank(), legend.position = c(0.25, 0.9),
+        axis.title.y = element_text(hjust = 0),
+        axis.title.x = element_text(hjust = 0)) -> p4
+
+((p1 / p2 / p3) | p4 ) +
+  plot_layout(widths = c(1, 2)) +
+  plot_annotation(tag_levels = "a") & theme(plot.tag.position  = c(.935, .96))
 
 png(
-  here::here("output", "figures", "overall-effect-20m.png"),
-  width = 945,
-  height = 945,
+  here::here("output", "figures", "all-models-predict-big-labs.png"),
+  width = 1476,
+  height = 1000,
   units = "px",
   type = "cairo"
 )
-fig
+
+((p1 / p2 / p3) | p4 ) +
+  plot_layout(widths = c(1, 2)) +
+  plot_annotation(tag_levels = "a") & theme(plot.tag.position  = c(.935, .96))
+
 dev.off()
-
-# plot parameter estimates ------------------------------------------------
-
-# Extract posterior samples of specified parameters
-
-model %>%
-  brms::posterior_samples() %>%
-  select(b_connectivity_pred_sc, b_coi_connectivity_pred_sc, b_zoi_connectivity_pred_sc, b_phi_connectivity_pred_sc) %>%
-  pivot_longer(cols = contains("connectivity_pred_sc"), names_to = "parameters") %>%
-  mutate(parameters = recode(parameters, b_connectivity_pred_sc = "mu", b_coi_connectivity_pred_sc = "coi",
-                             b_zoi_connectivity_pred_sc = "zoi", b_phi_connectivity_pred_sc = "phi")) %>%
-  mutate(parameters = as.character(parameters)) -> posterior_slope_params
-
-pdf("post_params_epred.pdf", width = 3.15, height = 3.15)
-ggplot(posterior_slope_params, aes(y = reorder(parameters, abs(value)), x = as.numeric(value))) +
-  ggdist::stat_halfeye(normalize = "xy", .width = 0.95, fill = "forestgreen",
-                       interval_size =0.005, stroke = 0.5,
-                       shape = 21, slab_alpha = 0.6, point_size = 1,
-                       point_fill = "white") +
-  labs(x = "Effect of connectivity on posterior means", y = "") +
-  geom_vline(xintercept = 0, linetype = 1, size = 0.25, colour = "blue") +
-  scale_y_discrete(labels = c("mu" = substitute(Beta),
-                              "phi"  = substitute(phi),
-                              "coi" = substitute(gamma),
-                              "zoi" = substitute(alpha))) +
-  theme_classic(base_size = 7 )+
-  theme(axis.text.y = element_text(face = "italic", size = 12, colour = "black"))
-dev.off()
-
-
