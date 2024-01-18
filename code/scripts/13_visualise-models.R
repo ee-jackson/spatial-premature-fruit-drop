@@ -93,41 +93,32 @@ testdat %>%
       attr(testdat$connectivity_sc, 'scaled:center')
   ) -> repro_mod
 
-testdat %>%
+testdat_t %>%
   modelr::data_grid(
     connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
   ) %>%
   add_epred_draws(model_t, ndraws = 1000, re_formula = NA) %>%
   mutate(
     connectivity_us = connectivity_sc *
-      attr(testdat$connectivity_sc, 'scaled:scale') +
-      attr(testdat$connectivity_sc, 'scaled:center')
+      attr(testdat_t$connectivity_sc, 'scaled:scale') +
+      attr(testdat_t$connectivity_sc, 'scaled:center')
   ) -> total_mod
 
-testdat %>%
+testdat_h %>%
   modelr::data_grid(
     connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
   ) %>%
   add_epred_draws(model_h, ndraws = 1000, re_formula = NA) %>%
   mutate(
     connectivity_us = connectivity_sc *
-      attr(testdat$connectivity_sc, 'scaled:scale') +
-      attr(testdat$connectivity_sc, 'scaled:center')
+      attr(testdat_h$connectivity_sc, 'scaled:scale') +
+      attr(testdat_h$connectivity_sc, 'scaled:center')
   ) -> hetro_mod
 
 # -------------------------------------------------------------------------
 # big 4 panel plot
 
-testdat %>%
-  modelr::data_grid(
-    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
-  ) %>%
-  add_epred_draws(model, ndraws = 1000, re_formula = NA) %>%
-  mutate(
-    connectivity_us = connectivity_sc *
-      attr(testdat$connectivity_sc, 'scaled:scale') +
-      attr(testdat$connectivity_sc, 'scaled:center')
-  ) %>%
+repro_mod %>%
   ggplot(aes(
     x = connectivity_us,
     y = .epred,
@@ -152,16 +143,8 @@ testdat %>%
   ylab("") +
   theme(legend.position = "none") -> p1
 
-testdat_t %>%
-  modelr::data_grid(
-    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
-  ) %>%
-  add_epred_draws(model_t, ndraws = 1000, re_formula = NA) %>%
-  mutate(
-    connectivity_us = connectivity_sc *
-      attr(testdat_t$connectivity_sc, 'scaled:scale') +
-      attr(testdat_t$connectivity_sc, 'scaled:center')
-  ) %>%
+
+total_mod %>%
   ggplot(aes(
     x = connectivity_us,
     y = .epred,
@@ -188,16 +171,8 @@ testdat_t %>%
   ylab("") +
   theme(legend.position = "none") -> p2
 
-testdat_h %>%
-  modelr::data_grid(
-    connectivity_sc = modelr::seq_range(connectivity_sc, n = 101)
-  ) %>%
-  add_epred_draws(model_h, ndraws = 1000, re_formula = NA) %>%
-  mutate(
-    connectivity_us = connectivity_sc *
-      attr(testdat_h$connectivity_sc, 'scaled:scale') +
-      attr(testdat_h$connectivity_sc, 'scaled:center')
-  ) %>%
+
+hetro_mod %>%
   ggplot(aes(
     x = connectivity_us,
     y = .epred,
@@ -236,11 +211,11 @@ bind_rows(repro_mod, total_mod, hetro_mod,  .id = "dataset") %>%
   scale_colour_manual(values = c("#E69F00", "#56B4E9", "#009E73")) +
   stat_lineribbon(.width = 0, alpha = 1) +
   theme_classic(base_size = 30) +
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_y_continuous(limits= c(0,1), expand = c(0, 0)) +
+  scale_x_continuous(limits= c(0, 200), expand = c(0, 0)) +
+  scale_y_continuous(limits= c(0, 1), expand = c(0, 0)) +
   xlab("Connectivity") +
   ylab("Proportion of immature seeds") +
-  guides(colour = FALSE,
+  guides(colour = "none",
          fill = guide_legend(override.aes = list(alpha = 1))) +
   theme(legend.title = element_blank(), legend.position = c(0.25, 0.9),
         axis.title.y = element_text(hjust = 0),
@@ -251,7 +226,7 @@ bind_rows(repro_mod, total_mod, hetro_mod,  .id = "dataset") %>%
   plot_annotation(tag_levels = "a") & theme(plot.tag.position  = c(.935, .96))
 
 png(
-  here::here("output", "figures", "all-models-predict-big-labs.png"),
+  here::here("output", "figures", "all-models-predict.png"),
   width = 1476,
   height = 1000,
   units = "px",
