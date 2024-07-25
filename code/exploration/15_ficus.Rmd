@@ -1,0 +1,116 @@
+---
+title: "Ficus"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  github_document:
+    keep_html: true
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/15_ficus/")
+```
+
+Sofia: 
+
+I wondered whether I could ask you for a favour (sorry!):
+ 
+Together with Liz Shaw (soil ecologist at the School of Geography) we are planning to conduct a little lab-based pilot study on the effects of fruit drop (immature or mature fruits) on soil processes. Strangely enough, it seems like this is something that hasn’t really been looked into.  Zoe (cc:d) has kindly agreed to help out with this as part of her current post with us.  The idea is to place some soil in pots, add fruits on top to a subset of the pots (three treatment levels: high fruit density, low/medium fruit density, and no fruits) and measure what happens in the soil at different time points (soil respiration, plant available nutrients). We are planning on using figs as our focal species.
+ 
+It occurred to me that it would be nice to use Joe’s trap data to inform treatment levels. I don’t have access to those, but wondered whether you might be able to check Ficus species for :
+
+1. max yearly fruit count observed in any individual trap throughout the ~30 year study period (and which fig species that was), and 
+2. for that particular fig species, the mean number of yearly fruit counts observed in ‘occupied’ traps (i.e. excluding traps with no fruits) throughout the 30 year study period. With a little bit of luck, some traps will have been located under fruiting figs…    
+
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse"); theme_set(theme_bw(base_size=10))
+library("patchwork")
+library("here")
+```
+
+```{r}
+read.table(
+  here::here("data", "raw", "BCI_TRAP200_20190215_spcorrected.txt"),
+  header = TRUE,
+  stringsAsFactors = FALSE
+) %>%
+  mutate(fecha = as.character(fecha)) %>%
+  mutate(fecha = as.Date(fecha, "%Y-%m-%d"),
+         year = format(as.Date(fecha), "%Y"),
+         sp = tolower(sp),
+         trap = formatC(
+           trap,
+           width = 3,
+           format = "d",
+           flag = "0"
+         )) %>%
+  mutate(trap = paste("trap", trap, sep = "_")) %>%
+  left_join(read_csv(here::here("data", "clean", "sp_data.csv")), by = c("sp" = "sp4")) %>% 
+  filter(genus == "Ficus") %>% 
+  filter( part == 1 | part == 5)-> figs
+
+glimpse(figs)
+```
+
+```{r}
+figs %>% 
+  group_by(sp, trap, year) %>% 
+  summarise(sum_fruit = sum(quantity)) %>% 
+  group_by(sp) %>% 
+  summarise(max_fruit = max(sum_fruit))
+```
+
+```{r}
+read_csv(here::here("data", "clean", "sp_data.csv")) %>% 
+           filter(sp4 == "fiyo")
+```
+
+```{r}
+figs %>% 
+  filter(sp == "fiyo" & trap == "trap_131") %>% 
+  ggplot(aes(x = year, y = quantity)) +
+  geom_col() +
+  ggtitle("Ficus obtusifolia, trap 131") +
+  scale_x_discrete(guide = guide_axis(angle = 90)) 
+```
+
+The max yearly fruit count observed in any individual trap was 630, and it was for Ficus obtusifolia.
+
+```{r}
+figs %>% 
+  filter(sp == "fiyo") %>% 
+  group_by(year) %>% 
+  summarise(sum_fruit = sum(quantity)) %>% 
+  ggplot(aes(x = year, y = sum_fruit)) +
+  geom_col()
+
+figs %>% 
+  filter(sp == "fiyo") %>% 
+  group_by(year, trap) %>% 
+  summarise(mean_fruit = mean(quantity)) %>% 
+  ggplot(aes(x = year, y = mean_fruit)) +
+  geom_col()
+```
+
+```{r}
+figs %>% 
+  filter(sp == "fiyo") %>% 
+  group_by(year, trap) %>% 
+  summarise(sum_fruit = mean(quantity)) %>%
+  filter(sum_fruit > 0) %>% 
+  ggplot(aes(x = sum_fruit)) +
+  geom_histogram() +
+  ggtitle("Ficus obtusifolia") +
+  xlab("Yearly mature + immature fruit counts per trap") +
+  geom_vline(xintercept = 6, linetype = 2, colour = "red")
+```
+
+```{r}
+figs %>% 
+  filter(sp == "fiyo") %>% 
+  group_by(year, trap) %>% 
+  summarise(sum_fruit = mean(quantity)) %>%
+  ungroup() %>% 
+  filter(sum_fruit > 0) %>% 
+  summarise(mean_fruit = mean(sum_fruit))
+```
+
