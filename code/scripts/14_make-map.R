@@ -11,7 +11,6 @@
 library("here")
 library("tidyverse")
 library("ggmap")
-library("ggsn")
 library("sf")
 library("patchwork")
 
