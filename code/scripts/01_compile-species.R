@@ -5,51 +5,67 @@
 ## Desc: Compile list of species in the seed rain dataset and add data on reproduction/dispersal modes
 ## Date created: 2021-04-20
 
-library("tidyverse") # v 1.3.1
-library("WorldFlora") # v 1.1
-library("readr") # v 2.0.2
-library("here") # v 1.0.1
+library("tidyverse")
+library("WorldFlora")
+library("readr")
+library("here")
+library("foreign")
 
-seedRain <- read.table(here::here("data", "raw",
-                                  "BCI_TRAP200_20190215_spcorrected.txt"),
-                       header = TRUE, stringsAsFactors = FALSE)
+seedRain <-
+  foreign::read.dbf(
+  here::here("data", "raw", "BCI_TRAP200_20250224.DBF")) %>%
+  mutate(MASS = na_if(MASS, -9)) %>%
+  rename_with(tolower)
 
-read.csv(here::here("data", "raw", "20120305_nomenclature.csv")) %>%
-  rename_with(tolower) -> nomenclature
+read.csv(here::here("data", "raw", "20210412_nomenclature.csv")) %>%
+  rename_with(tolower) %>%
+  mutate(description = na_if(description, "")) -> nomenclature
 
-read.csv(here::here("data", "raw", "Metadata_Capsulas_Part3_OsvaldoCalderon.csv")) -> capsulas
+read.csv(here::here("data",
+                    "raw",
+                    "Metadata_Capsulas_Part3_OsvaldoCalderon.csv")) -> capsulas
 
-read.csv(here::here("data", "raw", "species_20070228_DispersalModes.csv")) -> dispersal
+read.csv(here::here("data",
+                    "raw",
+                    "species_20070228_DispersalModes.csv")) %>%
+  select(sp, code6, starts_with("dsp")) %>%
+  mutate(sp = na_if(sp, "")) %>%
+  mutate(code6 = na_if(code6, "")) -> dispersal
 
 
 # Get list of unique species in seed rain data ----------------------------
 
 # some cleaning
 seedRain %>%
-  mutate(sp = str_squish(sp)) %>%
-  filter(!(str_detect(sp, "\\d"))) %>%
-  filter(sp != "dust",sp != "branch",sp != "petiole",sp != "pedicel-fruit",sp != "pedicel-flower",sp != "") %>%
-  rename(sp4 = sp) %>%
+  mutate(species = str_squish(species)) %>%
+  filter(species != "dust", species != "branch",
+         species != "petiole", species != "pedicel-fruit",
+         species != "pedicel-flower", species != "",
+         species != "NADA", species != "AUXX",
+         species != "UNK?") %>%
+  rename(sp4 = species) %>%
   distinct(sp4) -> species
 
 # join with nomenclature data
 species %>%
   left_join(nomenclature, by = "sp4") %>%
-  select(sp4, sp6, family, genus, species) -> species
+  select(sp4, sp6, genus, species) -> species
 
 
 # Update species names ----------------------------------------------------
 
 # update species names according to The World Flora Online (http://www.worldfloraonline.org)
-# data v.2021.01 valid at 2021-12-09
+# data v.2024.12 valid at 2025-04-23 https://doi.org/10.5281/zenodo.14538251
 
 species %>%
   select(sp4, genus, species) %>%
+  filter(!is.na(species)) %>%
+  filter(!is.na(genus)) %>%
   mutate(genus_species = paste0(genus, sep = " ", species)) %>%
   select(-c(genus, species)) -> orig_sp
 
 wfo <- WFO.match(spec.data = orig_sp,
-                 WFO.file = here::here("data", "raw", "classification.txt"),
+                 WFO.file = here::here("data", "raw", "classification.csv"),
                  no.dates = TRUE, spec.name = "genus_species")
 
 # finds one unique matching name for each submitted name
@@ -58,19 +74,11 @@ WFO.one(wfo, priority = "Accepted") %>%
          specificEpithet)  -> wfo_sp
 
 left_join(species, wfo_sp, by = "sp4") %>%
-  select(-c(family.x, genus.x, species)) %>%
-  rename(
-    species = specificEpithet,
-    genus = genus.y,
-    family = family.y
-  ) %>%
-  mutate(across(c("family", "genus", "species", ),
+  mutate(genus = coalesce(genus.y, genus.x)) %>%
+  mutate(species = coalesce(specificEpithet, species)) %>%
+  select(-c(genus.y, genus.x, specificEpithet)) %>%
+  mutate(across(c(family, genus, species),
             na_if, "")) -> species_names
-
-# GUA1 is listed as a synonym of Guarea guidonia (GUA2) in the World Flora Online database
-# Here we adopt the name Guarea megantha for GUA1
-species_names %>%
-  mutate(species = ifelse(sp4 == "GUA1", "megantha", species)) -> species_names
 
 
 # Clean capsule data ------------------------------------------------------
@@ -121,13 +129,32 @@ capsulas %>%
 species_names %>%
   left_join(capsulas_clean, by = "sp4") -> species_capsulas
 
+
 # Clean dispersal mode data -----------------------------------------------
 
-key <- species_names %>% select(sp4, sp6)
+# fill any missing 4 digit IDs in dispersal data
+key <- species_names %>%
+  select(sp4, sp6) %>%
+  drop_na()
 
-dispersal %>%
+missing_sp4 <-
+  dispersal %>%
+  filter(is.na(sp)) %>%
   left_join(key, by = c("code6" = "sp6")) %>%
-  drop_na(sp4) %>%
+  mutate(sp = coalesce(sp4, sp)) %>%
+  select(-sp4) %>%
+  drop_na(sp)
+
+dispersal <-
+  bind_rows(dispersal, missing_sp4) %>%
+  drop_na(sp) %>%
+  distinct() %>%
+  filter(code6 != "CHR1EC") %>% # duplicated sp4
+  select(-code6)
+
+# create column indicating animal dispersal
+species_capsulas %>%
+  left_join(y = dispersal, by = c("sp4" = "sp")) %>%
   mutate(
     animal_disp = case_when(
       dsp_ant == TRUE |
@@ -137,11 +164,8 @@ dispersal %>%
         dsp_mam == TRUE ~ TRUE,
       TRUE ~ FALSE
     )
-  ) %>%
-  select(sp4, animal_disp) -> dispersal_clean
+  ) -> dispersal_clean
 
-species_capsulas %>%
-  left_join(dispersal_clean, by = "sp4") -> species_capsulas_dispersal
 
 # Add dioecious variable --------------------------------------------------
 
@@ -155,7 +179,7 @@ dioecious_sp <- c("ade1tr", "alchco", "alchla", "alibed", "amaico", "ast2gr",
   "olmeas", "urerba", "virose", "virosu", "virosp", "xyl2ol", "zantbe",
   "zantp1", "zantpr", "zantse")
 
-species_capsulas_dispersal %>%
+dispersal_clean %>%
   mutate_at(c("sp6", "sp4"), tolower) %>%
   mutate(dioecious = case_when(sp6 %in% dioecious_sp ~ TRUE,
                                TRUE ~ FALSE)
