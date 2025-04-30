@@ -32,6 +32,24 @@ read.csv(here::here("data",
   mutate(sp = na_if(sp, "")) %>%
   mutate(code6 = na_if(code6, "")) -> dispersal
 
+# seed traits from Joe
+seed_trait <-
+  read_tsv(
+    here::here(
+      "data",
+      "raw",
+      "seed-masses",
+      "Fruit_Seed_masses_20210111_BanisteriopsisCorrectedToBactrismajor.txt"
+    )
+  ) %>%
+  rename_with(tolower) %>%
+  mutate(id = paste(sp4, ind.unique, fruit.unique, sep = "_")) %>%
+  select(sp4, id, n_seedfull, n_capsules, lifeform) %>%
+  distinct() %>%
+  group_by(sp4, lifeform) %>%
+  summarise(seeds_per_fruit = mean(n_seedfull, na.rm = TRUE),
+            capsules_per_fruit = mean(n_capsules, na.rm = TRUE))
+
 
 # Get list of unique species in seed rain data ----------------------------
 
@@ -44,12 +62,18 @@ seedRain %>%
          species != "NADA", species != "AUXX",
          species != "UNK?") %>%
   rename(sp4 = species) %>%
-  distinct(sp4) -> species
+  distinct(sp4) -> seedRain_sp
 
-# join with nomenclature data
-species %>%
+# join with nomenclature and seed trait data
+seedRain_sp %>%
   left_join(nomenclature, by = "sp4") %>%
-  select(sp4, sp6, genus, species) -> species
+  select(sp4, sp6, genus, species) %>%
+  left_join(seed_trait, by = "sp4") %>%
+  filter(
+    lifeform == "S" |
+      lifeform == "U" |
+      lifeform == "M" | lifeform == "T"
+  ) -> species
 
 
 # Update species names ----------------------------------------------------
@@ -102,7 +126,7 @@ capsulas %>%
     Capsulas_por_fruta_disecciones = as.character(Capsulas_por_fruta_disecciones)
   ) %>%
   mutate(
-    capsules_per_fruit =
+    capsules_per_fruit_oc =
       case_when(
         is.na(Capsulas_por_fruta_disecciones) ~ Capsulas_por_fruta_conocimiento_expert,
         Capsulas_por_fruta_disecciones == NaN ~ Capsulas_por_fruta_conocimiento_expert,
@@ -110,30 +134,40 @@ capsulas %>%
         TRUE ~ Capsulas_por_fruta_disecciones
       )
   ) %>%
-  mutate(capsules_per_fruit = ifelse(capsules == FALSE, NA, capsules_per_fruit)) %>%
-  mutate(capsules_per_fruit = gsub(" a ", ",", capsules_per_fruit)) %>%
+  mutate(capsules_per_fruit_oc = ifelse(capsules == FALSE, NA, capsules_per_fruit_oc)) %>%
+  mutate(capsules_per_fruit_oc = gsub(" a ", ",", capsules_per_fruit_oc)) %>%
   separate(
-    capsules_per_fruit,
+    capsules_per_fruit_oc,
     into = c("min", "max"),
     sep = ",",
     remove = FALSE
   ) %>%
-  mutate_at(c("capsules_per_fruit", "min", "max"), readr::parse_number) %>%
+  mutate_at(c("capsules_per_fruit_oc", "min", "max"), readr::parse_number) %>%
   rowwise() %>%
   mutate(median = median(c(min, max))) %>%
   ungroup() %>%
-  mutate(capsules_per_fruit = ifelse(is.na(median), capsules_per_fruit, median)) %>%
-  mutate(capsules_per_fruit = round(capsules_per_fruit, digits = 2)) %>%
-  select(sp4, capsules, capsules_per_fruit) -> capsulas_clean
+  mutate(capsules_per_fruit_oc = ifelse(is.na(median), capsules_per_fruit_oc, median)) %>%
+  mutate(capsules_per_fruit_oc = round(capsules_per_fruit_oc, digits = 2)) %>%
+  select(sp4, capsules, capsules_per_fruit_oc) -> capsulas_clean
 
 species_names %>%
-  left_join(capsulas_clean, by = "sp4") -> species_capsulas
+  left_join(capsulas_clean, by = "sp4") %>%
+  mutate(capsules_per_fruit = case_when(
+    is.na(capsules_per_fruit) ~ capsules_per_fruit_oc,
+    .default = capsules_per_fruit
+  )) %>%
+  select(- capsules_per_fruit_oc) %>%
+  mutate(capsules = case_when(
+    is.na(capsules) & capsules_per_fruit >  0 ~ TRUE,
+    .default = capsules)
+    ) -> species_capsulas
 
 
 # Clean dispersal mode data -----------------------------------------------
 
 # fill any missing 4 digit IDs in dispersal data
-key <- species_names %>%
+key <-
+  species_names %>%
   select(sp4, sp6) %>%
   drop_na()
 
@@ -188,6 +222,11 @@ dispersal_clean %>%
 
 # Write clean data --------------------------------------------------------
 
-write.csv(species_capsulas_dispersal_dioecious,
-          here::here("data", "clean", "species_list.csv"),
+# only keep animal dispersed species if we can estimate fruits from capsules
+
+species_capsulas_dispersal_dioecious %>%
+  filter(dioecious == FALSE &
+         ((animal_disp == FALSE | is.na(animal_disp)) | capsules == TRUE)) %>%
+  filter(!is.na(seeds_per_fruit)) %>%
+  write.csv(here::here("data", "clean", "species_list.csv"),
           row.names = FALSE)
