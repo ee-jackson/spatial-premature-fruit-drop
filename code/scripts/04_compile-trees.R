@@ -8,45 +8,81 @@
 library("tidyverse") # v 1.3.1
 library("here") # v 1.0.1
 
-file_names <- as.list(dir(path = here::here("data", "raw", "bci.tree"),
-                         pattern = "bci.tree*", full.names = TRUE))
+bci10 <-
+  readxl::read_excel(here::here("data", "raw","bci-50ha", "bci2022_2023.xlsx"),
+                     na = c("", "NULL")) %>%
+  rename_with(tolower) %>%
+  mutate(census = 10,
+         date = as.Date(exactdate)) %>%
+  select(-c(plotname, family, genus, speciesname, subspecies, speciesid,
+            quadratname, qy, qx, subspecies,
+            listoftsm, highhom, exactdate, dbhid)) %>%
+  rename(sp6 = mnemonic) %>%
+  mutate(across(c(sp6, status, stemid, stemtag, tag, treeid), as.factor)) %>%
+  select(sort(tidyselect::peek_vars()))
 
-lapply(file_names, load, environment())
+file_names <- as.list(dir(path = here::here("data", "raw", "bci-50ha"),
+                         pattern = "*bci_all_stems.txt", full.names = TRUE))
+
+bci_data_list <-
+  lapply(file_names, read_tsv)
+
+names(bci_data_list) <-
+  lapply(file_names, basename)
 
 species_list <- read.csv(here::here("data", "clean", "species_list.csv"))
 
 R50 <- read.csv(here::here("data", "clean","R50.csv"))
 
+tidy_bci <- function(bci_data) {
+  bci_data %>%
+    rename_with(tolower) %>%
+    select(-c(latin, subspecies, quadrat, stem,
+              codes, no.)) %>%
+    rename(sp6 = mnemonic) %>%
+    mutate(across(c(sp6, status, stemid, stemtag, tag, treeid), as.factor)) %>%
+    select(sort(tidyselect::peek_vars()))
+}
+
+bci_data_list <-
+  lapply(bci_data_list, tidy_bci)
 
 # expand the bci survey data so we can match it to nearest years of the trap data
 # we are repeating each row of the bci datasets 5 times and assigning 2 years either side
 
-e.bci.tree3 <- bci.tree3[rep(seq_len(nrow(bci.tree3)), each = 5), ]
-e.bci.tree3$year <- rep(c("1988","1989","1990","1991","1992"))
+bci3 <-
+  bci_data_list$`03_bci_all_stems.txt`[rep(seq_len(nrow(bci_data_list$`03_bci_all_stems.txt`)), each = 5), ]
+bci3$year <- rep(c("1990","1991","1992"), nrow(bci3)/3)
 
-e.bci.tree4 <- bci.tree4[rep(seq_len(nrow(bci.tree4)), each = 5), ]
-e.bci.tree4$year <- rep(c("1993","1994","1995","1996","1997"))
+bci4 <-
+  bci_data_list$`04_bci_all_stems.txt`[rep(seq_len(nrow(bci_data_list$`04_bci_all_stems.txt`)), each = 5), ]
+bci4$year <- rep(c("1993","1994","1995","1996","1997"), nrow(bci4)/5)
 
-e.bci.tree5 <- bci.tree5[rep(seq_len(nrow(bci.tree5)), each = 5), ]
-e.bci.tree5$year <- rep(c("2002","2001","2000","1999","1998"))
+bci5 <-
+  bci_data_list$`05_bci_all_stems.txt`[rep(seq_len(nrow(bci_data_list$`05_bci_all_stems.txt`)), each = 5), ]
+bci5$year <- rep(c("2002","2001","2000","1999","1998"), nrow(bci5)/5)
 
-e.bci.tree6 <- bci.tree6[rep(seq_len(nrow(bci.tree6)), each = 5), ]
-e.bci.tree6$year <- rep(c("2003","2004","2005","2006","2007"))
+bci6 <-
+  bci_data_list$`06_bci_all_stems.txt`[rep(seq_len(nrow(bci_data_list$`06_bci_all_stems.txt`)), each = 5), ]
+bci6$year <- rep(c("2003","2004","2005","2006","2007"), nrow(bci6)/5)
 
-e.bci.tree7 <- bci.tree7[rep(seq_len(nrow(bci.tree7)), each = 5), ]
-e.bci.tree7$year <- rep(c("2008","2009","2010","2011","2012"))
+bci7 <-
+  bci_data_list$`07_bci_all_stems.txt`[rep(seq_len(nrow(bci_data_list$`07_bci_all_stems.txt`)), each = 5), ]
+bci7$year <- rep(c("2008","2009","2010","2011","2012"), nrow(bci7)/5)
 
-e.bci.tree8 <- bci.tree8[rep(seq_len(nrow(bci.tree8)), each = 5), ]
-e.bci.tree8$year <- rep(c("2013","2014","2015","2016","2017"))
+bci8 <-
+  bci_data_list$`08_bci_all_stems.txt`[rep(seq_len(nrow(bci_data_list$`08_bci_all_stems.txt`)), each = 6), ]
+bci8$year <- rep(c("2013","2014","2015","2016","2017","2018"), nrow(bci8)/6)
 
-# bind all the bci datasets together and add column for survey year
-bind_rows(mget(ls(pattern="e.bci.tree*")), .id='df') %>%
-    mutate(survey_year = case_when(df == "e.bci.tree8" ~ "2015",
-                        df == "e.bci.tree7" ~ "2010",
-                        df == "e.bci.tree6" ~ "2005",
-                        df == "e.bci.tree5" ~ "2000",
-                        df == "e.bci.tree4" ~ "1995",
-                        df == "e.bci.tree3" ~ "1990")) -> bci_bind
+bci10 <-
+  bci10[rep(seq_len(nrow(bci10)), each = 6), ]
+bci10$year <- rep(c("2019","2020","2021","2022","2023","2024"), nrow(bci10)/6)
+
+# bind all the bci datasets together
+rm(bci_data_list)
+bind_rows(mget(ls(pattern="^bci*")), .id='df') -> bci_bind
+
+## TO DO multiple stems!!
 
 # subset to the species in the trap data and clean up
 species_list %>%
