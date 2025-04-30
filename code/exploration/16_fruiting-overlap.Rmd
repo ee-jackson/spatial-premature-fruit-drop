@@ -1,0 +1,103 @@
+---
+title: "Fruiting overlap"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  github_document:
+    keep_html: true
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/16_fruiting-overlap/")
+```
+
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse"); theme_set(theme_bw(base_size = 10))
+library("patchwork")
+library("here")
+```
+
+```{r}
+seed_rain <- 
+  foreign::read.dbf(
+  here::here("data", "raw", "BCI_TRAP200_20250224.DBF")) %>%
+  mutate(MASS = na_if(MASS, -9)) %>%
+  rename_with(tolower) 
+```
+
+```{r}
+seed_rain <- 
+  seed_rain %>% 
+  mutate(date = as.Date(date, "%Y-%m-%d"),
+         year = format(as.Date(date), "%Y"),
+         month = format(as.Date(date), "%m"))
+
+```
+
+
+```{r}
+seed_rain %>% 
+  filter(part == 1) %>% 
+  group_by(month) %>% 
+  summarise(n_species = n_distinct(species)) %>% 
+  ggplot(aes(x = month, y = n_species)) +
+  geom_col()
+
+```
+
+
+```{r}
+seed_rain %>% 
+  filter(part == 1 & quantity > 2) %>% 
+  group_by(month) %>% 
+  summarise(n_species = n_distinct(species)) %>% 
+  ggplot(aes(x = month, y = n_species)) +
+  geom_col()
+
+```
+
+
+```{r}
+seed_rain %>% 
+  filter(part == 1 & quantity > 2) %>% 
+  group_by(month, species) %>% 
+  summarise(avg_fruits = mean(quantity, na.rm = TRUE)) %>% 
+  group_by(month) %>% 
+  summarise(n_species = n_distinct(species)) %>% 
+  ggplot(aes(x = month, y = n_species)) +
+  geom_col()
+
+```
+
+```{r}
+seed_rain %>% 
+  filter(part == 1 & quantity > 1) %>% 
+  filter(species %in% sample(unique(seed_rain$species), 50)) %>% 
+  group_by(month, species) %>% 
+  summarise(avg_fruits_per_trap = mean(quantity, na.rm = TRUE)) %>% 
+  ggplot(aes(x = month, y = avg_fruits_per_trap)) +
+  geom_col() +
+  facet_wrap(~species, scales = "free_y")
+
+```
+
+```{r}
+seed_rain %>% 
+  filter(part == 1 & quantity > 1) %>% 
+  filter(species %in% c("JACC", "OENM", "ZAN2")) %>% 
+  ggplot(aes(x = month, y = quantity)) +
+  geom_boxplot() +
+  stat_summary(fun = mean, geom = "point", colour = "red") +
+  facet_wrap(~species, scales = "free_y")
+
+```
+
+```{r}
+seed_rain %>% 
+  filter(part == 1 | part == 5) %>% 
+  group_by(trap, species, month) %>% 
+  summarise(quantity_sum = sum(quantity, na.rm = TRUE)) %>% 
+  group_by(species, month) %>% 
+  summarise(median = median(quantity_sum, na.rm = TRUE)) %>% 
+  filter(median > 1) %>% glimpse
+```
+
