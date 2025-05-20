@@ -191,7 +191,6 @@ species_capsulas %>%
   left_join(y = dispersal, by = c("sp4" = "sp")) %>%
   mutate(
     animal_disp = case_when(
-      dsp_ant == TRUE |
         dsp_bat == TRUE |
         dsp_bird == TRUE |
         dsp_bbird == TRUE |
@@ -225,8 +224,11 @@ dispersal_clean %>%
 # only keep animal dispersed species if we can estimate fruits from capsules
 
 species_capsulas_dispersal_dioecious %>%
-  filter(dioecious == FALSE &
-         ((animal_disp == FALSE | is.na(animal_disp)) | capsules == TRUE)) %>%
+  filter(
+    case_when(
+      animal_disp == TRUE & (capsules == FALSE | is.na(capsules)) ~ F,
+      .default = T
+    ) ) %>%
   filter(!is.na(seeds_per_fruit)) %>%
   write.csv(here::here("data", "clean", "species_list.csv"),
           row.names = FALSE)
