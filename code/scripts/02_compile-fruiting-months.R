@@ -2,7 +2,7 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: compile-traps.R
-## Desc: create dataset fruiting months for each species
+## Desc: create dataset of co-fruiting species
 ## Date created: 2025-04-29
 
 library("tidyverse")
@@ -59,7 +59,7 @@ abs_dat_comb <-
     # immature fruits
     part == 5 ~ quantity * seeds_per_fruit,
 
-    # damaged fruits
+    # insect damaged fruits - only recorded for select species
     part == 7 ~ quantity * seeds_per_fruit))
 
 
@@ -106,7 +106,7 @@ full_join(sum_caps_seeds, sum_fruits_seeds)  %>%
   ungroup() %>%
   select(-capsules_seeds, -fruits_seeds) -> abs_dat
 
-# check with a plot
+# quick look
 abs_dat %>%
   group_by(sp4, month) %>%
   summarise(median = mean(n_seeds, na.rm = TRUE)) %>%
@@ -114,10 +114,52 @@ abs_dat %>%
   geom_col() +
   facet_wrap(~sp4, scales = "free_y")
 
+
+# Get co-fruiting species -------------------------------------------------
+
+# list of unique year-months for each species
 fruit_months <-
   abs_dat %>%
-  select(sp4, month) %>%
-  distinct()
+  drop_na(n_seeds) %>%
+  select(sp4, month, year) %>%
+  distinct() %>%
+  mutate(yr_month = paste(year, month, sep = "_"))
 
-write_csv(fruit_months,
-        here::here("data", "clean", "fruit_months.csv"))
+# list of species
+sp4_list <-
+  abs_dat %>%
+  select(sp4) %>%
+  distinct() %>%
+  pull(sp4)
+
+# function to get species with overlapping year-months for species i
+get_cofruit_species <-
+  function(species_id, fruit_months_data) {
+  sp_i_month_yrs <-
+    fruit_months %>%
+    filter(sp4 == species_id) %>%
+    select(yr_month)
+
+  sp_i_co_sp <-
+    fruit_months %>%
+    filter(sp4 != species_id) %>%
+    filter(yr_month %in% sp_i_month_yrs$yr_month) %>%
+    select(sp4) %>%
+    distinct() %>%
+    rename(co_fruit_sp = sp4) %>%
+    mutate(sp4 = species_id)
+
+  return(sp_i_co_sp)
+  }
+
+# run function for every species
+cofruit_data <-
+  lapply(X = sp4_list,
+       FUN = get_cofruit_species,
+       fruit_months_data = fruit_months) %>%
+  bind_rows() %>%
+  group_by(sp4) %>%
+  nest(co_fruit_sp = co_fruit_sp)
+
+saveRDS(cofruit_data,
+        here::here("data", "clean", "cofruit_data.rds"))
