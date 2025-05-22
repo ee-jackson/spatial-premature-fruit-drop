@@ -11,20 +11,33 @@ library("readr")
 library("here")
 library("foreign")
 
+# trap data
 seedRain <-
   foreign::read.dbf(
   here::here("data", "raw", "BCI_TRAP200_20250224.DBF")) %>%
   mutate(MASS = na_if(MASS, -9)) %>%
   rename_with(tolower)
 
+# species ID codes + nomenclature
 read.csv(here::here("data", "raw", "20210412_nomenclature.csv")) %>%
   rename_with(tolower) %>%
-  mutate(description = na_if(description, "")) -> nomenclature
+  select(sp4, sp6, genus, species) -> nomenclature1
 
+read.csv(here::here("data", "raw", "20120305_nomenclature.csv")) %>%
+  rename_with(tolower) %>%
+  select(sp4, sp6, genus, species) %>%
+  drop_na(sp4) %>%
+  filter(!sp4 %in% nomenclature1$sp4) -> nomenclature2
+
+nomenclature <-
+  bind_rows(nomenclature1, nomenclature2)
+
+# capsules per fruit as defined by expert
 read.csv(here::here("data",
                     "raw",
                     "Metadata_Capsulas_Part3_OsvaldoCalderon.csv")) -> capsulas
 
+# species dispersal modes
 read.csv(here::here("data",
                     "raw",
                     "species_20070228_DispersalModes.csv")) %>%
@@ -32,7 +45,7 @@ read.csv(here::here("data",
   mutate(sp = na_if(sp, "")) %>%
   mutate(code6 = na_if(code6, "")) -> dispersal
 
-# seed traits from Joe
+# seed traits
 seed_trait <-
   read_tsv(
     here::here(
@@ -64,10 +77,9 @@ seedRain %>%
   rename(sp4 = species) %>%
   distinct(sp4) -> seedRain_sp
 
-# join with nomenclature and seed trait data
+# join with nomenclature and seed trait data, only woody stems
 seedRain_sp %>%
   left_join(nomenclature, by = "sp4") %>%
-  select(sp4, sp6, genus, species) %>%
   left_join(seed_trait, by = "sp4") %>%
   filter(
     lifeform == "S" |
