@@ -65,7 +65,7 @@ bci_data_onestem_list$bci10 <-
 
 # bind files together
 bci_bind <-
-  bind_rows(mget(ls(pattern="^bci*")), .id='df')
+  bind_rows(bci_data_onestem_list, .id='df')
 
 # Dmax as mean of 6 the individuals with the highest dbh
 bci_bind %>%
