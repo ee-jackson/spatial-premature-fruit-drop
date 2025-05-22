@@ -2,17 +2,20 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: calculate-connectivity.R
-## Desc: Script used to calculate connectivity indicies for each trap in every year
+## Desc: Calculate connectivity to reproductive conspecifics
 ## Date created: 2020-09-30
 
-library("tidyverse") # v 1.3.1
-library("here") # v 1.0.1
-library("rdist") # v 0.0.5
+library("tidyverse")
+library("here")
+library("rdist")
 
 # Load data ---------------------------
 trap_data <- readRDS(here::here("data", "clean", "trap_data.rds"))
 
-tree_data <- readRDS(here::here("data", "clean", "tree_data.rds"))
+tree_data <-
+  readRDS(here::here("data", "clean", "tree_data.rds")) %>%
+  filter(dbh_mm >= r50)  %>% # only reproductive-sized
+  select(sp4, year, tree, x, y, basal_area_m2)
 
 # Calculate euclidean distances ---------------------------
 
@@ -45,7 +48,7 @@ trap_data %>%
 trap_data %>%
   distinct(sp4) %>%
   inner_join(distinct(tree_data, sp4)) %>%
-  pull(sp4) -> sp_list
+  pull(sp4) -> sp_list #86 species
 
 # apply function to all pairwise combinations of year and species
 # will return list of dfs
@@ -59,7 +62,7 @@ bci_dists <- dplyr::bind_rows(all_dists)
 calculate_CI <- function (trap) {
 	drop_na(bci_dists, trap) %>%
 	group_by(tree, year) %>%
-	mutate(a = exp( (-1/20) * eval(parse(text = trap)) ) * dbh^(0.5) ) %>%
+	mutate(a = exp( (-1/20) * eval(parse(text = trap)) ) * basal_area_m2 ) %>%
 	ungroup() %>%
 	dplyr::select(year, sp4, trap, a) %>%
 	group_by(year, sp4) %>%
@@ -80,4 +83,4 @@ CI_data_b  %>%
   left_join(trap_data, by = c("trap", "year", "sp4")) -> trap_connect
 
 saveRDS(trap_connect,
-	file = here::here("data", "clean", "trap_connect_20m.rds"))
+	file = here::here("data", "clean", "trap_connect_repro_consp_20m.rds"))
