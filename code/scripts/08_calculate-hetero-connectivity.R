@@ -2,28 +2,49 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: calculate-connectivity.R
-## Desc: Calculate connectivity indicies for each trap in every year
+## Desc: Calculate connectivity to reproductive, co-fruiting heterospecifics
 ## Date created: 2023-08-02
 
-library("dplyr") # v 1.3.1
-library("rdist") # v 0.0.5
+library("dplyr")
+library("rdist")
 library("tidyr")
 
-# Load data ---------------------------
-trap_data <- readRDS("/home/users/ft840275/spatial_patterns/data/clean/trap_data.rds")
 
-tree_data <- readRDS("/home/users/ft840275/spatial_patterns/data/clean/tree_data.rds")
+# Load data ---------------------------
+trap_data <-
+  readRDS("data/clean/trap_data.rds")
+
+tree_data <-
+  readRDS("data/clean/tree_data.rds") %>%
+  filter(dbh_mm >= r50)  %>% # only reproductive-sized
+  select(sp4, year, tree, x, y, basal_area_m2)
+
+fruiting_data <-
+  readRDS("data/clean/cofruit_data.rds")
+
 
 # Calculate euclidean distances ---------------------------
 
-calculate_dist <- function (species, yr) {
-  # subset tree data
-  bd <- dplyr::filter(tree_data,
-                      (tree_data[,"sp4"] == species) & (tree_data[,"year"] == yr) )
+# distance between each tree of species i and every trap, in each year
 
-  # subset trap data
-  td <- dplyr::filter(trap_data,
-                      (trap_data[,"sp4"] == species) & (trap_data[,"year"] == yr) )
+calculate_dist <- function (species, yr, fruiting, tree_df, trap_df) {
+
+  fd <- fruiting %>%
+    dplyr::filter(sp4 == species) %>%
+    tidyr::unnest(co_fruit_sp) %>%
+    dplyr::pull(co_fruit_sp)
+
+  # only keep heterospecific trees i.e. not species i
+  # and only heterospecifics which fruit at the same time as species i
+  bd <- tree_df %>%
+    dplyr::filter(sp4 != species  &
+                    sp4 %in% fd &
+                    year == yr)
+
+  # only keep traps with seeds of species i
+  td <- trap_df %>%
+    dplyr::filter(sp4 == species) %>%
+    dplyr::filter(year == yr)
 
   # create distance matrix using x and y co-ordinates
   dists <- cdist(bd[,c("x", "y")], td[,c("x", "y")], metric = "euclidean")
@@ -33,51 +54,56 @@ calculate_dist <- function (species, yr) {
   colnames(dists_df) <- unlist(td$trap)
 
   # bind with the tree data
-  cbind(bd, dists_df)
+  cbind(bd, dists_df) %>%
+    mutate(sp_i = species) -> out
+
+  return(out)
 }
 
-# create lists of sp and year to pass to function
-trap_data %>%
-  distinct(year) %>%
-  inner_join(distinct(tree_data, year)) %>%
-  pull(year) -> year_list
+# get every possible comb of yr and sp to pass to function
+keys <-
+  expand(trap_data, sp4, year)
 
-trap_data %>%
-  distinct(sp4) %>%
-  inner_join(distinct(tree_data, sp4)) %>%
-  pull(sp4) -> sp_list
-
-# apply function to all pairwise combinations of year and species
+# apply function
 # will return list of dfs
-all_dists <- outer(sp_list, year_list, FUN = Vectorize(calculate_dist))
+all_dists <-
+  purrr::map2(
+    .x = keys$sp4,
+    .y = keys$year,
+    .f = calculate_dist,
+    fruiting = fruiting_data,
+    tree_df = tree_data,
+    trap_df = trap_data,
+    .progress = TRUE
+  )
 
-bci_dists <- dplyr::bind_rows(all_dists)
+bci_dists <-
+  dplyr::bind_rows(all_dists)
 
 # Hanski's Connectivity index ---------------------------
 
 # function to calculate CI
 calculate_hetero_CI <- function (trap_id, sp_id) {
-  drop_na(bci_dists, trap_id) %>%
+  bci_dists %>%
+    drop_na(trap_id) %>%
     group_by(tree, year) %>%
-    mutate(a = exp( (-1/20) * eval(parse(text = trap_id)) ) * dbh^(0.5) ) %>%
+    mutate(a = exp( (-1/20) * eval(parse(text = trap_id)) ) * basal_area_m2 ) %>%
     ungroup() %>%
-    dplyr::filter(sp4 != sp_id) %>%
+    dplyr::filter(sp_i == sp_id) %>%
     dplyr::select(year, all_of(trap_id), a) %>%
     group_by(year) %>%
     summarise(trap = paste(trap_id), sp4 = paste(sp_id),
               connectivity = sum(a, na.rm = TRUE), .groups = "drop")
 }
 
-trap_data %>%
-  filter(sp4 %in% sp_list) %>%
-  select(trap, sp4) %>%
-  distinct() %>%
-  rename(trap_id = trap, sp_id = sp4) -> trap_sp_df
+keys_traps <-
+  expand(trap_data, sp4, trap) %>%
+  rename(trap_id = trap, sp_id = sp4)
 
 CI_data_h <-
   purrr::map2(.f = calculate_hetero_CI,
-              .x= trap_sp_df$trap_id,
-              .y = trap_sp_df$sp_id)
+              .x = keys_traps$trap_id,
+              .y = keys_traps$sp_id)
 
 CI_data_h_b <- bind_rows(CI_data_h)
 
@@ -87,4 +113,4 @@ CI_data_h_b  %>%
   inner_join(trap_data, by = c("trap", "year", "sp4")) -> trap_connect
 
 saveRDS(trap_connect,
-        file = "/home/users/ft840275/spatial_patterns/data/clean/hetero_trap_connect_20m.rds")
+        file = "data/clean/trap_connect_repro_hetero_20m.rds")
