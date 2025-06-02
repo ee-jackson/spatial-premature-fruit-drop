@@ -2,7 +2,7 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: calculate-connectivity.R
-## Desc: Calculate connectivity indicies for each trap in every year
+## Desc: Calculate connectivity to non-reproductive conspecifics
 ## Date created: 2023-08-02
 
 library("dplyr") # v 1.3.1
@@ -10,10 +10,17 @@ library("rdist") # v 0.0.5
 library("tidyr")
 library("parallel")
 
-# Load data ---------------------------
-trap_data <- readRDS("/home/users/ft840275/spatial_patterns/data/clean/trap_data.rds")
 
-tree_data <- readRDS("/home/users/ft840275/spatial_patterns/data/clean/total_tree_data.rds")
+# Load data ---------------------------
+
+trap_data <-
+  readRDS("data/clean/trap_data.rds")
+
+tree_data <-
+  readRDS("data/clean/tree_data.rds") %>%
+  filter(dbh_mm < r50)  %>% # not reproductive-sized
+  select(sp4, year, tree, x, y, basal_area_m2)
+
 
 # Calculate euclidean distances ---------------------------
 
@@ -38,19 +45,18 @@ calculate_dist <- function (species, yr) {
 }
 
 # create lists of sp and year to pass to function
-trap_data %>%
-  distinct(year) %>%
-  inner_join(distinct(tree_data, year)) %>%
-  pull(year) -> year_list
-
-trap_data %>%
-  distinct(sp4) %>%
-  inner_join(distinct(tree_data, sp4)) %>%
-  pull(sp4) -> sp_list
+keys <-
+  expand(trap_data, sp4, year)
 
 # apply function to all pairwise combinations of year and species
 # will return list of dfs
-all_dists <- outer(sp_list, year_list, FUN = Vectorize(calculate_dist))
+all_dists <-
+  purrr::map2(
+    .x = keys$sp4,
+    .y = keys$year,
+    .f = calculate_dist,
+    .progress = TRUE
+  )
 
 bci_dists <- dplyr::bind_rows(all_dists)
 
@@ -60,7 +66,7 @@ bci_dists <- dplyr::bind_rows(all_dists)
 calculate_CI <- function (trap) {
   drop_na(bci_dists, trap) %>%
     group_by(tree, year) %>%
-    mutate(a = exp( (-1/20) * eval(parse(text = trap)) ) * dbh^(0.5) ) %>%
+    mutate(a = exp( (-1/20) * eval(parse(text = trap)) ) * basal_area_m2 ) %>%
     ungroup() %>%
     dplyr::select(year, sp4, trap, a) %>%
     group_by(year, sp4) %>%
@@ -71,7 +77,7 @@ trap_data %>%
   distinct(trap) %>%
   pull(trap) -> trap_list
 
-CI_data <- mclapply(trap_list, calculate_CI, mc.cores = 8)
+CI_data <- parallel::mclapply(trap_list, calculate_CI, mc.cores = 4)
 
 CI_data_b <- bind_rows(CI_data)
 
@@ -81,4 +87,4 @@ CI_data_b  %>%
   left_join(trap_data, by = c("trap", "year", "sp4")) -> trap_connect
 
 saveRDS(trap_connect,
-        file = "/home/users/ft840275/spatial_patterns/data/clean/total_trap_connect_20m.rds")
+        file = "data/clean/trap_connect_nonrepro_consp_20m.rds")
