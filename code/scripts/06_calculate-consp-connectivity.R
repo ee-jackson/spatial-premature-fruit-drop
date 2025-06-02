@@ -40,19 +40,18 @@ calculate_dist <- function (species, yr) {
 }
 
 # create lists of sp and year to pass to function
-trap_data %>%
-  distinct(year) %>%
-  inner_join(distinct(tree_data, year)) %>%
-  pull(year) -> year_list
-
-trap_data %>%
-  distinct(sp4) %>%
-  inner_join(distinct(tree_data, sp4)) %>%
-  pull(sp4) -> sp_list #86 species
+keys <-
+  expand(trap_data, sp4, year)
 
 # apply function to all pairwise combinations of year and species
 # will return list of dfs
-all_dists <- outer(sp_list, year_list, FUN = Vectorize(calculate_dist))
+all_dists <-
+  purrr::map2(
+    .x = keys$sp4,
+    .y = keys$year,
+    .f = calculate_dist,
+    .progress = TRUE
+  )
 
 bci_dists <- dplyr::bind_rows(all_dists)
 
