@@ -5,8 +5,8 @@
 ## Desc: Calculate connectivity to non-reproductive conspecifics
 ## Date created: 2023-08-02
 
-library("dplyr") # v 1.3.1
-library("rdist") # v 0.0.5
+library("dplyr")
+library("rdist", lib.loc = "~/local/rlibs")
 library("tidyr")
 library("parallel")
 

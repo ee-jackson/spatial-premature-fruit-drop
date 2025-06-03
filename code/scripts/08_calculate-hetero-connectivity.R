@@ -6,7 +6,7 @@
 ## Date created: 2023-08-02
 
 library("dplyr")
-library("rdist")
+library("rdist", lib.loc = "~/local/rlibs")
 library("tidyr")
 
 
@@ -25,10 +25,11 @@ fruiting_data <-
 
 # Calculate euclidean distances ---------------------------
 
-# distance between each tree of species i and every trap, in each year
+# distance between each tree and every trap, in each year
 
 calculate_dist <- function (species, yr, fruiting, tree_df, trap_df) {
 
+  # get list of species which fruit at the same time as species i
   fd <- fruiting %>%
     dplyr::filter(sp4 == species) %>%
     tidyr::unnest(co_fruit_sp) %>%
@@ -60,7 +61,7 @@ calculate_dist <- function (species, yr, fruiting, tree_df, trap_df) {
   return(out)
 }
 
-# get every possible comb of yr and sp to pass to function
+# get every possible comb of trap, yr and sp to pass to function
 keys <-
   expand(trap_data, sp4, year)
 
