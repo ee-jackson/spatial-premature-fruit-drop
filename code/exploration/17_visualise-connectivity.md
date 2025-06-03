@@ -1,0 +1,144 @@
+New connectivity values
+================
+Eleanor Jackson
+03 June, 2025
+
+``` r
+library("tidyverse"); theme_set(theme_bw(base_size = 10))
+library("patchwork")
+library("here")
+```
+
+We have 3 connectivity indices:
+
+- Non-reproductive conspecifics
+- Reproductive conspecifics
+- Reproductive heterospecifics
+
+Previously, the categories were:
+
+- Reproductive conspecifics
+- Reproductive + non-reproductive conspecifics
+- Reproductive heterospecifics
+
+We are also now using basal area (m^2), rather than DBH (mm) as a proxy
+for fecundity of an individual tree.
+
+``` r
+consp_nonrepro <-
+   readRDS(here::here("data", "clean", "trap_connect_nonrepro_consp_20m.rds"))
+
+consp_repro <-
+   readRDS(here::here("data", "clean", "trap_connect_repro_consp_20m.rds"))
+
+hetero_repro <-
+   readRDS(here::here("data", "clean", "trap_connect_repro_hetero_20m.rds"))
+```
+
+``` r
+consp_nonrepro %>% 
+  ggplot(aes(x = connectivity)) +
+  geom_density() + 
+  ggtitle("Non-reproductive conspecifics") +
+  
+  consp_repro %>% 
+  ggplot(aes(x = connectivity)) +
+  geom_density() +
+  ggtitle("Reproductive conspecifics") +
+  
+  hetero_repro %>% 
+  ggplot(aes(x = connectivity)) +
+  geom_density()+
+  ggtitle("Reproductive heterospecifics") +
+  
+  plot_layout(ncol = 1)
+```
+
+![](figures/17_visualise-connectivity/unnamed-chunk-3-1.png)<!-- -->
+
+Note the difference in scale on the x-axis.
+
+``` r
+consp_repro %>% 
+  rename(conspecific_repro = connectivity) %>% 
+  full_join(consp_nonrepro) %>% 
+  rename(conspecific_nonrepro = connectivity) %>% 
+  ggplot(aes(x = conspecific_repro, y = conspecific_nonrepro)) +
+  geom_point() +
+  ggpubr::stat_cor() +
+  geom_smooth(method = "lm") +
+  
+  consp_repro %>% 
+  rename(conspecific_repro = connectivity) %>% 
+  full_join(consp_nonrepro) %>% 
+  rename(conspecific_nonrepro = connectivity) %>% 
+  filter(x > 980 | x < 20 | y > 480 | y < 20) %>% 
+  ggplot(aes(x = conspecific_repro, y = conspecific_nonrepro)) +
+  geom_point() +
+  ggpubr::stat_cor() +
+  geom_smooth(method = "lm") +
+  ggtitle("No traps < 20m from the edge")
+```
+
+![](figures/17_visualise-connectivity/unnamed-chunk-4-1.png)<!-- -->
+
+Traps with high connectivity to conspecific juveniles have low
+connectivity to conspecific adults.
+
+Juveniles + adults of the same species aren’t occupying the same spaces?
+
+``` r
+consp_repro %>% 
+  rename(conspecific_repro = connectivity) %>% 
+  full_join(hetero_repro) %>% 
+  rename(heterospecific_repro = connectivity) %>% 
+  ggplot(aes(x = conspecific_repro, y = heterospecific_repro)) +
+  ggpubr::stat_cor() +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  
+  consp_repro %>% 
+  rename(conspecific_repro = connectivity) %>% 
+  full_join(hetero_repro) %>% 
+  rename(heterospecific_repro = connectivity) %>% 
+  filter(x > 980 | x < 20 | y > 480 | y < 20) %>% 
+  ggplot(aes(x = conspecific_repro, y = heterospecific_repro)) +
+  ggpubr::stat_cor() +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("No traps < 20m from the edge")
+```
+
+![](figures/17_visualise-connectivity/unnamed-chunk-5-1.png)<!-- -->
+
+Traps with high connectivity to conspecific adults have low connectivity
+to heterospecific adults.
+
+``` r
+consp_nonrepro %>% 
+  rename(conspecific_nonrepro = connectivity) %>% 
+  full_join(hetero_repro) %>% 
+  rename(heterospecific_repro = connectivity) %>% 
+  ggplot(aes(x = conspecific_nonrepro, y = heterospecific_repro)) +
+  ggpubr::stat_cor() +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  
+  consp_nonrepro %>% 
+  rename(conspecific_nonrepro = connectivity) %>% 
+  full_join(hetero_repro) %>% 
+  rename(heterospecific_repro = connectivity) %>% 
+  filter(x > 980 | x < 20 | y > 480 | y < 20) %>% 
+  ggplot(aes(x = conspecific_nonrepro, y = heterospecific_repro)) +
+  ggpubr::stat_cor() +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  ggtitle("No traps < 20m from the edge")
+```
+
+![](figures/17_visualise-connectivity/unnamed-chunk-6-1.png)<!-- -->
+
+Traps with high connectivity to conspecific juveniles have high
+connectivity to heterospecific adults.
+
+Correlations are present but not super strong.
