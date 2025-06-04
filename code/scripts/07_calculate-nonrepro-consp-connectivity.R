@@ -13,13 +13,35 @@ library("parallel")
 
 # Load data ---------------------------
 
-trap_data <-
-  readRDS("data/clean/trap_data.rds")
-
 tree_data <-
   readRDS("data/clean/tree_data.rds") %>%
   filter(dbh_mm < r50)  %>% # not reproductive-sized
   select(sp4, year, tree, x, y, basal_area_m2)
+
+trap_data <-
+  readRDS("data/clean/trap_data.rds")
+
+
+# Filter species ----------------------------------------------------------
+
+# only keep species which appear in both datasets
+shared_sp <-
+  trap_data %>%
+  select(sp4) %>%
+  distinct() %>%
+  inner_join(
+    y = tree_data %>%
+      select(sp4) %>%
+      distinct()
+  )
+
+trap_data <-
+  trap_data %>%
+  filter(sp4 %in% shared_sp$sp4)
+
+tree_data <-
+  tree_data %>%
+  filter(sp4 %in% shared_sp$sp4)
 
 
 # Calculate euclidean distances ---------------------------
@@ -60,6 +82,7 @@ all_dists <-
 
 bci_dists <- dplyr::bind_rows(all_dists)
 
+
 # Hanski's Connectivity index ---------------------------
 
 # function to calculate CI
@@ -80,6 +103,7 @@ trap_data %>%
 CI_data <- parallel::mclapply(trap_list, calculate_CI, mc.cores = 4)
 
 CI_data_b <- bind_rows(CI_data)
+
 
 # Merge and save dataset ---------------------------
 

@@ -11,6 +11,7 @@ library("tidyr")
 
 
 # Load data ---------------------------
+
 trap_data <-
   readRDS("data/clean/trap_data.rds")
 
@@ -21,6 +22,28 @@ tree_data <-
 
 fruiting_data <-
   readRDS("data/clean/cofruit_data.rds")
+
+
+# Filter species ----------------------------------------------------------
+
+# only keep species which appear in both datasets
+shared_sp <-
+  trap_data %>%
+  select(sp4) %>%
+  distinct() %>%
+  inner_join(
+    y = tree_data %>%
+      select(sp4) %>%
+      distinct()
+  )
+
+trap_data <-
+  trap_data %>%
+  filter(sp4 %in% shared_sp$sp4)
+
+tree_data <-
+  tree_data %>%
+  filter(sp4 %in% shared_sp$sp4)
 
 
 # Calculate euclidean distances ---------------------------
@@ -81,6 +104,7 @@ all_dists <-
 bci_dists <-
   dplyr::bind_rows(all_dists)
 
+
 # Hanski's Connectivity index ---------------------------
 
 # function to calculate CI
@@ -107,6 +131,7 @@ CI_data_h <-
               .y = keys_traps$sp_id)
 
 CI_data_h_b <- bind_rows(CI_data_h)
+
 
 # Merge and save dataset ---------------------------
 

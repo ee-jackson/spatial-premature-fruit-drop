@@ -10,12 +10,36 @@ library("here")
 library("rdist")
 
 # Load data ---------------------------
+
 trap_data <- readRDS(here::here("data", "clean", "trap_data.rds"))
 
 tree_data <-
   readRDS(here::here("data", "clean", "tree_data.rds")) %>%
   filter(dbh_mm >= r50)  %>% # only reproductive-sized
   select(sp4, year, tree, x, y, basal_area_m2)
+
+
+# Filter species ----------------------------------------------------------
+
+# only keep species which appear in both datasets
+shared_sp <-
+  trap_data %>%
+  select(sp4) %>%
+  distinct() %>%
+  inner_join(
+    y = tree_data %>%
+      select(sp4) %>%
+      distinct()
+  )
+
+trap_data <-
+  trap_data %>%
+  filter(sp4 %in% shared_sp$sp4)
+
+tree_data <-
+  tree_data %>%
+  filter(sp4 %in% shared_sp$sp4)
+
 
 # Calculate euclidean distances ---------------------------
 
