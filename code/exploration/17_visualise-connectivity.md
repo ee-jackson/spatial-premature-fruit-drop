@@ -1,7 +1,7 @@
 New connectivity values
 ================
 Eleanor Jackson
-03 June, 2025
+05 June, 2025
 
 ``` r
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
@@ -21,8 +21,8 @@ Previously, the categories were:
 - Reproductive + non-reproductive conspecifics
 - Reproductive heterospecifics
 
-We are also now using basal area (m^2), rather than DBH (mm) as a proxy
-for fecundity of an individual tree.
+We are also now using basal area (m<sup>2</sup>), rather than DBH (mm)
+as a proxy for fecundity of an individual tree.
 
 ``` r
 consp_nonrepro <-
@@ -59,6 +59,37 @@ consp_nonrepro %>%
 Note the difference in scale on the x-axis.
 
 ``` r
+consp_nonrepro %>% 
+  filter(x < 980 & x > 20) %>% 
+  filter(y < 480 & y > 20) %>% 
+  ggplot(aes(x = connectivity)) +
+  geom_density() + 
+  ggtitle("Non-reproductive conspecifics") +
+  
+  consp_repro %>% 
+  filter(x < 980 & x > 20) %>% 
+  filter(y < 480 & y > 20) %>% 
+  ggplot(aes(x = connectivity)) +
+  geom_density() +
+  ggtitle("Reproductive conspecifics") +
+  
+  hetero_repro %>% 
+  filter(x < 980 & x > 20) %>% 
+  filter(y < 480 & y > 20) %>% 
+  ggplot(aes(x = connectivity)) +
+  geom_density()+
+  ggtitle("Reproductive heterospecifics") +
+  
+  plot_layout(ncol = 1) +
+  plot_annotation(title = "No traps < 20m from the edge")
+```
+
+![](figures/17_visualise-connectivity/unnamed-chunk-4-1.png)<!-- -->
+
+Removing edge traps doesn’t seem to change the distributions, which is
+good.
+
+``` r
 consp_repro %>% 
   rename(conspecific_repro = connectivity) %>% 
   full_join(consp_nonrepro) %>% 
@@ -72,7 +103,8 @@ consp_repro %>%
   rename(conspecific_repro = connectivity) %>% 
   full_join(consp_nonrepro) %>% 
   rename(conspecific_nonrepro = connectivity) %>% 
-  filter(x > 980 | x < 20 | y > 480 | y < 20) %>% 
+  filter(x < 980 & x > 20) %>% 
+  filter(y < 480 & y > 20) %>% 
   ggplot(aes(x = conspecific_repro, y = conspecific_nonrepro)) +
   geom_point() +
   ggpubr::stat_cor() +
@@ -80,7 +112,7 @@ consp_repro %>%
   ggtitle("No traps < 20m from the edge")
 ```
 
-![](figures/17_visualise-connectivity/unnamed-chunk-4-1.png)<!-- -->
+![](figures/17_visualise-connectivity/unnamed-chunk-5-1.png)<!-- -->
 
 Traps with high connectivity to conspecific juveniles have low
 connectivity to conspecific adults.
@@ -101,7 +133,8 @@ consp_repro %>%
   rename(conspecific_repro = connectivity) %>% 
   full_join(hetero_repro) %>% 
   rename(heterospecific_repro = connectivity) %>% 
-  filter(x > 980 | x < 20 | y > 480 | y < 20) %>% 
+  filter(x < 980 & x > 20) %>% 
+  filter(y < 480 & y > 20) %>% 
   ggplot(aes(x = conspecific_repro, y = heterospecific_repro)) +
   ggpubr::stat_cor() +
   geom_point() +
@@ -109,7 +142,7 @@ consp_repro %>%
   ggtitle("No traps < 20m from the edge")
 ```
 
-![](figures/17_visualise-connectivity/unnamed-chunk-5-1.png)<!-- -->
+![](figures/17_visualise-connectivity/unnamed-chunk-6-1.png)<!-- -->
 
 Traps with high connectivity to conspecific adults have low connectivity
 to heterospecific adults.
@@ -128,7 +161,8 @@ consp_nonrepro %>%
   rename(conspecific_nonrepro = connectivity) %>% 
   full_join(hetero_repro) %>% 
   rename(heterospecific_repro = connectivity) %>% 
-  filter(x > 980 | x < 20 | y > 480 | y < 20) %>% 
+  filter(x < 980 & x > 20) %>% 
+  filter(y < 480 & y > 20) %>% 
   ggplot(aes(x = conspecific_nonrepro, y = heterospecific_repro)) +
   ggpubr::stat_cor() +
   geom_point() +
@@ -136,9 +170,7 @@ consp_nonrepro %>%
   ggtitle("No traps < 20m from the edge")
 ```
 
-![](figures/17_visualise-connectivity/unnamed-chunk-6-1.png)<!-- -->
+![](figures/17_visualise-connectivity/unnamed-chunk-7-1.png)<!-- -->
 
 Traps with high connectivity to conspecific juveniles have high
 connectivity to heterospecific adults.
-
-Correlations are present but not super strong.

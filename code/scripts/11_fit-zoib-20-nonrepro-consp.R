@@ -17,19 +17,11 @@ trap_connect <-
   readRDS("data/clean/trap_connect_nonrepro_consp_20m.rds")
 
 # don't include traps < 20m from the edge of the plot
-edge_traps <-
-  trap_connect %>%
-  filter(x > 980 | x < 20 | y > 480 | y < 20)
-
-edge_traps_list <-
-  edge_traps %>%
-  select(trap) %>%
-  distinct()
-
 # centre and scale connectivity
 test_data <-
   trap_connect %>%
-  filter(!trap %in% edge_traps_list$trap) %>%
+  filter(x < 980 & x > 20) %>%
+  filter(y < 480 & y > 20) %>%
   select(- x, - y, - capsules) %>%
   transform(connectivity_sc = scale(connectivity)) %>%
   filter(sum_parts >= 3) %>%
