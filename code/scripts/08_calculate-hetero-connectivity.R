@@ -23,6 +23,10 @@ tree_data <-
 fruiting_data <-
   readRDS("data/clean/cofruit_data.rds")
 
+monoecious_species <-
+  read.csv("data/clean/species_list.csv") %>%
+  filter(dioecious != TRUE)
+
 
 # Filter species ----------------------------------------------------------
 
@@ -35,7 +39,8 @@ shared_sp <-
     y = tree_data %>%
       select(sp4) %>%
       distinct()
-  )
+  ) %>%
+  filter(sp4 %in% monoecious_species$sp4) # drops 21 dioecious species
 
 trap_data <-
   trap_data %>%
