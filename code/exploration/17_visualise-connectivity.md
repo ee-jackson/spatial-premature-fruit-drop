@@ -1,7 +1,7 @@
 New connectivity values
 ================
 Eleanor Jackson
-05 June, 2025
+11 June, 2025
 
 ``` r
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
@@ -114,10 +114,7 @@ consp_repro %>%
 
 ![](figures/17_visualise-connectivity/unnamed-chunk-5-1.png)<!-- -->
 
-Traps with high connectivity to conspecific juveniles have low
-connectivity to conspecific adults.
-
-Juveniles + adults of the same species aren’t occupying the same spaces?
+No relationship there.
 
 ``` r
 consp_repro %>% 

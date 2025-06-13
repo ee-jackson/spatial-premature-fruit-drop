@@ -115,10 +115,7 @@ consp_repro %>%
   ggtitle("No traps < 20m from the edge")
 ```
 
-Traps with high connectivity to conspecific juveniles 
-have low connectivity to conspecific adults.
-
-Juveniles + adults of the same species aren't occupying the same spaces?
+No relationship there.
 
 ```{r fig.width=9, warning=FALSE, message = FALSE}
 consp_repro %>% 
