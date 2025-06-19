@@ -263,11 +263,60 @@ sp_ests_h <-
 est_diff <- 
   bind_rows(list("conspecific" = sp_ests, "heterospecific" = sp_ests_h),
           .id = "density") %>% 
-  select(term, level, density, estimate, group) %>% 
-  pivot_wider(values_from = estimate, names_from = density) %>% 
-  mutate(abs_difference = abs(conspecific - heterospecific),
-         difference = conspecific - heterospecific)
+  select(term, level, density, estimate, group, conf.low, conf.high) %>% 
+  pivot_wider(values_from = c(estimate, conf.low, conf.high), 
+              names_from = density) %>% 
+  mutate(abs_difference = abs(estimate_conspecific - estimate_heterospecific),
+         difference = estimate_conspecific - estimate_heterospecific)
 ```
+
+``` r
+bind_rows(list("conspecific" = sp_ests, "heterospecific" = sp_ests_h),
+          .id = "density") %>% 
+  rowwise() %>% 
+  filter(! str_detect("Intercept", term)) %>% 
+  left_join(abun, by = c("level" = "sp4")) %>%  
+  ggplot(aes(x = log(median_abundance), 
+             y = estimate, 
+             group = density)) +
+  geom_pointinterval(aes(ymax = conf.high,
+                         ymin = conf.low,
+                         colour = density),
+             alpha = 0.8, shape = 16) +
+  geom_smooth(aes(colour = density,
+                  fill = density),
+              method = "lm") +
+  facet_wrap(~group, scales = "free") +
+  scale_colour_viridis_d() +
+  scale_fill_viridis_d() 
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](figures/19_species-abundance/unnamed-chunk-14-1.png)<!-- -->
+
+``` r
+bind_rows(list("conspecific" = sp_ests, "heterospecific" = sp_ests_h),
+          .id = "density") %>% 
+  rowwise() %>% 
+  filter(! str_detect("Intercept", term)) %>% 
+  left_join(abun, by = c("level" = "sp4")) %>%  
+  ggplot(aes(x = log(median_abundance), 
+             y = estimate, 
+             group = density)) +
+  geom_point(aes(colour = density),
+             alpha = 0.8, shape = 16) +
+  geom_smooth(aes(colour = density,
+                  fill = density),
+              method = "lm") +
+  facet_wrap(~group, scales = "free") +
+  scale_colour_viridis_d() +
+  scale_fill_viridis_d() 
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](figures/19_species-abundance/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 est_diff %>%
@@ -288,7 +337,7 @@ est_diff %>%
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](figures/19_species-abundance/unnamed-chunk-14-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-16-1.png)<!-- -->
 
 More of a difference between effect of conspecifics & effect of
 heterospecifics when abundance is high?
@@ -320,7 +369,7 @@ autoplot(pca_p,
          loadings.label = TRUE)
 ```
 
-![](figures/19_species-abundance/unnamed-chunk-15-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 fortify(pca_p) %>% 
@@ -331,7 +380,7 @@ fortify(pca_p) %>%
   scale_colour_viridis_c() 
 ```
 
-![](figures/19_species-abundance/unnamed-chunk-15-2.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-17-2.png)<!-- -->
 
 ``` r
 preds_sp <- 
@@ -359,4 +408,4 @@ preds_sp %>%
 
     ## Joining with `by = join_by(sp4)`
 
-![](figures/19_species-abundance/unnamed-chunk-17-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-19-1.png)<!-- -->
