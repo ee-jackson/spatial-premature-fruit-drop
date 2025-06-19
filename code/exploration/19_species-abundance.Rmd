@@ -56,7 +56,7 @@ tree_data %>%
   summarise(abundance = sum(basal_area_m2, na.rm = TRUE)) %>% 
   ggplot(aes(x = as.factor(year), y = abundance )) +
   geom_point() +
-  facet_wrap(~sp4, scales = "free")
+  facet_wrap(~sp4, scales = "free_y")
 ```
 
 Abundance changes quite a lot..
@@ -82,6 +82,8 @@ tree_data %>%
   geom_point(aes( x = median_abundance ), colour = "red") +
   geom_point(aes( x = mean_abundance ))
 ```
+
+Medians and means are v similar
 
 ```{r}
 model <-
@@ -117,7 +119,9 @@ abun <-
   group_by(year, sp4, genus, species) %>% 
   summarise(abundance = sum(basal_area_m2, na.rm = TRUE)) %>% 
   group_by(sp4, genus, species) %>% 
-  summarise(median_abundance = median(abundance, na.rm = TRUE))
+  summarise(median_abundance = median(abundance, na.rm = TRUE),
+            mean_abundance = mean(abundance, na.rm = TRUE),
+            max_abundance = max(abundance, na.rm = TRUE))
 
 ```
 ## Conspecific effect
@@ -136,10 +140,31 @@ sp_ests %>%
   ggplot(aes(x= log(median_abundance), y = estimate,
              ymin = conf.low , ymax=conf.high)) +
   geom_pointinterval() +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
   geom_smooth(method = "lm") +
-  facet_wrap(~group, scales = "free")
+  facet_wrap(~group, scales = "free") +
+  ggtitle("Slopes")
 
 ```
+
+```{r}
+sp_ests %>%
+  rowwise() %>% 
+  filter(str_detect("Intercept", term)) %>% 
+  left_join(abun, by = c("level" = "sp4")) %>% 
+  ggplot(aes(x= log(median_abundance), y = estimate,
+             ymin = conf.low , ymax=conf.high)) +
+  geom_pointinterval() +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~group, scales = "free") +
+  ggtitle("Intercepts")
+```
+
 
 ```{r}
 
@@ -149,9 +174,11 @@ sp_ests %>%
   pivot_wider(names_from = term,
               values_from = estimate) %>% 
   rename("slope" = "connectivity_sc") %>% 
-  ggplot(aes(x = slope, y = `(Intercept)`)) +
+  left_join(abun, by = c("level" = "sp4")) %>% 
+  ggplot(aes(x = slope, y = `(Intercept)`, colour = log(median_abundance))) +
   geom_point() +
-  facet_wrap(~group, scales = "free")
+  facet_wrap(~group, scales = "free") +
+  scale_colour_viridis_c() 
 ```
 
 
@@ -200,17 +227,6 @@ est_diff <-
   mutate(abs_difference = abs(conspecific - heterospecific),
          difference = conspecific - heterospecific)
 
-est_diff %>%
-  rowwise() %>% 
-  filter(! str_detect("Intercept", term)) %>% 
-  left_join(abun, by = c("level" = "sp4")) %>% 
-  ggplot(aes(x= log(median_abundance), y = abs_difference)) +
-  geom_point(aes(colour = log(median_abundance))) +
-  geom_smooth(method = "lm") +
-  facet_wrap(~group, scales = "free") +
-  scale_colour_viridis_c() +
-  theme(legend.position = "none") + 
-  ggpubr::stat_cor(label.x.npc = "left", label.y.npc = "top") 
 ```
 
 ```{r}
@@ -220,6 +236,9 @@ est_diff %>%
   left_join(abun, by = c("level" = "sp4")) %>% 
   ggplot(aes(x= log(median_abundance), y = difference)) +
   geom_point(aes(colour = log(median_abundance))) +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
   geom_smooth(method = "lm") +
   facet_wrap(~group, scales = "free") +
   scale_colour_viridis_c() +

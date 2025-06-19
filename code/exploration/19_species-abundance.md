@@ -1,7 +1,7 @@
 Species abundance
 ================
 Eleanor Jackson
-17 June, 2025
+19 June, 2025
 
 ``` r
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
@@ -52,7 +52,7 @@ tree_data %>%
   summarise(abundance = sum(basal_area_m2, na.rm = TRUE)) %>% 
   ggplot(aes(x = as.factor(year), y = abundance )) +
   geom_point() +
-  facet_wrap(~sp4, scales = "free")
+  facet_wrap(~sp4, scales = "free_y")
 ```
 
     ## `summarise()` has grouped output by 'year', 'sp4', 'genus'. You can override
@@ -97,6 +97,8 @@ tree_data %>%
 
 ![](figures/19_species-abundance/unnamed-chunk-5-1.png)<!-- -->
 
+Medians and means are v similar
+
 ``` r
 model <-
   readRDS(here::here("output", "models", 
@@ -131,7 +133,9 @@ abun <-
   group_by(year, sp4, genus, species) %>% 
   summarise(abundance = sum(basal_area_m2, na.rm = TRUE)) %>% 
   group_by(sp4, genus, species) %>% 
-  summarise(median_abundance = median(abundance, na.rm = TRUE))
+  summarise(median_abundance = median(abundance, na.rm = TRUE),
+            mean_abundance = mean(abundance, na.rm = TRUE),
+            max_abundance = max(abundance, na.rm = TRUE))
 ```
 
     ## `summarise()` has grouped output by 'year', 'sp4', 'genus'. You can override
@@ -160,8 +164,12 @@ sp_ests %>%
   ggplot(aes(x= log(median_abundance), y = estimate,
              ymin = conf.low , ymax=conf.high)) +
   geom_pointinterval() +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
   geom_smooth(method = "lm") +
-  facet_wrap(~group, scales = "free")
+  facet_wrap(~group, scales = "free") +
+  ggtitle("Slopes")
 ```
 
     ## `geom_smooth()` using formula = 'y ~ x'
@@ -171,16 +179,38 @@ sp_ests %>%
 ``` r
 sp_ests %>%
   rowwise() %>% 
+  filter(str_detect("Intercept", term)) %>% 
+  left_join(abun, by = c("level" = "sp4")) %>% 
+  ggplot(aes(x= log(median_abundance), y = estimate,
+             ymin = conf.low , ymax=conf.high)) +
+  geom_pointinterval() +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~group, scales = "free") +
+  ggtitle("Intercepts")
+```
+
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](figures/19_species-abundance/unnamed-chunk-10-1.png)<!-- -->
+
+``` r
+sp_ests %>%
+  rowwise() %>% 
   select(estimate, level, group, term) %>% 
   pivot_wider(names_from = term,
               values_from = estimate) %>% 
   rename("slope" = "connectivity_sc") %>% 
-  ggplot(aes(x = slope, y = `(Intercept)`)) +
+  left_join(abun, by = c("level" = "sp4")) %>% 
+  ggplot(aes(x = slope, y = `(Intercept)`, colour = log(median_abundance))) +
   geom_point() +
-  facet_wrap(~group, scales = "free")
+  facet_wrap(~group, scales = "free") +
+  scale_colour_viridis_c() 
 ```
 
-![](figures/19_species-abundance/unnamed-chunk-10-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-11-1.png)<!-- -->
 
 ``` r
 sp_ests %>% 
@@ -203,7 +233,7 @@ autoplot(pca_p,
          loadings.label = TRUE)
 ```
 
-![](figures/19_species-abundance/unnamed-chunk-11-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 fortify(pca_p) %>% 
@@ -214,7 +244,7 @@ fortify(pca_p) %>%
   scale_colour_viridis_c() 
 ```
 
-![](figures/19_species-abundance/unnamed-chunk-11-2.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-12-2.png)<!-- -->
 
 ## Difference between conspecific and heterospecific effect
 
@@ -237,23 +267,7 @@ est_diff <-
   pivot_wider(values_from = estimate, names_from = density) %>% 
   mutate(abs_difference = abs(conspecific - heterospecific),
          difference = conspecific - heterospecific)
-
-est_diff %>%
-  rowwise() %>% 
-  filter(! str_detect("Intercept", term)) %>% 
-  left_join(abun, by = c("level" = "sp4")) %>% 
-  ggplot(aes(x= log(median_abundance), y = abs_difference)) +
-  geom_point(aes(colour = log(median_abundance))) +
-  geom_smooth(method = "lm") +
-  facet_wrap(~group, scales = "free") +
-  scale_colour_viridis_c() +
-  theme(legend.position = "none") + 
-  ggpubr::stat_cor(label.x.npc = "left", label.y.npc = "top") 
 ```
-
-    ## `geom_smooth()` using formula = 'y ~ x'
-
-![](figures/19_species-abundance/unnamed-chunk-12-1.png)<!-- -->
 
 ``` r
 est_diff %>%
@@ -262,6 +276,9 @@ est_diff %>%
   left_join(abun, by = c("level" = "sp4")) %>% 
   ggplot(aes(x= log(median_abundance), y = difference)) +
   geom_point(aes(colour = log(median_abundance))) +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
   geom_smooth(method = "lm") +
   facet_wrap(~group, scales = "free") +
   scale_colour_viridis_c() +
@@ -271,7 +288,7 @@ est_diff %>%
 
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](figures/19_species-abundance/unnamed-chunk-13-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-14-1.png)<!-- -->
 
 More of a difference between effect of conspecifics & effect of
 heterospecifics when abundance is high?
@@ -303,7 +320,7 @@ autoplot(pca_p,
          loadings.label = TRUE)
 ```
 
-![](figures/19_species-abundance/unnamed-chunk-14-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 fortify(pca_p) %>% 
@@ -314,7 +331,7 @@ fortify(pca_p) %>%
   scale_colour_viridis_c() 
 ```
 
-![](figures/19_species-abundance/unnamed-chunk-14-2.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-15-2.png)<!-- -->
 
 ``` r
 preds_sp <- 
@@ -342,4 +359,4 @@ preds_sp %>%
 
     ## Joining with `by = join_by(sp4)`
 
-![](figures/19_species-abundance/unnamed-chunk-16-1.png)<!-- -->
+![](figures/19_species-abundance/unnamed-chunk-17-1.png)<!-- -->
