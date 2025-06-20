@@ -1,7 +1,7 @@
 Species abundance
 ================
 Eleanor Jackson
-19 June, 2025
+20 June, 2025
 
 ``` r
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
@@ -387,7 +387,7 @@ preds_sp <-
   test_data %>%
   modelr::data_grid(
     connectivity_sc =
-      modelr::seq_range(connectivity_sc, n = 5),
+      c(0, 0.5, 1, 1.5, 2),
     sp4 = unique(test_data$sp4),
                     .model = model
   ) %>%
@@ -409,3 +409,67 @@ preds_sp %>%
     ## Joining with `by = join_by(sp4)`
 
 ![](figures/19_species-abundance/unnamed-chunk-19-1.png)<!-- -->
+
+``` r
+preds_sp_h <- 
+  test_data %>%
+  modelr::data_grid(
+    connectivity_sc =
+      c(0, 0.5, 1, 1.5, 2),
+    sp4 = unique(test_data$sp4),
+                    .model = model_h
+  ) %>%
+  tidybayes::add_epred_draws(model_h, 
+                             re_formula = 
+                               ~ (1 + 
+                                    connectivity_sc | sp4)) 
+```
+
+``` r
+preds_sp_h %>% 
+  left_join(abun)%>%
+  ggplot(aes(y = .epred, x = connectivity_sc,
+             colour = log(median_abundance), group = sp4)) +
+  stat_lineribbon(.width = 0) +
+  scale_colour_viridis_c()
+```
+
+    ## Joining with `by = join_by(sp4)`
+
+![](figures/19_species-abundance/unnamed-chunk-21-1.png)<!-- -->
+
+``` r
+preds_sp_sum <- 
+  preds_sp %>% 
+  point_interval()
+
+
+preds_sp_h_sum <- 
+  preds_sp_h %>% 
+  point_interval()
+
+preds_sp_sum %>% 
+  full_join(preds_sp_h_sum, by = c("connectivity_sc", "sp4"),
+            suffix = c("_consp", "_hetero")) %>% 
+  mutate(difference = (.epred_consp -.epred_hetero),
+         up = (.upper_consp - .upper_hetero),
+         lo = (.lower_consp - .lower_hetero)) %>% 
+  left_join(abun)%>%
+  ggplot(aes(y = difference, x = connectivity_sc,
+             colour = log(median_abundance), 
+             fill = log(median_abundance), 
+             group = sp4,
+             ymin = lo,
+             ymax = up)) +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
+  geom_lineribbon() +
+  scale_colour_viridis_c() +
+  scale_fill_viridis_c(alpha = 0.5) +
+  facet_wrap(~sp4) 
+```
+
+    ## Joining with `by = join_by(sp4)`
+
+![](figures/19_species-abundance/unnamed-chunk-22-1.png)<!-- -->
