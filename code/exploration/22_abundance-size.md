@@ -34,11 +34,11 @@ tree_data <-
 abun <- 
   tree_data %>% 
   group_by(year, sp4, sp6, genus, species) %>% 
-  summarise(abundance = sum(basal_area_m2, na.rm = TRUE)) %>% 
+  summarise(abundance_ba = sum(basal_area_m2, na.rm = TRUE),
+            abundance_n = n_distinct(tree)) %>% 
   group_by(sp4, sp6, genus, species) %>% 
-  summarise(median_abundance = median(abundance, na.rm = TRUE),
-            mean_abundance = mean(abundance, na.rm = TRUE),
-            max_abundance = max(abundance, na.rm = TRUE))
+  summarise(median_abundance_ba = median(abundance_ba, na.rm = TRUE),
+            median_abundance_n = median(abundance_n, na.rm = TRUE))
 ```
 
     ## `summarise()` has grouped output by 'year', 'sp4', 'sp6', 'genus'. You can
@@ -47,14 +47,33 @@ abun <-
     ## using the `.groups` argument.
 
 ``` r
+abun %>% 
+  inner_join(R50) %>% 
+  left_join(read_csv(here::here("data", "clean", "species_list.csv"))) %>% 
+  ggplot(aes(x = log(median_abundance_ba), y = dmax,
+             colour = lifeform)) +
+  geom_point()  +
+  
   abun %>% 
   inner_join(R50) %>% 
   left_join(read_csv(here::here("data", "clean", "species_list.csv"))) %>% 
-  ggplot(aes(x = log(median_abundance), y = dmax,
+  ggplot(aes(x = log(median_abundance_n), y = dmax,
              colour = lifeform)) +
-  geom_point()  
+  geom_point() +
+  
+  plot_layout(guides = "collect")
 ```
 
+    ## Joining with `by = join_by(sp6)`
+    ## Rows: 103 Columns: 19
+    ## ── Column specification
+    ## ──────────────────────────────────────────────────────── Delimiter: "," chr
+    ## (6): sp4, sp6, species, lifeform, family, genus dbl (2): seeds_per_fruit,
+    ## capsules_per_fruit lgl (11): capsules, dsp_ant, dsp_bat, dsp_bird, dsp_bbird,
+    ## dsp_explo, dsp_ma...
+    ## ℹ Use `spec()` to retrieve the full column specification for this data. ℹ
+    ## Specify the column types or set `show_col_types = FALSE` to quiet this message.
+    ## Joining with `by = join_by(sp4, sp6, genus, species)`
     ## Joining with `by = join_by(sp6)`
     ## Rows: 103 Columns: 19
     ## ── Column specification

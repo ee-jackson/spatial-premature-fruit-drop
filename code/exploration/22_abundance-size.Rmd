@@ -38,20 +38,29 @@ tree_data <-
 abun <- 
   tree_data %>% 
   group_by(year, sp4, sp6, genus, species) %>% 
-  summarise(abundance = sum(basal_area_m2, na.rm = TRUE)) %>% 
+  summarise(abundance_ba = sum(basal_area_m2, na.rm = TRUE),
+            abundance_n = n_distinct(tree)) %>% 
   group_by(sp4, sp6, genus, species) %>% 
-  summarise(median_abundance = median(abundance, na.rm = TRUE),
-            mean_abundance = mean(abundance, na.rm = TRUE),
-            max_abundance = max(abundance, na.rm = TRUE))
+  summarise(median_abundance_ba = median(abundance_ba, na.rm = TRUE),
+            median_abundance_n = median(abundance_n, na.rm = TRUE))
 
 ```
 
 ```{r}
+abun %>% 
+  inner_join(R50) %>% 
+  left_join(read_csv(here::here("data", "clean", "species_list.csv"))) %>% 
+  ggplot(aes(x = log(median_abundance_ba), y = dmax,
+             colour = lifeform)) +
+  geom_point()  +
+  
   abun %>% 
   inner_join(R50) %>% 
   left_join(read_csv(here::here("data", "clean", "species_list.csv"))) %>% 
-  ggplot(aes(x = log(median_abundance), y = dmax,
+  ggplot(aes(x = log(median_abundance_n), y = dmax,
              colour = lifeform)) +
-  geom_point()  
+  geom_point() +
+  
+  plot_layout(guides = "collect")
 ```
 
