@@ -14,6 +14,7 @@ knitr::opts_chunk$set(fig.path="figures/22_abundance-size/")
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
 library("patchwork")
 library("here")
+library("tidybayes")
 ```
 
 Sofia:
@@ -62,5 +63,64 @@ abun %>%
   geom_point() +
   
   plot_layout(guides = "collect")
+```
+
+> If we were to do something on growth form (which isn’t necessarily a good idea!), my thinking was something similar to what you did for the three abundance categories (but instead using the four growth form categories (M, S, T and U). The prediction would be to find more of a relationship between fruit drop and connectivity in S and U than in M and T?
+
+```{r}
+data <- readRDS(here::here("data", "clean", "trap_connect_repro_consp_20m_dioecious.rds"))
+
+model <- readRDS(here::here("output", "models", "repro_consp_20m_yesdioecious.rds"))
+
+data %>%
+  filter(x < 980 & x > 20) %>%
+  filter(y < 480 & y > 20) %>%
+  select(- x, - y, - capsules) %>%
+  filter(sum_parts >= 3) %>%
+  mutate(connectivity_sc = scale(connectivity)) %>%
+  mutate(
+         year = as.factor(year),
+         trap = as.factor(trap)) -> testdat
+```
+
+
+```{r}
+testdat %>%
+  modelr::data_grid(
+    connectivity_sc = modelr::seq_range(connectivity_sc, n = 20),
+    sp4 = unique(testdat$sp4)
+  ) %>%
+  add_epred_draws(model,
+                  re_formula =
+                    ~ (1 +
+                         connectivity_sc | sp4)) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat$connectivity_sc, 'scaled:scale') +
+      attr(testdat$connectivity_sc, 'scaled:center')
+  ) -> preds
+```
+
+```{r}
+preds %>% 
+  left_join(read_csv(here::here("data", "clean", "species_list.csv"))) %>% 
+  ggplot(aes(x = connectivity_us, y = .epred, 
+             color = lifeform, fill = lifeform)) +
+  stat_lineribbon(.width = .95, alpha = 0.5) +
+  stat_lineribbon(.width = 0, alpha = 1)
+```
+
+> One more thing: I think I suggested it could perhaps also be worth doing a similar analysis comparing species with/without known seed predators? 
+
+```{r}
+read_csv(here("data", "raw", "TidyTrait.csv")) %>% 
+  mutate(sp4 = tolower(Codigo)) %>% 
+  select(sp4, SeedPred_pres) %>% 
+  right_join(preds) %>%
+  ggplot(aes(x = connectivity_us, y = .epred, 
+             colour = as.factor(SeedPred_pres), 
+             fill = as.factor(SeedPred_pres))) +
+  stat_lineribbon(.width = .95, alpha = 0.5) +
+  stat_lineribbon(.width = 0, alpha = 1)
 ```
 
