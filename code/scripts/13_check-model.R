@@ -17,11 +17,11 @@ library("bayestestR")
 library("gt")
 
 model_rc <- readRDS(
-  here::here("output", "models", "202308","zoib_20m.rds"))
+  here::here("output", "models", "repro_consp_20m_yesdioecious.rds"))
 model_tc <- readRDS(
-  here::here("output", "models", "202308","zoib_total_c_20m.rds"))
+  here::here("output", "models", "nonrepro_consp_20m_yesdioecious.rds"))
 model_h <- readRDS(
-  here::here("output", "models", "202308","zoib_hetero_20m.rds"))
+  here::here("output", "models", "repro_hetero_20m_yesdioecious.rds"))
 
 # Posterior predictive checks ---------------------------------------------
 
@@ -45,13 +45,34 @@ plot_mcmc_check <- function(model) {
 
 # Get posterior param estimates -------------------------------------------
 
+names <-
+  c("Intercept",
+    "Reproductive conspecific density",
+    "Non-reproductive conspecific density",
+    "Diameter at breast height",
+    "Year")
+
+values <-
+  c("b_Intercept",
+    "b_phi_Intercept",
+    "b_zoi_Intercept",
+    "b_coi_Intercept",
+    "b_connectivity_sc",
+    "b_phi_connectivity_sc",
+    "b_zoi_connectivity_sc",
+    "b_coi_connectivity_sc")
+
+
 get_table <- function(model) {
   bayestestR::describe_posterior(model,
+                                 effects = "fixed",
+                                 component = "all",
                                  ci = 0.95,
                                  ci_method = "HDI",
                                  centrality = "median",
                                  test = FALSE) %>%
     mutate(across(!Rhat & !Parameter, round, 2)) %>%
+    mutate(Parameter = str_replace(Parameter, values, names)) %>%
     gt()
 }
 
@@ -63,16 +84,15 @@ rc_t_png <- png::readPNG(here::here("output", "results", "repro_con_20m.png"),
                          native = TRUE)
 
 rc_pp <- plot_pp_check(model_rc)
-rc_mcmc <- plot_mcmc_check(model_rc)
 
-((rc_pp / rc_t_png) | rc_mcmc) +
+(rc_pp / rc_t_png) +
   plot_annotation(tag_levels = 'a') &
   theme(plot.tag = element_text(size = 20))
 
 png(
   here::here("output", "figures", "repro_con_si.png"),
-  width = 1476,
-  height = 1000,
+  width = 500,
+  height = 500,
   units = "px"
 )
 
@@ -84,9 +104,8 @@ tc_t_png <- png::readPNG(here::here("output", "results", "total_con_20m.png"),
                          native = TRUE)
 
 tc_pp <- plot_pp_check(model_tc)
-tc_mcmc <- plot_mcmc_check(model_tc)
 
-((tc_pp / tc_t_png) | tc_mcmc) +
+(tc_pp / tc_t_png) +
   plot_annotation(tag_levels = 'a') &
   theme(plot.tag = element_text(size = 20))
 
@@ -105,9 +124,8 @@ h_t_png <- png::readPNG(here::here("output", "results", "het_20m.png"),
                         native = TRUE)
 
 h_pp <- plot_pp_check(model_h)
-h_mcmc <- plot_mcmc_check(model_h)
 
-((h_pp / h_t_png) | h_mcmc) +
+(h_pp / h_t_png) +
   plot_annotation(tag_levels = 'a') &
   theme(plot.tag = element_text(size = 20))
 
