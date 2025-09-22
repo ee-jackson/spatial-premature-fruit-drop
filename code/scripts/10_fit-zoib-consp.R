@@ -14,12 +14,17 @@ library("brms")
 # Get data ----------------------------------------------------------------
 
 trap_connect <-
-  readRDS("data/clean/trap_connect_repro_consp_20m.rds")
+  readRDS("data/clean/trap_connect_repro_consp_20m_dioecious.rds")
+
+not_wind_disp_species <-
+  read.csv("data/clean/species_list.csv") #%>%
+  filter(dsp_wind != TRUE)
 
 # don't include traps < 20m from the edge of the plot
 # centre and scale connectivity
 test_data <-
   trap_connect %>%
+  #filter(sp4 %in% not_wind_disp_species$sp4) %>% # drops 30 species
   filter(x < 980 & x > 20) %>%
   filter(y < 480 & y > 20) %>%
   select(- x, - y, - capsules) %>%
@@ -32,10 +37,10 @@ test_data <-
 
 zoib_mod <-
   bf(
-  proportion_abscised ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4),
-  phi ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4),
-  zoi ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4),
-  coi ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4),
+  proportion_abscised ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4), # The mean of the 0-1 values, or mu
+  phi ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4), # The precision of the 0-1 values, or phi
+  zoi ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4), # The zero-or-one-inflated part, or alpha
+  coi ~ connectivity_sc + (1|quadrat/trap) + (1|year) + (1 + connectivity_sc|sp4), # The one-inflated part, conditional on the 0s, or gamma
   family = zero_one_inflated_beta()
 )
 
@@ -65,7 +70,7 @@ fit <-
   #control = list(max_treedepth = 12, adapt_delta = 0.99),
   cores = 4,
   seed = 123,
-  file = "output/models/repro_consp_20m"
+  file = "output/models/repro_consp_20m_yesdioecious"
 )
 
 add_criterion(

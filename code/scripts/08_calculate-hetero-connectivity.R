@@ -39,8 +39,8 @@ shared_sp <-
     y = tree_data %>%
       select(sp4) %>%
       distinct()
-  ) %>%
-  filter(sp4 %in% monoecious_species$sp4) # drops 21 dioecious species
+  ) #%>%
+  #filter(sp4 %in% monoecious_species$sp4) # drops 21 dioecious species
 
 trap_data <-
   trap_data %>%
@@ -144,4 +144,4 @@ CI_data_h_b  %>%
   inner_join(trap_data, by = c("trap", "year", "sp4")) -> trap_connect
 
 saveRDS(trap_connect,
-        file = "data/clean/trap_connect_repro_hetero_20m.rds")
+        file = "data/clean/trap_connect_repro_hetero_20m_dioecious.rds")
