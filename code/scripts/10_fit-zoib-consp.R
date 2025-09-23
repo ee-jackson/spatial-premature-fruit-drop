@@ -17,7 +17,7 @@ trap_connect <-
   readRDS("data/clean/trap_connect_repro_consp_20m_dioecious.rds")
 
 not_wind_disp_species <-
-  read.csv("data/clean/species_list.csv") #%>%
+  read.csv("data/clean/species_list.csv") %>%
   filter(dsp_wind != TRUE)
 
 # don't include traps < 20m from the edge of the plot

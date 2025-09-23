@@ -17,14 +17,14 @@ trap_connect <-
   readRDS("data/clean/trap_connect_nonrepro_consp_20m_dioecious.rds")
 
 not_wind_disp_species <-
-  read.csv("data/clean/species_list.csv") #%>%
-  #filter(dsp_wind != TRUE)
+  read.csv("data/clean/species_list.csv") %>%
+  filter(dsp_wind != TRUE)
 
 # don't include traps < 20m from the edge of the plot
 # centre and scale connectivity
 test_data <-
   trap_connect %>%
-  filter(sp4 %in% not_wind_disp_species$sp4) %>% # drops 30 species
+  #filter(sp4 %in% not_wind_disp_species$sp4) %>% # drops 30 species
   filter(x < 980 & x > 20) %>%
   filter(y < 480 & y > 20) %>%
   select(- x, - y, - capsules) %>%
