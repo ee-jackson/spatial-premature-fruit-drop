@@ -107,12 +107,13 @@ wfo <- WFO.match(spec.data = orig_sp,
 # finds one unique matching name for each submitted name
 WFO.one(wfo, priority = "Accepted") %>%
   select(sp4, family, genus,
-         specificEpithet)  -> wfo_sp
+         specificEpithet, scientificNameAuthorship)  -> wfo_sp
 
-left_join(species, wfo_sp, by = "sp4") %>%
-  mutate(genus = coalesce(genus.y, genus.x)) %>%
-  mutate(species = coalesce(specificEpithet, species)) %>%
-  select(-c(genus.y, genus.x, specificEpithet)) %>%
+species %>%
+  select(-c(genus, species)) %>%
+  left_join(wfo_sp, by = "sp4") %>%
+  rename(species = specificEpithet,
+         name_authorship = scientificNameAuthorship) %>%
   mutate(across(c(family, genus, species),
             na_if, "")) -> species_names
 
