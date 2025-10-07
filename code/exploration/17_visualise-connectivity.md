@@ -1,7 +1,7 @@
 New connectivity values
 ================
 Eleanor Jackson
-11 June, 2025
+07 October, 2025
 
 ``` r
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
@@ -26,13 +26,13 @@ as a proxy for fecundity of an individual tree.
 
 ``` r
 consp_nonrepro <-
-   readRDS(here::here("data", "clean", "trap_connect_nonrepro_consp_20m.rds"))
+   readRDS(here::here("data", "clean", "trap_connect_nonrepro_consp_20m_dioecious.rds"))
 
 consp_repro <-
-   readRDS(here::here("data", "clean", "trap_connect_repro_consp_20m.rds"))
+   readRDS(here::here("data", "clean", "trap_connect_repro_consp_20m_dioecious.rds"))
 
 hetero_repro <-
-   readRDS(here::here("data", "clean", "trap_connect_repro_hetero_20m.rds"))
+   readRDS(here::here("data", "clean", "trap_connect_repro_hetero_20m_dioecious.rds"))
 ```
 
 ``` r
