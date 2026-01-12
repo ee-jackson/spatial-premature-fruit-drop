@@ -1,7 +1,7 @@
 Species level predictions
 ================
 Eleanor Jackson
-02 December, 2025
+12 January, 2026
 
 We already know that species which have a host-specific seed predator
 drop more fruits prematurely. And species which are more abundant in the
@@ -166,6 +166,22 @@ point_preds %>%
 ![](figures/24_explore-sp-lvl/unnamed-chunk-10-1.png)<!-- -->
 
 ``` r
+point_preds %>%
+  group_by(sp4, BCIReproductive) %>% 
+  summarise(max_diff = max(difference)) %>% 
+  ggplot(aes(y = log(BCIReproductive), x = max_diff)) +
+  geom_point() 
+```
+
+    ## `summarise()` has grouped output by 'sp4'. You can override using the `.groups`
+    ## argument.
+
+    ## Warning: Removed 8 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](figures/24_explore-sp-lvl/unnamed-chunk-11-1.png)<!-- -->
+
+``` r
 tree_data <-
   readRDS(here::here("data", "clean", "tree_data.rds")) %>%
   filter(year %in% c("1990", "1995", "2000", "2005", "2010",
@@ -252,7 +268,7 @@ point_preds %>%
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](figures/24_explore-sp-lvl/unnamed-chunk-13-1.png)<!-- -->
+![](figures/24_explore-sp-lvl/unnamed-chunk-14-1.png)<!-- -->
 
 ``` r
 point_preds %>% 
@@ -273,7 +289,7 @@ point_preds %>%
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
     ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
 
-![](figures/24_explore-sp-lvl/unnamed-chunk-14-1.png)<!-- -->
+![](figures/24_explore-sp-lvl/unnamed-chunk-15-1.png)<!-- -->
 
 ``` r
 point_preds %>% 
@@ -288,42 +304,6 @@ point_preds %>%
 
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](figures/24_explore-sp-lvl/unnamed-chunk-15-1.png)<!-- -->
-
-``` r
-point_preds %>%
-  drop_na(SeedPred_pres) %>% 
-  ggplot(aes(x = connectivity_us, y = difference, 
-             colour = as.factor(SeedPred_pres),
-             group = as.factor(SeedPred_pres))) +
-  geom_line(aes(group = sp4),
-            stat = "smooth", alpha = 0.3, linewidth = 0.75) +
-  geom_smooth() +
-  scale_colour_manual(values = c("#0072B2", "#D55E00")) +
-  
-  point_preds %>% 
-  mutate(grouped_abun2 = case_when(
-    log_median_abundance < q25 ~ "Rare",
-    log_median_abundance > q75 ~ "Abundant",
-    .default = NA
-  )) %>% 
-  drop_na(grouped_abun2) %>% 
-  ggplot(aes(x = connectivity_us, y = difference, 
-             colour = as.factor(grouped_abun2),
-             ))  +
-  geom_line(aes(group = sp4),
-            stat = "smooth", alpha = 0.3, linewidth = 0.75) +
-  geom_smooth(aes(group = grouped_abun2),
-              linewidth = 1) +
-  scale_colour_manual(values = c("#0072B2", "#D55E00")) &
-  theme(legend.position = "bottom") 
-```
-
-    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
-    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
-    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
-    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
-
 ![](figures/24_explore-sp-lvl/unnamed-chunk-16-1.png)<!-- -->
 
 ``` r
@@ -332,6 +312,42 @@ point_preds %>%
   ggplot(aes(x = connectivity_us, y = difference, 
              colour = as.factor(SeedPred_pres),
              group = as.factor(SeedPred_pres))) +
+  geom_line(aes(group = sp4),
+            stat = "smooth", alpha = 0.3, linewidth = 0.75) +
+  geom_smooth() +
+  scale_colour_manual(values = c("#0072B2", "#D55E00")) +
+  
+  point_preds %>% 
+  mutate(grouped_abun2 = case_when(
+    log_median_abundance < q25 ~ "Rare",
+    log_median_abundance > q75 ~ "Abundant",
+    .default = NA
+  )) %>% 
+  drop_na(grouped_abun2) %>% 
+  ggplot(aes(x = connectivity_us, y = difference, 
+             colour = as.factor(grouped_abun2),
+             ))  +
+  geom_line(aes(group = sp4),
+            stat = "smooth", alpha = 0.3, linewidth = 0.75) +
+  geom_smooth(aes(group = grouped_abun2),
+              linewidth = 1) +
+  scale_colour_manual(values = c("#0072B2", "#D55E00")) &
+  theme(legend.position = "bottom") 
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+    ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+![](figures/24_explore-sp-lvl/unnamed-chunk-17-1.png)<!-- -->
+
+``` r
+point_preds %>%
+  drop_na(SeedPred_pres) %>% 
+  ggplot(aes(x = connectivity_us, y = difference, 
+             colour = as.factor(SeedPred_pres),
+             group = as.factor(SeedPred_pres))) +
   geom_point(shape = 16, alpha = 0.3) +
   geom_smooth() +
   scale_colour_manual(values = c("#0072B2", "#D55E00")) +
@@ -356,7 +372,7 @@ point_preds %>%
     ## `geom_smooth()` using method = 'gam' and formula = 'y ~ s(x, bs = "cs")'
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](figures/24_explore-sp-lvl/unnamed-chunk-17-1.png)<!-- -->
+![](figures/24_explore-sp-lvl/unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 point_preds %>%
@@ -374,7 +390,7 @@ point_preds %>%
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](figures/24_explore-sp-lvl/unnamed-chunk-18-1.png)<!-- -->
+![](figures/24_explore-sp-lvl/unnamed-chunk-19-1.png)<!-- -->
 
 ``` r
 point_preds %>% 
@@ -398,7 +414,7 @@ point_preds %>%
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
     ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
 
-![](figures/24_explore-sp-lvl/unnamed-chunk-19-1.png)<!-- -->
+![](figures/24_explore-sp-lvl/unnamed-chunk-20-1.png)<!-- -->
 
 Add random effects to GAM
 
@@ -476,4 +492,36 @@ point_preds %>%
     ## ℹ Did you forget to specify a `group` aesthetic or to convert a numerical
     ##   variable into a factor?
 
-![](figures/24_explore-sp-lvl/unnamed-chunk-21-1.png)<!-- -->
+![](figures/24_explore-sp-lvl/unnamed-chunk-22-1.png)<!-- -->
+
+``` r
+point_preds %>%
+  group_by(sp4, SeedPredationRate) %>% 
+  summarise(max_diff = max(difference)) %>% 
+  ggplot(aes(y = SeedPredationRate, x = max_diff)) +
+  geom_point() 
+```
+
+    ## `summarise()` has grouped output by 'sp4'. You can override using the `.groups`
+    ## argument.
+
+    ## Warning: Removed 5 rows containing missing values or values outside the scale range
+    ## (`geom_point()`).
+
+![](figures/24_explore-sp-lvl/unnamed-chunk-23-1.png)<!-- -->
+
+``` r
+point_preds %>%
+  group_by(sp4, SeedPred_pres) %>% 
+  summarise(max_diff = max(difference)) %>% 
+  drop_na(SeedPred_pres) %>% 
+  ggplot(aes(y = max_diff, x = as.factor(SeedPred_pres))) +
+  geom_boxplot() +
+  ylab("Stabilising CNDD") +
+  xlab("Presence of seed predator")
+```
+
+    ## `summarise()` has grouped output by 'sp4'. You can override using the `.groups`
+    ## argument.
+
+![](figures/24_explore-sp-lvl/unnamed-chunk-24-1.png)<!-- -->

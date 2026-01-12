@@ -148,6 +148,14 @@ point_preds %>%
 ```
 
 ```{r}
+point_preds %>%
+  group_by(sp4, BCIReproductive) %>% 
+  summarise(max_diff = max(difference)) %>% 
+  ggplot(aes(y = log(BCIReproductive), x = max_diff)) +
+  geom_point() 
+```
+
+```{r}
 
 tree_data <-
   readRDS(here::here("data", "clean", "tree_data.rds")) %>%
@@ -399,3 +407,21 @@ point_preds %>%
   theme(legend.position = "bottom") 
 ```
 
+```{r}
+point_preds %>%
+  group_by(sp4, SeedPredationRate) %>% 
+  summarise(max_diff = max(difference)) %>% 
+  ggplot(aes(y = SeedPredationRate, x = max_diff)) +
+  geom_point() 
+```
+
+```{r}
+point_preds %>%
+  group_by(sp4, SeedPred_pres) %>% 
+  summarise(max_diff = max(difference)) %>% 
+  drop_na(SeedPred_pres) %>% 
+  ggplot(aes(y = max_diff, x = as.factor(SeedPred_pres))) +
+  geom_boxplot() +
+  ylab("Stabilising CNDD") +
+  xlab("Presence of seed predator")
+```
