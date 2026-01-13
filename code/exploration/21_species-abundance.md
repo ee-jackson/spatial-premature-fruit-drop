@@ -1,0 +1,173 @@
+Species abundance
+================
+Eleanor Jackson
+25 June, 2025
+
+``` r
+library("tidyverse"); theme_set(theme_bw(base_size = 10))
+library("patchwork")
+library("here")
+library("marginaleffects")
+library("tidybayes")
+```
+
+## Get abundance data
+
+``` r
+tree_data <- 
+  readRDS(here::here("data", "clean", "tree_data.rds")) %>% 
+  filter(year %in% c("1990", "1995", "2000", "2005", "2010",
+                     "2010", "2015", "2022"))
+
+trap_data <- readRDS(here::here("data", "clean", "trap_data.rds"))
+
+
+monoecious_species <-
+  read.csv(here::here("data", "clean", "species_list.csv")) %>%
+  filter(dioecious != TRUE)
+
+# only keep species which appear in both datasets
+shared_sp <-
+  trap_data %>%
+  select(sp4) %>%
+  distinct() %>%
+  inner_join(
+    y = tree_data %>%
+      select(sp4) %>%
+      distinct()
+  ) %>%
+  filter(sp4 %in% monoecious_species$sp4) # drops 21 dioecious species
+```
+
+    ## Joining with `by = join_by(sp4)`
+
+``` r
+tree_data <-
+  tree_data %>%
+  filter(sp4 %in% shared_sp$sp4)
+```
+
+``` r
+# brms::parnames(model)
+abun <- 
+  tree_data %>% 
+  group_by(year, sp4, genus, species) %>% 
+  summarise(abundance = sum(basal_area_m2, na.rm = TRUE)) %>% 
+  group_by(sp4, genus, species) %>% 
+  summarise(median_abundance = median(abundance, na.rm = TRUE),
+            mean_abundance = mean(abundance, na.rm = TRUE),
+            max_abundance = max(abundance, na.rm = TRUE))
+```
+
+    ## `summarise()` has grouped output by 'year', 'sp4', 'genus'. You can override
+    ## using the `.groups` argument.
+    ## `summarise()` has grouped output by 'sp4', 'genus'. You can override using the
+    ## `.groups` argument.
+
+## get connectivity data
+
+``` r
+consp_repro <-
+  readRDS(here::here("data", "clean", "trap_connect_repro_consp_20m.rds"))
+
+# don't include traps < 20m from the edge of the plot
+# centre and scale connectivity
+test_data <-
+  consp_repro %>%
+  filter(x < 980 & x > 20) %>%
+  filter(y < 480 & y > 20) %>%
+  select(- x, - y, - capsules) %>%
+  transform(connectivity_sc =
+              scale(connectivity)) %>%
+  filter(sum_parts >= 3) %>% # do we need to do this?
+  mutate_at(c("sp4", "year", "trap", "quadrat"), ~as.factor(.))
+```
+
+``` r
+model <-
+  readRDS(here::here("output", "models", 
+                     "repro_consp_20m.rds"))
+
+model_h <-
+  readRDS(here::here("output", "models", 
+                     "repro_hetero_20m.rds"))
+```
+
+## Get predictions
+
+``` r
+preds_sp_con <- 
+  test_data %>%
+  modelr::data_grid(
+    connectivity_sc =
+      c(0, 0.5, 1, 1.5, 2),
+    sp4 = unique(test_data$sp4),
+                    .model = model
+  ) %>%
+  tidybayes::add_epred_draws(model, 
+                             re_formula = 
+                               ~ (1 + 
+                                    connectivity_sc | sp4)) 
+
+preds_sp_het<- 
+  test_data %>%
+  modelr::data_grid(
+    connectivity_sc =
+      c(0, 0.5, 1, 1.5, 2),
+    sp4 = unique(test_data$sp4),
+                    .model = model_h
+  ) %>%
+  tidybayes::add_epred_draws(model_h, 
+                             re_formula = 
+                               ~ (1 + 
+                                    connectivity_sc | sp4)) 
+```
+
+Difference = fruit drop as predicted by conspecific density - fruit drop
+as predicted by heterospecific density
+
+``` r
+preds_difference <- 
+  preds_sp_con %>% 
+  left_join(preds_sp_het, 
+            by = c("connectivity_sc", "sp4",
+                  ".row", ".chain",
+                  ".iteration", ".draw"),
+            suffix = c("_conspecific", "_heterospecific")) %>% 
+  mutate(difference =  .epred_conspecific - .epred_heterospecific) %>% 
+  point_interval() 
+```
+
+## Plot
+
+``` r
+preds_difference %>% 
+  left_join(abun) %>%
+  mutate(grouped_anbun = case_when(
+    median_abundance < 0.763 ~ "1_low_abundance",
+    median_abundance > 0.763  & median_abundance < 6.58 ~ "2_IQR",
+    median_abundance > 6.58 ~ "3_high_abundance"
+  )) %>% 
+  ggplot(aes(x = connectivity_sc,
+             y = difference,
+             )) +
+  geom_pointinterval(aes(ymin = difference.lower ,
+                         ymax = difference.upper ),
+                     alpha = 0.5) +
+  geom_smooth(method = "lm") +
+  geom_hline(yintercept = 0, 
+             colour = "red", 
+             linetype = 2) +
+  ggpubr::stat_cor(label.x.npc = "left", label.y.npc = "top") +
+  facet_wrap(~grouped_anbun, nrow = 1) +
+  theme(legend.position = "bottom") +
+  labs(y = "difference in predicted fruit drop",
+       x = "density index")
+```
+
+    ## Joining with `by = join_by(sp4)`
+    ## `geom_smooth()` using formula = 'y ~ x'
+
+![](figures/21_species-abundance/unnamed-chunk-8-1.png)<!-- -->
+
+### There is less of an effect of density on fruit drop for common species

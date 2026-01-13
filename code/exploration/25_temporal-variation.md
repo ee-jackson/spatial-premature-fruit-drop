@@ -1,0 +1,131 @@
+Temporal variation
+================
+Eleanor Jackson
+12 January, 2026
+
+> Joe: What about temporal satiation? The Methods section describes a
+> random intercept for year. Is that random intercept correlated with
+> total seed crop size (i.e., immature + mature seeds)? A negative
+> correlation between proportion immature and total seed crop size would
+> provide evidence for temporal satiation.
+
+``` r
+library("tidyverse")
+library("brms")
+library("ggdist")
+library("tidybayes")
+library("patchwork")
+```
+
+``` r
+data <- readRDS(here::here("data", "clean", "trap_connect_repro_consp_20m_dioecious.rds"))
+model <- readRDS(here::here("output", "models", "repro_consp_20m_yesdioecious.rds"))
+
+data_h <- readRDS(here::here("data", "clean", "trap_connect_repro_hetero_20m_dioecious.rds"))
+model_h <- readRDS(here::here("output", "models", "repro_hetero_20m_yesdioecious.rds"))
+
+sp_data <- read.csv(here::here("data", "clean", "species_list.csv"))
+```
+
+``` r
+data %>%
+  filter(x < 980 & x > 20) %>%
+  filter(y < 480 & y > 20) %>%
+  select(- x, - y, - capsules) %>%
+  filter(sum_parts >= 3) %>%
+  mutate(connectivity_sc = scale(connectivity)) %>%
+  mutate(
+         year = as.factor(year),
+         trap = as.factor(trap)) -> testdat
+
+##
+
+data_h %>%
+  filter(x < 980 & x > 20) %>%
+  filter(y < 480 & y > 20) %>%
+  select(- x, - y, - capsules) %>%
+  filter(sum_parts >= 3) %>%
+  mutate(connectivity_sc = scale(connectivity)) %>%
+  mutate(
+    year = as.factor(year),
+    trap = as.factor(trap)) -> testdat_h
+```
+
+``` r
+pred_range <- 
+  testdat %>%
+  modelr::data_grid(
+    year = unique(testdat$year),
+    connectivity_sc = modelr::seq_range(connectivity_sc, n = 25)
+  ) 
+
+pred_range %>%
+  add_epred_draws(model, re_formula =
+                               ~ (1 | year)) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat$connectivity_sc, 'scaled:scale') +
+      attr(testdat$connectivity_sc, 'scaled:center')
+  ) -> repro_mod
+
+pred_range %>%
+  add_epred_draws(model_h, re_formula =
+                               ~ (1 | year)) %>%
+  mutate(
+    connectivity_us = connectivity_sc *
+      attr(testdat_h$connectivity_sc, 'scaled:scale') +
+      attr(testdat_h$connectivity_sc, 'scaled:center')
+  ) -> hetro_mod
+```
+
+``` r
+point_preds <-
+    repro_mod %>%
+    left_join(hetro_mod,
+              by = c("connectivity_sc", "year",
+                     ".row", ".chain",
+                     ".iteration", ".draw"),
+              suffix = c("_conspecific", "_heterospecific")) %>%
+    mutate(difference =  .epred_conspecific - .epred_heterospecific) %>%
+    point_interval()
+```
+
+``` r
+yearly_seeds <-
+  data %>% 
+  group_by(year) %>% 
+  summarise(n_seeds = sum(total_seeds),
+            n_abscised_seeds = sum(abscised_seeds)) %>% 
+  mutate(yr_proportion_abscised = n_abscised_seeds/n_seeds)
+```
+
+``` r
+point_preds %>% 
+  left_join(yearly_seeds) %>% 
+  ggplot(aes(x = connectivity_sc, y = difference,
+             group = year, colour = as.numeric(year))) +
+  geom_line(stat = "smooth", alpha = 0.5, linewidth = 0.75) 
+```
+
+    ## Joining with `by = join_by(year)`
+    ## `geom_smooth()` using method = 'loess' and formula = 'y ~ x'
+
+![](figures/25_temporal-variation/unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+point_preds %>% 
+  group_by(year) %>% 
+  summarise(max = max(difference)) %>% 
+  left_join(yearly_seeds) %>% 
+  ggplot(aes(x = n_seeds, y = yr_proportion_abscised)) +
+  geom_point(aes(group = year, colour = as.numeric(year))) +
+  ylab("Difference in predicted immature seed drop at peak") +
+  xlab("Total yearly seeds")
+```
+
+    ## Joining with `by = join_by(year)`
+
+![](figures/25_temporal-variation/unnamed-chunk-8-1.png)<!-- -->
+
+A negative correlation between proportion immature and total seed crop
+size would provide evidence for temporal satiation.
