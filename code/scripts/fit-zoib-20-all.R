@@ -56,41 +56,41 @@ test_data <-
 
 zoib_mod <-
   bf(
-    proportion_abscised ~
+    proportion_abscised ~ 1 +
       d_conspecific_nonreproductive_sc +
       d_conspecific_reproductive_sc +
       d_heterospecific_reproductive_sc +
-      (1|quadrat/trap) +
+      (1|trap) +
       (1|year) +
       (1 +
          d_conspecific_nonreproductive_sc +
          d_conspecific_reproductive_sc +
          d_heterospecific_reproductive_sc | sp4),
-    phi ~
+    phi ~ 1 +
       d_conspecific_nonreproductive_sc +
       d_conspecific_reproductive_sc +
       d_heterospecific_reproductive_sc +
-      (1|quadrat/trap) +
+      (1|trap) +
       (1|year) +
       (1 +
          d_conspecific_nonreproductive_sc +
          d_conspecific_reproductive_sc +
          d_heterospecific_reproductive_sc | sp4),
-    zoi ~
+    zoi ~ 1 +
       d_conspecific_nonreproductive_sc +
       d_conspecific_reproductive_sc +
       d_heterospecific_reproductive_sc +
-      (1|quadrat/trap) +
+      (1|trap) +
       (1|year) +
       (1 +
          d_conspecific_nonreproductive_sc +
          d_conspecific_reproductive_sc +
          d_heterospecific_reproductive_sc | sp4),
-    coi ~
+    coi ~ 1 +
       d_conspecific_nonreproductive_sc +
       d_conspecific_reproductive_sc +
       d_heterospecific_reproductive_sc +
-      (1|quadrat/trap) +
+      (1|trap) +
       (1|year) +
       (1 +
          d_conspecific_nonreproductive_sc +
@@ -103,7 +103,7 @@ zero_one_inflated_beta( link = "logit",
                         link_phi = "log",
                         link_zoi = "logit",
                         link_coi = "logit"
-)
+  )
 
 
 # Set priors --------------------------------------------------------------
@@ -124,6 +124,7 @@ fit <-
     #control = list(max_treedepth = 12, adapt_delta = 0.99),
     cores = 4,
     seed = 123,
+    file_refit = "always",
     file = "output/models/all_dens_20m"
   )
 
