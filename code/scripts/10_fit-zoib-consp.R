@@ -53,10 +53,13 @@ zero_one_inflated_beta( link = "logit",
 
 # Set priors --------------------------------------------------------------
 
-priors <-
-  set_prior(
-  prior = "normal(0, 10)",
-  class = "b")
+priors <- c(
+  set_prior("normal(0, 1)", class = "b"),
+  set_prior("normal(0, 1)", class = "b", dpar = "coi"),
+  set_prior("normal(0, 1)", class = "b", dpar = "phi"),
+  set_prior("normal(0, 1)", class = "b", dpar = "zoi")
+)
+
 
 # Fit model ---------------------------------------------------------------
 
