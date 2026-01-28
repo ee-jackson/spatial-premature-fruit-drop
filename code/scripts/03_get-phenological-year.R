@@ -2,7 +2,7 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: get-phenological-year.R
-## Desc: calculate phenological year for each species
+## Desc: Calculate phenological year start for each species
 ## Date created: 2026-01-21
 
 library("tidyverse")
@@ -11,7 +11,7 @@ library("here")
 species_list <-
   read_csv(here::here("data", "clean", "species_list.csv"))
 
-# seed rain data - fruits only
+# seed rain data
 trap_dat <-
   foreign::read.dbf(
   here::here("data", "raw", "BCI_TRAP200_20250224.DBF")) %>%
@@ -32,26 +32,18 @@ trap_dat <-
          )) %>%
   mutate(trap = paste("trap", trap, sep = "_")) %>%
   rename(sp4 = species) %>%
-  inner_join(species_list, by = "sp4")
+  inner_join(species_list, by = "sp4") # only keep species in our dataset
 
-# sum fruits per species on each day of year
-summed_fruits <-
+# Sum parts per species on each day of year
+# mature fruits, immature fruits, single diaspores and capsules
+summed_parts <-
   trap_dat %>%
-  filter(part == 1 | part == 5| part == 3) %>% # only fruits (mature, immature and capsules)
+  filter(part == 1 | part == 2| part == 3| part == 5) %>%
   group_by(sp4, day_of_year) %>%
   summarise(quantity_sum = sum(quantity, na.rm = TRUE)) %>%
   ungroup()
 
-# sum flowers per species on each day of year
-summed_flowers <-
-  trap_dat %>%
-  filter(part == 6 | part == 9) %>% # only flowers (male and female)
-  group_by(sp4, day_of_year) %>%
-  summarise(quantity_sum = sum(quantity, na.rm = TRUE)) %>%
-  ungroup()
-
-
-#function
+# Create function to calculate variance for each species & day
 rolling_variance_by_species <- function(df,
                                         day_col = day_of_year,
                                         qty_col = quantity_sum,
@@ -116,61 +108,65 @@ rolling_variance_by_species <- function(df,
   result
 }
 
-# Fun function for both flowers and fruits
-out_fl <- rolling_variance_by_species(summed_flowers)
-out_fr <- rolling_variance_by_species(summed_fruits)
+# Run function
+out_parts <- rolling_variance_by_species(summed_parts)
 
-# now find the day with minimum variance for each species
+# Now find the day with minimum variance for each species
 # if multiple days with the same variance, calculate the median day
-min_vars_fl <-
-  out_fl %>%
+min_vars <-
+  out_parts %>%
   group_by(sp4) %>%
   slice_min(variance, with_ties = TRUE) %>%
   summarise(min_var_day = floor(median(beginyr)))
 
-min_vars_fr <-
-  out_fr %>%
-  group_by(sp4) %>%
-  slice_min(variance, with_ties = TRUE) %>%
-  summarise(min_var_day = floor(median(beginyr)))
 
-# check with plots
+# Check results with a figure for each species ----------------------------
 
+# sum by parts for plotting
+summed_parts <-
+  trap_dat %>%
+  filter(part == 1 | part == 2| part == 3| part == 5) %>%
+  group_by(sp4, day_of_year, part) %>%
+  summarise(quantity_sum = sum(quantity, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(part = case_when(
+    part == 1 ~ "1 - Mature fruit",
+    part == 5 ~ "5 - Immature fruit",
+    part == 3 ~ "3 - Capsules",
+    part == 2 ~ "2 - Seeds"
+  )) %>%
+  mutate(part = as.ordered(part))
+
+# Function to make a single plot
 make_sp_plot <- function(fruit_data,
-                         fruit_variance_data,
-                         flower_variance_data,
+                         variance_data,
                          species_code,
                          species_name) {
 
-  fruit_line_df <- fruit_variance_data %>%
-    filter(sp4 == species_code, !is.na(min_var_day))
-
-  flower_line_df <- flower_variance_data %>%
+  line_df <- variance_data %>%
     filter(sp4 == species_code, !is.na(min_var_day))
 
   fruit_data %>%
     filter(sp4 == species_code) %>%
-    ggplot(aes(x = day_of_year, y = quantity_sum)) +
-    geom_col() +
+    ggplot(aes(x = day_of_year, y = quantity_sum,
+               colour = part, fill = part)) +
+    geom_col(position = "stack") +
     geom_vline(
-      data = fruit_line_df,
-      aes(xintercept = min_var_day),
-      colour = "blue",
-      linetype = 2
-    ) +
-    geom_vline(
-      data = flower_line_df,
+      data = line_df,
       aes(xintercept = min_var_day),
       colour = "red",
       linetype = 2
     ) +
     labs(
       title = species_name,
-      y = "Summed fruits (mature, immature capsules)"
+      y = "Number of parts"
     ) +
-    xlim(c(0, 365))
+    xlim(c(0, 365)) +
+    scale_colour_viridis_d(drop = FALSE) +
+    scale_fill_viridis_d(drop = FALSE)
 }
 
+# Get a list of species with latin names
 all_sp <-
   trap_dat %>%
   drop_na(sp4) %>%
@@ -180,19 +176,18 @@ all_sp <-
   mutate(name = paste(sp4, "-", genus, species, sep = " ")) %>%
   arrange(sp4)
 
-# create many plots
+# Create a plot for each species
 plot_list <- purrr::pmap(
   .f = make_sp_plot,
-  fruit_data = summed_fruits,
-  fruit_variance_data = min_vars_fr,
-  flower_variance_data = min_vars_fl,
+  fruit_data = summed_parts,
+  variance_data = min_vars,
   list(
     species_code = all_sp$sp4,
     species_name = all_sp$name),
   .progress = TRUE
 )
 
-# split into groups of 4 plots
+# Split into groups of 4 plots
 plot_list_split <-
   split(plot_list, rep(
     seq_along(plot_list),
@@ -200,16 +195,17 @@ plot_list_split <-
     length.out = length(plot_list)
   ))
 
-# wrap each group of 4 plots for 1 pdf page
+# Wrap each group of 4 plots for 1 pdf page
 plots_wrapped <-
   purrr::map(
     .x = plot_list_split,
     .f = patchwork::wrap_plots,
+    guides = "collect",
     nrow = 2,
     ncol = 2
   )
 
-# make pdf
+# Make pdf
 pdf(
   width = 12,
   height = 8,
@@ -218,7 +214,9 @@ pdf(
 plots_wrapped
 dev.off()
 
-# save fruiting pheno data
-min_vars_fr %>%
+
+# Save output data --------------------------------------------------------
+
+min_vars %>%
   rename(pheno_year_start = min_var_day) %>%
   write_csv(here::here("data", "clean", "phenological_years.csv"))
