@@ -17,7 +17,7 @@ trap_data <-
 
 tree_data <-
   readRDS("data/clean/tree_data.rds") %>%
-  filter(dbh_mm >= r50)  %>% # only reproductive-sized
+  filter(dbh_mm >= repro_dbh)  %>% # only reproductive-sized
   select(sp4, year, tree, x, y, basal_area_m2)
 
 fruiting_data <-

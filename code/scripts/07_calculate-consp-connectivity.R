@@ -12,11 +12,11 @@ library("rdist")
 
 # Load data ---------------------------
 
-trap_data <- readRDS(here::here("data", "clean", "trap_data.rds"))
+trap_data <- readRDS("data/clean/trap_data.rds")
 
 tree_data <-
-  readRDS(here::here("data", "clean", "tree_data.rds")) %>%
-  filter(dbh_mm >= r50)  %>% # only reproductive-sized
+  readRDS("data/clean/trap_data.rds") %>%
+  filter(dbh_mm >= repro_dbh)  %>% # only reproductive-sized
   select(sp4, year, tree, x, y, basal_area_m2)
 
 monoecious_species <-
