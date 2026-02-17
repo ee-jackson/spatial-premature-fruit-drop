@@ -41,6 +41,11 @@ species_list <-
 R50 <-
   read.csv(here::here("data", "clean","R50.csv"))
 
+# model derived reproductive size thresholds
+size_thresh <-
+  read.csv(here::here("data", "clean","size_thresholds_45spp.csv")) %>%
+  rename(sp6 = species)
+
 tidy_bci <- function(bci_data, sp_data) {
   bci_data %>%
     rename_with(tolower) %>%
@@ -77,14 +82,14 @@ bci_data_onestem_list <-
   lapply(bci_data_list, get_trees, sp_data = species_list)
 
 # expand the bci survey data so we can match it to nearest years of the trap data
-# we are repeating each row of the bci datasets 5 times and assigning 2 years either side
+# we are repeating each row of the bci datasets 5 times and assigning 2 pheno years either side
 
 bci3 <-
   bci_data_onestem_list$`03_bci_all_stems.txt`[rep(seq_len(nrow(
     bci_data_onestem_list$`03_bci_all_stems.txt`
-  )), each = 3), ]
-bci3$year <- rep(c("1990", "1991", "1992"),
-                 nrow(bci3) / 3)
+  )), each = 4), ]
+bci3$year <- rep(c("1989", "1990", "1991", "1992"),
+                 nrow(bci3) / 4)
 
 bci4 <-
   bci_data_onestem_list$`04_bci_all_stems.txt`[rep(seq_len(nrow(
@@ -122,20 +127,22 @@ bci8$year <- rep(c("2013", "2014", "2015", "2016", "2017", "2018"),
                  nrow(bci8) / 6)
 
 bci10 <-
-  bci10_onestem[rep(seq_len(nrow(bci10_onestem)), each = 6), ]
-bci10$year <- rep(c("2019", "2020", "2021", "2022", "2023", "2024"),
-                          nrow(bci10) / 6)
+  bci10_onestem[rep(seq_len(nrow(bci10_onestem)), each = 5), ]
+bci10$year <- rep(c("2019", "2020", "2021", "2022", "2023"),
+                          nrow(bci10) / 5)
 
 # bind all the bci datasets together
 rm(bci_data_list)
 rm(bci_data_onestem_list)
 rm(bci10_onestem)
-bind_rows(mget(ls(pattern="^bci*")), .id='df') -> bci_bind
+bind_rows(mget(ls(pattern = "^bci*")), .id = 'df') -> bci_bind
 
 # join up data and format
 bci_bind %>%
   left_join(species_list, by = "sp6") %>%
   left_join(R50, by = "sp6") %>%
+  left_join(size_thresh, by = "sp6") %>%
+  mutate(repro_dbh = ifelse(is.na(dbh50_mean), r50, dbh50_mean)) %>%
   mutate(treeid =  formatC(
     treeid,
     width = 6,
@@ -150,7 +157,7 @@ bci_bind %>%
   mutate(radius_m = dbh_m / 2) %>%
   mutate(basal_area_m2 = pi * radius_m^2) %>%
   select(sp4, sp6, genus, species, family,
-         capsules, dioecious, animal_disp, dsp_wind, r50,
+         capsules, dioecious, animal_disp, dsp_wind, repro_dbh,
          tree, x, y, dbh_mm, basal_area_m2, census, year) -> tree_data
 
 saveRDS(tree_data,
