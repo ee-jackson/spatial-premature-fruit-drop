@@ -5,9 +5,8 @@
 ## Desc: Calculate connectivity to reproductive, co-fruiting heterospecifics
 ## Date created: 2023-08-02
 
-library("dplyr")
+library("tidyverse")
 library("rdist", lib.loc = "~/local/rlibs")
-library("tidyr")
 
 
 # Load data ---------------------------

@@ -6,8 +6,7 @@
 ## Date created: 2020-09-30
 
 library("tidyverse")
-library("here")
-library("rdist")
+library("rdist", lib.loc = "~/local/rlibs")
 
 
 # Load data ---------------------------
@@ -15,7 +14,7 @@ library("rdist")
 trap_data <- readRDS("data/clean/trap_data.rds")
 
 tree_data <-
-  readRDS("data/clean/trap_data.rds") %>%
+  readRDS("data/clean/tree_data.rds") %>%
   filter(dbh_mm >= repro_dbh)  %>% # only reproductive-sized
   select(sp4, year, tree, x, y, basal_area_m2)
 
@@ -112,4 +111,4 @@ CI_data_b  %>%
   left_join(trap_data, by = c("trap", "year", "sp4")) -> trap_connect
 
 saveRDS(trap_connect,
-	file = here::here("data", "clean", "trap_connect_repro_consp_20m_dioecious.rds"))
+	file = "data/clean/trap_connect_repro_consp_20m_dioecious.rds")
