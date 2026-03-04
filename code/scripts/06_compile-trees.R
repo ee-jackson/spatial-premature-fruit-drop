@@ -30,7 +30,8 @@ file_names <- as.list(dir(path = here::here("data", "raw", "bci-50ha"),
 file_names[9] <- NULL
 
 bci_data_list <-
-  lapply(file_names, read_tsv)
+  lapply(file_names, read_tsv, trim_ws = TRUE,
+         col_types = "dccccdddcdcdddDccc")
 
 names(bci_data_list) <-
   lapply(file_names, basename)
@@ -67,8 +68,8 @@ bci_data_list <-
 get_trees <- function(bci_data, sp_data) {
   bci_data %>%
     filter(sp6 %in% sp_data$sp6) %>%
-    filter(status == "A" | status == "AD"| status == "AR" |
-             status == "alive") %>%
+    filter(status %in% c("A", "AD", "AR", "alive")) %>%
+    filter(!is.na(dbh) & !is.na(px) & !is.na(py)) %>%
     group_by(treeid) %>%
     slice_max(order_by = dbh, with_ties = TRUE) %>%
     slice_max(order_by = hom, with_ties = FALSE) %>%
@@ -132,10 +133,7 @@ bci10$year <- rep(c("2019", "2020", "2021", "2022", "2023"),
                           nrow(bci10) / 5)
 
 # bind all the bci datasets together
-rm(bci_data_list)
-rm(bci_data_onestem_list)
-rm(bci10_onestem)
-bind_rows(mget(ls(pattern = "^bci*")), .id = 'df') -> bci_bind
+bci_bind <- bind_rows(bci3, bci4, bci5, bci6, bci7, bci8, bci10, .id = 'df')
 
 # join up data and format
 bci_bind %>%
