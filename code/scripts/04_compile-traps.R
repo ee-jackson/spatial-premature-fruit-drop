@@ -169,18 +169,24 @@ full_join(abs_dat_abscised, abs_dat_viable) %>%
          abscised_seeds = replace_na(abscised_seeds, 0)) -> abs_dat_abscised_viable
 
 # calculate proportion abscised
+# use non-integers for calculating proportion_abscised
+# but round values for estimates of seeds
 abs_dat_abscised_viable %>%
   rowwise() %>%
-  mutate(total_seeds = sum(abscised_seeds, viable_seeds, na.rm = TRUE),
-         proportion_abscised = abscised_seeds / total_seeds) %>%
-  # there is one NaN where 2 capsules collected but capsules = FALSE and no other parts found
-  drop_na(proportion_abscised) %>%
-  ungroup() -> prop_dat
+  mutate(proportion_abscised =
+           abscised_seeds / sum(abscised_seeds, viable_seeds, na.rm = TRUE)) %>%
+  mutate_at(c("abscised_seeds", "viable_seeds"), ~ round(.)) %>%
+  mutate(total_seeds = abscised_seeds + viable_seeds) %>%
+  ungroup() %>%
+  filter(total_seeds != 0) -> prop_dat
 
 prop_dat %>%
   left_join(sum_dat, by = c("sp4", "pheno_year", "trap")) %>%
   left_join(trap_locs, by = "trap") %>%
-  rename(year = pheno_year)-> trap_dat
+  rename(year = pheno_year) %>%
+  # don't include traps < 20m from the edge of the plot
+  filter(x < 980 & x > 20) %>%
+  filter(y < 480 & y > 20) -> trap_dat
 
 saveRDS(trap_dat,
           here::here("data", "clean", "trap_data.rds"))
