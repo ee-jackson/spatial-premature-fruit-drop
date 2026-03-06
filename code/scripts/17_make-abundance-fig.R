@@ -22,7 +22,7 @@ library("ggpubr")
 tree_data <-
   readRDS(here::here("data", "clean", "tree_data.rds")) %>%
   filter(year %in% c("1990", "1995", "2000", "2005", "2010",
-                     "2010", "2015", "2022"))
+                     "2010", "2015", "2022")) # not replicate years
 
 trap_data <- readRDS(here::here("data", "clean", "trap_data.rds"))
 
