@@ -5,16 +5,19 @@
 ## Desc: Fit final model
 
 options(mc.cores = 4)
+options(brms.file_refit = "on_change")
 
 # Packages ----------------------------------------------------------------
 
 library("tidyverse")
 library("brms")
+library("extraDistr", lib.loc = "~/local/rlibs")
 
 
 # Get data ----------------------------------------------------------------
 
-test_data <- readRDS("data/clean/trap_connect.rds")
+test_data <-
+  readRDS("data/clean/trap_connect.rds")
 
 
 # Define model ------------------------------------------------------------
@@ -59,16 +62,14 @@ fit <-
     control = list(adapt_delta = 0.95),
     cores = 4,
     seed = 123,
-    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds",
-    save_pars = save_pars(all = TRUE),
-    file_refit = "on_change"
+    init_r = 0.1,
+    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds"
   )
 
-# brms::add_criterion(x = fit, criterion = "loo",
-#                     newdata = test_data)
-#
-# print(fit$criteria$loo)
+brms::add_criterion(x = fit, criterion = "loo",
+                    overwrite = TRUE)
 
+print(fit$criteria$loo)
 
 fit_int <-
   brm(
@@ -81,13 +82,11 @@ fit_int <-
     control = list(adapt_delta = 0.95),
     cores = 4,
     seed = 123,
-    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds_interact",
-    save_pars = save_pars(all = TRUE),
-    file_refit = "always"
+    init_r = 0.1,
+    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds_interact"
   )
 
-# brms::add_criterion(x = fit_int, criterion = "loo",
-#                     newdata = test_data)
-#
-# print(fit_int$criteria$loo)
+brms::add_criterion(x = fit_int, criterion = "loo",
+                    overwrite = TRUE)
 
+print(fit_int$criteria$loo)
