@@ -142,6 +142,7 @@ compute_all_three <-
     year = !!yr,
     trap = td$trap,
     sp4 = !!species,
+    alpha = !!alpha,
     conn_RH = as.numeric(conn_RH[td$trap]),
     conn_RC = as.numeric(conn_RC[td$trap]),
     conn_NRC = as.numeric(conn_NRC[td$trap])
@@ -164,8 +165,26 @@ all_connectivities <- purrr::map2(
                            tree_nonrepro_df = tree_nonrepro,
                            trap_df = trap_data,
                            alpha = 1/20),
-  .progress = TRUE
-) %>% list_rbind()
+  .progress = TRUE) %>%
+  list_rbind()
+
+
+# Alternative if testing different alpha values:
+
+# keys <- trap_data %>%
+#   expand(sp4, year, alpha = 1/seq(5, 40, 5)) %>%
+#   arrange(sp4, year)
+#
+# all_connectivities <- purrr::pmap(
+#   .l = list(species = keys$sp4,
+#             yr = keys$year,
+#             alpha = keys$alpha),
+#   .f = compute_all_three,
+#   fruiting_df = fruiting_data,
+#   tree_repro_df = tree_repro,
+#   tree_nonrepro_df = tree_nonrepro,
+#   trap_df = trap_data) %>%
+#   list_rbind()
 
 
 # Add seed rain and trap metadata -----------------------------------------
@@ -173,6 +192,9 @@ all_connectivities <- purrr::map2(
 trap_connect_all3 <-
   all_connectivities %>%
   inner_join(trap_data, by = c("trap", "year", "sp4")) %>%
+  # don't include traps < 20m (1/alpha) from the edge of the plot
+  filter(x < 980 & x > 20) %>%
+  filter(y < 480 & y > 20) %>%
   # transform variables for modelling
   mutate(log_total_seeds = log(total_seeds)) %>%
   mutate(
@@ -185,3 +207,6 @@ trap_connect_all3 <-
 
 saveRDS(trap_connect_all3,
         file = "data/clean/trap_connect.rds")
+
+# saveRDS(trap_connect_all3,
+#         file = "data/clean/connect_all_alpha.rds")

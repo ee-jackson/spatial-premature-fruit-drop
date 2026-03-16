@@ -183,10 +183,7 @@ abs_dat_abscised_viable %>%
 prop_dat %>%
   left_join(sum_dat, by = c("sp4", "pheno_year", "trap")) %>%
   left_join(trap_locs, by = "trap") %>%
-  rename(year = pheno_year) %>%
-  # don't include traps < 20m from the edge of the plot
-  filter(x < 980 & x > 20) %>%
-  filter(y < 480 & y > 20) -> trap_dat
+  rename(year = pheno_year) -> trap_dat
 
 saveRDS(trap_dat,
           here::here("data", "clean", "trap_data.rds"))
