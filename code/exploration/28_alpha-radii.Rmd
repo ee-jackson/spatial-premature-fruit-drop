@@ -1,0 +1,190 @@
+---
+title: "Testing different values of alpha"
+author: "Eleanor Jackson"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  github_document:
+    keep_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path = "figures/28_alpha-radii/")
+ggplot2::theme_set(ggplot2::theme_classic(base_size = 10))
+```
+
+```{r message=FALSE, warning=FALSE}
+library("tidyverse"); theme_set(theme_bw(base_size = 10))
+library("sf")
+library("patchwork")
+```
+
+Use an effective radius that captures almost all kernel weight 
+(so anything beyond it contributes negligible connectivity).
+
+effective radius (capturing 95% of influence) = -ln(0.05) / alpha
+
+```{r}
+test_data <- 
+  readRDS(here::here("data", "clean", "connect_all_alpha.rds"))
+```
+
+```{r}
+
+eps <- 0.05 #captures 95% of influence
+
+# draw the fdp
+fdplot <- rbind(c(0,0), c(0, 500), c(1000, 500), c(1000, 0), c(0,0))
+
+# make it a polygon
+plot_polygon <- sf::st_polygon(list(fdplot))
+
+plot(plot_polygon)
+```
+
+```{r}
+dat_sf <- sf::st_as_sf(test_data, coords = c("x", "y"),
+                       remove = FALSE) 
+
+# distance to boundary
+dist_to_boundary <- st_distance(dat_sf, st_boundary(plot_polygon),
+                                which = "Euclidean")
+
+# st_distance returns units; convert to numeric meters
+dist_to_boundary_m <- as.numeric(dist_to_boundary)
+
+dat_sf$dist_to_edge_m <- dist_to_boundary_m
+
+# effective radii (exponential kernel)
+# the distance where the weight drops to some small threshold
+
+dat_sf <- 
+  dat_sf %>% 
+  mutate(r_eff =  (- log(eps)) / alpha) %>% 
+  mutate(location = ifelse(dist_to_edge_m >= r_eff, "interior",
+                       "edge"))
+
+dat_sf %>% 
+  sf::st_drop_geometry() %>% 
+  mutate(dist = 1/alpha) %>% 
+  select(trap, x, y , location, alpha, dist) %>% 
+  distinct() %>% 
+  ggplot(aes(x = x, y = y, colour = location)) +
+  geom_point() +
+  facet_wrap(~dist)
+
+```
+
+```{r}
+dat_sf %>% 
+  mutate(alpha = 1/alpha) %>%
+  ggplot(aes(x = conn_RH, colour = location)) +
+  geom_density() +
+  facet_wrap(~alpha, scales = "free") +
+  ggtitle("Reproductive heterospecifics")
+
+```
+
+Traps at the edge generally have connectivity distributions which
+are shifted lower. 
+This is more apparent when the "average migration distance" (or 1/alpha) is low,
+because there are fewer "edge traps" in these datasets and they are closer
+to the edge (see previous figure).
+
+```{r}
+dat_sf %>% 
+  sf::st_drop_geometry() %>% 
+  filter(alpha == 1/40 & sp4 == "jacc") %>% 
+  filter(year == 1990 | year == 2000 | year == 2010| year == 2020 ) %>% 
+  distinct() %>% 
+  ggplot(aes(x = x, y = y, colour = conn_RH)) +
+  geom_point() +
+  facet_wrap(~year) +
+  ggtitle("jacc")
+
+dat_sf %>% 
+  sf::st_drop_geometry() %>% 
+  filter(alpha == 1/40 & sp4 == "alsb") %>% 
+  filter(year == 1990 | year == 2000 | year == 2010| year == 2020 ) %>% 
+  distinct() %>% 
+  ggplot(aes(x = x, y = y, colour = conn_RH)) +
+  geom_point() +
+  facet_wrap(~year) +
+  ggtitle("alsb")
+
+dat_sf %>% 
+  sf::st_drop_geometry() %>% 
+  filter(alpha == 1/40 & sp4 == "hybp") %>% 
+  filter(year == 1990 | year == 2000 | year == 2010| year == 2020 ) %>% 
+  distinct() %>% 
+  ggplot(aes(x = x, y = y, colour = conn_RH)) +
+  geom_point() +
+  facet_wrap(~year) +
+  ggtitle("hybp")
+```
+
+Traps on the RHS of the plot seem to have a high density of heterospecifics.
+Perhaps just many trees in this area - near the river?
+
+This is causing the bimodal distribution in `conn_RH` values at higher
+alpha.
+
+```{r}
+dat_sf %>% 
+  mutate(alpha = 1/alpha) %>%
+  ggplot(aes(x = conn_RC, colour = location)) +
+  geom_density() +
+  facet_wrap(~alpha, scales = "free") +
+  ggtitle("Reproductive conspecifics")
+
+```
+
+Edge traps also have lower reproductive conspecific density,
+
+```{r}
+dat_sf %>% 
+  mutate(alpha = 1/alpha) %>%
+  ggplot(aes(x = conn_NRC, colour = location)) +
+  geom_density() +
+  facet_wrap(~alpha, scales = "free") +
+  ggtitle("Non-reproductive conspecifics")
+
+```
+
+and lower non-reproductive conspecific density.
+
+```{r}
+# dat_sf %>%
+#   sf::st_drop_geometry() %>%
+#   mutate(location = as.factor(location)) %>%
+#   saveRDS(here::here("data", "clean", "connect_all_alpha_buffer.rds"))
+```
+
+How different is the new radii method from excluding those which are less than
+1/alpha from the edge?
+
+```{r}
+dat_sf %>% 
+  sf::st_drop_geometry() %>% 
+  mutate(dist = 1/alpha) %>% 
+  filter(dist == 20) %>% 
+  select(trap, x, y , location, alpha, dist) %>% 
+  distinct() %>% 
+  ggplot(aes(x = x, y = y, colour = location)) +
+  geom_point() +
+  
+  dat_sf %>% 
+  filter(alpha == 1/20) %>%
+  select(trap, x, y , location, alpha) %>% 
+  mutate(location = case_when(
+    x < 980 & x > 20 & y < 480 & y > 20 ~ "interior",
+    .default = "edge"
+  )) %>% 
+  mutate(location = as.factor(location)) %>% 
+  distinct() %>% 
+  ggplot(aes(x = x, y = y, colour = location)) +
+  geom_point() +
+  
+  plot_layout(ncol = 1)
+
+```
+
