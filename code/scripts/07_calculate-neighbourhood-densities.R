@@ -62,7 +62,7 @@ tree_nonrepro <- tree_data %>%
 #  td: tibble of traps (rows: traps) with columns x,y,trap (trap order matters)
 # returns numeric vector length nrow(td) of connectivity contributions
 
-calculate_connectivity <- function(bd, td, alpha = 1/20) {
+calculate_connectivity <- function(bd, td, alpha = 1/5) {
   # no traps -> empty numeric named vector
   if (nrow(td) == 0) return(set_names(numeric(0), character(0)))
 
@@ -97,7 +97,7 @@ calculate_connectivity <- function(bd, td, alpha = 1/20) {
 # Function to compute all 3 densities per trap x sp x year ----------------
 
 compute_all_three <-
-  function(species, yr, fruiting_df, tree_repro_df, tree_nonrepro_df, trap_df, alpha = 1/20) {
+  function(species, yr, fruiting_df, tree_repro_df, tree_nonrepro_df, trap_df, alpha = 1/5) {
 
   # traps for focal species-year
   td <- trap_df %>% filter(sp4 == !!species, year == !!yr)
@@ -156,6 +156,8 @@ keys <- trap_data %>%
   expand(sp4, year) %>%
   arrange(sp4, year)
 
+alphas <- exp(seq(log(0.07), log(0.40), length.out = 6))
+
 all_connectivities <- purrr::map2(
   .x = keys$sp4,
   .y = keys$year,
@@ -164,7 +166,7 @@ all_connectivities <- purrr::map2(
                            tree_repro_df = tree_repro,
                            tree_nonrepro_df = tree_nonrepro,
                            trap_df = trap_data,
-                           alpha = 1/20),
+                           alpha = alphas[[3]]),
   .progress = TRUE) %>%
   list_rbind()
 
@@ -172,10 +174,10 @@ all_connectivities <- purrr::map2(
 # Alternative if testing different alpha values:
 
 # keys <- trap_data %>%
-#   expand(sp4, year, alpha = 1/seq(5, 40, 5)) %>%
+#   expand(sp4, year, alpha = exp(seq(log(0.07), log(0.40), length.out = 6))) %>%
 #   arrange(sp4, year)
 #
-# all_connectivities <- purrr::pmap(
+# trap_connect_all3 <- purrr::pmap(
 #   .l = list(species = keys$sp4,
 #             yr = keys$year,
 #             alpha = keys$alpha),
@@ -184,7 +186,9 @@ all_connectivities <- purrr::map2(
 #   tree_repro_df = tree_repro,
 #   tree_nonrepro_df = tree_nonrepro,
 #   trap_df = trap_data) %>%
-#   list_rbind()
+#   list_rbind() %>%
+#   inner_join(trap_data, by = c("trap", "year", "sp4")) %>%
+#   mutate_at(c("sp4", "trap", "quadrat", "year"), ~as.factor(.))
 
 
 # Add seed rain and trap metadata -----------------------------------------
@@ -192,17 +196,6 @@ all_connectivities <- purrr::map2(
 trap_connect_all3 <-
   all_connectivities %>%
   inner_join(trap_data, by = c("trap", "year", "sp4")) %>%
-  # don't include traps < 20m (1/alpha) from the edge of the plot
-  filter(x < 980 & x > 20) %>%
-  filter(y < 480 & y > 20) %>%
-  # transform variables for modelling
-  mutate(log_total_seeds = log(total_seeds)) %>%
-  mutate(
-    conn_RC_sc = as.numeric(scale(conn_RC)),
-    conn_RH_sc = as.numeric(scale(conn_RH)),
-    conn_NRC_sc = as.numeric(scale(conn_NRC)),
-    log_total_seeds_sc = as.numeric(scale(log_total_seeds))
-  ) %>%
   mutate_at(c("sp4", "trap", "quadrat", "year"), ~as.factor(.))
 
 saveRDS(trap_connect_all3,
