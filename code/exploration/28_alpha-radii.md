@@ -1,7 +1,7 @@
 Testing different values of alpha
 ================
 Eleanor Jackson
-19 March, 2026
+20 March, 2026
 
 ``` r
 library("tidyverse"); theme_set(theme_bw(base_size = 10))
@@ -57,103 +57,53 @@ dat_sf <-
 
 dat_sf %>% 
   sf::st_drop_geometry() %>% 
-  mutate(dist = 1/alpha) %>% 
-  select(trap, x, y , location, alpha, dist) %>% 
+  mutate(r_eff_m = round(r_eff)) %>% 
+  select(trap, x, y , location, alpha, r_eff_m) %>% 
   distinct() %>% 
   ggplot(aes(x = x, y = y, colour = location)) +
   geom_point() +
-  facet_wrap(~dist)
+  facet_wrap(~r_eff_m)
 ```
 
 ![](figures/28_alpha-radii/unnamed-chunk-4-1.png)<!-- -->
 
 ``` r
 dat_sf %>% 
-  mutate(alpha = 1/alpha) %>%
+  mutate(r_eff_m = round(r_eff)) %>% 
   ggplot(aes(x = conn_RH, colour = location)) +
   geom_density() +
-  facet_wrap(~alpha, scales = "free") +
+  facet_wrap(~r_eff_m, scales = "free") +
   ggtitle("Reproductive heterospecifics")
 ```
 
 ![](figures/28_alpha-radii/unnamed-chunk-5-1.png)<!-- -->
 
 Traps at the edge generally have connectivity distributions which are
-shifted lower. This is more apparent when the “average migration
-distance” (or 1/alpha) is low, because there are fewer “edge traps” in
-these datasets and they are closer to the edge (see previous figure).
+shifted lower.
 
 ``` r
 dat_sf %>% 
-  sf::st_drop_geometry() %>% 
-  filter(alpha == 1/40 & sp4 == "jacc") %>% 
-  filter(year == 1990 | year == 2000 | year == 2010| year == 2020 ) %>% 
-  distinct() %>% 
-  ggplot(aes(x = x, y = y, colour = conn_RH)) +
-  geom_point() +
-  facet_wrap(~year) +
-  ggtitle("jacc")
-```
-
-![](figures/28_alpha-radii/unnamed-chunk-6-1.png)<!-- -->
-
-``` r
-dat_sf %>% 
-  sf::st_drop_geometry() %>% 
-  filter(alpha == 1/40 & sp4 == "alsb") %>% 
-  filter(year == 1990 | year == 2000 | year == 2010| year == 2020 ) %>% 
-  distinct() %>% 
-  ggplot(aes(x = x, y = y, colour = conn_RH)) +
-  geom_point() +
-  facet_wrap(~year) +
-  ggtitle("alsb")
-```
-
-![](figures/28_alpha-radii/unnamed-chunk-6-2.png)<!-- -->
-
-``` r
-dat_sf %>% 
-  sf::st_drop_geometry() %>% 
-  filter(alpha == 1/40 & sp4 == "hybp") %>% 
-  filter(year == 1990 | year == 2000 | year == 2010| year == 2020 ) %>% 
-  distinct() %>% 
-  ggplot(aes(x = x, y = y, colour = conn_RH)) +
-  geom_point() +
-  facet_wrap(~year) +
-  ggtitle("hybp")
-```
-
-![](figures/28_alpha-radii/unnamed-chunk-6-3.png)<!-- -->
-
-Traps on the RHS of the plot seem to have a high density of
-heterospecifics. Perhaps just many trees in this area - near the river?
-
-This is causing the bimodal distribution in `conn_RH` values at higher
-alpha.
-
-``` r
-dat_sf %>% 
-  mutate(alpha = 1/alpha) %>%
+  mutate(r_eff_m = round(r_eff)) %>% 
   ggplot(aes(x = conn_RC, colour = location)) +
   geom_density() +
-  facet_wrap(~alpha, scales = "free") +
+  facet_wrap(~r_eff_m, scales = "free") +
   ggtitle("Reproductive conspecifics")
 ```
 
-![](figures/28_alpha-radii/unnamed-chunk-7-1.png)<!-- -->
+![](figures/28_alpha-radii/unnamed-chunk-6-1.png)<!-- -->
 
 Edge traps also have lower reproductive conspecific density,
 
 ``` r
 dat_sf %>% 
-  mutate(alpha = 1/alpha) %>%
+  mutate(r_eff_m = round(r_eff)) %>% 
   ggplot(aes(x = conn_NRC, colour = location)) +
   geom_density() +
-  facet_wrap(~alpha, scales = "free") +
+  facet_wrap(~r_eff_m, scales = "free") +
   ggtitle("Non-reproductive conspecifics")
 ```
 
-![](figures/28_alpha-radii/unnamed-chunk-8-1.png)<!-- -->
+![](figures/28_alpha-radii/unnamed-chunk-7-1.png)<!-- -->
 
 and lower non-reproductive conspecific density.
 
@@ -163,33 +113,3 @@ and lower non-reproductive conspecific density.
 #   mutate(location = as.factor(location)) %>%
 #   saveRDS(here::here("data", "clean", "connect_all_alpha_buffer.rds"))
 ```
-
-How different is the new radii method from excluding those which are
-less than 1/alpha from the edge?
-
-``` r
-dat_sf %>% 
-  sf::st_drop_geometry() %>% 
-  mutate(dist = 1/alpha) %>% 
-  filter(dist == 20) %>% 
-  select(trap, x, y , location, alpha, dist) %>% 
-  distinct() %>% 
-  ggplot(aes(x = x, y = y, colour = location)) +
-  geom_point() +
-  
-  dat_sf %>% 
-  filter(alpha == 1/20) %>%
-  select(trap, x, y , location, alpha) %>% 
-  mutate(location = case_when(
-    x < 980 & x > 20 & y < 480 & y > 20 ~ "interior",
-    .default = "edge"
-  )) %>% 
-  mutate(location = as.factor(location)) %>% 
-  distinct() %>% 
-  ggplot(aes(x = x, y = y, colour = location)) +
-  geom_point() +
-  
-  plot_layout(ncol = 1)
-```
-
-![](figures/28_alpha-radii/unnamed-chunk-10-1.png)<!-- -->
