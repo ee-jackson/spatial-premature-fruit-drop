@@ -1,0 +1,64 @@
+---
+title: "vir2_NRC_effect"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  github_document:
+    keep_html: false
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/30_virs-NRC-effect/")
+```
+
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse")
+library("brms")
+library("patchwork")
+library("tidybayes")
+library("modelr")
+library("emmeans")
+```
+
+```{r}
+bbinom_interact_abund <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_binom_nseeds_abund.rds"))
+```
+
+```{r}
+vir2_preds <- 
+  bbinom_interact_abund$data %>%
+  filter(sp4 == "vir2") %>% 
+  modelr::data_grid(
+    log_median_abundance_sc = -0.8307045,
+    log_total_seeds_sc = 0,
+    total_seeds = 1,
+    sp4 = "vir2",
+    conn_RC_sc = seq_range(conn_RC_sc, n = 10),
+    conn_RH_sc = seq_range(conn_RH_sc, n = 10),
+    conn_NRC_sc = seq_range(conn_NRC_sc, n = 10),
+  ) %>% 
+  add_epred_draws(bbinom_interact_abund, re_formula = ~ (1 + conn_RC_sc + conn_RH_sc + conn_NRC_sc | sp4)) 
+```
+
+```{r}
+
+vir2_preds %>% 
+  ggplot(aes(x = conn_NRC_sc, y = .epred)) +
+  stat_lineribbon(.width = 0.95, 
+                  colour = "blue",
+                  fill = "lightgrey",
+                  alpha = 0.7,
+                  show.legend = FALSE) +
+  ylim(0, 1) +
+  
+  vir2_preds %>% 
+  ggplot(aes(x = conn_RC_sc, y = .epred)) +
+  stat_lineribbon(.width = 0.95,
+                  colour = "blue",
+                  fill = "lightgrey",
+                  alpha = 0.7,
+                  show.legend = FALSE) +
+  ylim(0, 1)
+```
+
