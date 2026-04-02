@@ -1,7 +1,7 @@
 Compare binomial models
 ================
 Eleanor Jackson
-23 March, 2026
+26 March, 2026
 
 ``` r
 library("tidyverse")
@@ -282,6 +282,20 @@ Stabilizing CNDD = CNDD - HNDD
 
 On the logit scale
 
+``` r
+species_rc_rh_draws %>%
+  ggplot(aes(y = rc_rh_contrast, x = log_median_abundance_sc, group = sp4)) +
+  ggdist::stat_gradientinterval(.width = 0.95, fill = "forestgreen",
+                                stroke = 0.5, linewidth = 0.5,
+                                shape = 21, fatten_point = 0.7,
+                                point_fill = "white",
+                                orientation = "vertical") +
+  labs(y = "Stabilising CNDD effect", x = "Species abundance") +
+  coord_cartesian(ylim = c(-2.5, 5))
+```
+
+![](figures/29_binom-models-compare/unnamed-chunk-8-1.png)<!-- -->
+
 # Check correlations between density estimates
 
 ``` r
@@ -305,7 +319,7 @@ bbinom_interact_abund$data %>%
     ## `geom_smooth()` using formula = 'y ~ x'
     ## `geom_smooth()` using formula = 'y ~ x'
 
-![](figures/29_binom-models-compare/unnamed-chunk-8-1.png)<!-- -->
+![](figures/29_binom-models-compare/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 cor.test(bbinom_interact_abund$data$conn_RC_sc,

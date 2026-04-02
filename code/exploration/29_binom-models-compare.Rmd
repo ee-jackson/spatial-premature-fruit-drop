@@ -229,6 +229,18 @@ Stabilizing CNDD = CNDD - HNDD
 
 On the logit scale
 
+```{r}
+species_rc_rh_draws %>%
+  ggplot(aes(y = rc_rh_contrast, x = log_median_abundance_sc, group = sp4)) +
+  ggdist::stat_gradientinterval(.width = 0.95, fill = "forestgreen",
+                                stroke = 0.5, linewidth = 0.5,
+                                shape = 21, fatten_point = 0.7,
+                                point_fill = "white",
+                                orientation = "vertical") +
+  labs(y = "Stabilising CNDD effect", x = "Species abundance") +
+  coord_cartesian(ylim = c(-2.5, 5))
+```
+
 # Check correlations between density estimates
 
 ```{r}
