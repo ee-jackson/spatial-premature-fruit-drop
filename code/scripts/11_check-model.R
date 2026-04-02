@@ -16,14 +16,14 @@ library("bayesplot")
 library("bayestestR")
 library("gt")
 
-model_rc <- readRDS(
-  here::here("output", "models", "repro_consp_20m_yesdioecious.rds"))
-model_tc <- readRDS(
-  here::here("output", "models", "nonrepro_consp_20m_yesdioecious.rds"))
-model_h <- readRDS(
-  here::here("output", "models", "repro_hetero_20m_yesdioecious.rds"))
+mod <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_binom_nseeds_abund.rds"))
 
 # Posterior predictive checks ---------------------------------------------
+
+# For binomial data, plots of y and yrep show the proportion of successes
+# rather than the raw count
 
 plot_pp_check <- function(model) {
   pp_check(model, ndraws = 500) +
@@ -48,19 +48,30 @@ plot_mcmc_check <- function(model) {
 names <-
   c("Intercept",
     "Reproductive conspecific density",
+    "Reproductive heterospecific density",
     "Non-reproductive conspecific density",
-    "Diameter at breast height",
-    "Year")
+    "log total seeds",
+    "log abundance",
+    "Reproductive conspecific density:log total seeds",
+    "Reproductive heterospecific density:log total seeds",
+    "Non-reproductive conspecific density:log total seeds",
+    "Reproductive conspecific density:log species abundance",
+    "Reproductive heterospecific density:log species abundance",
+    "Non-reproductive conspecific density:log species abundance")
 
 values <-
-  c("b_Intercept",
-    "b_phi_Intercept",
-    "b_zoi_Intercept",
-    "b_coi_Intercept",
-    "b_connectivity_sc",
-    "b_phi_connectivity_sc",
-    "b_zoi_connectivity_sc",
-    "b_coi_connectivity_sc")
+  c("(Intercept)",
+    "b_conn_RH_sc",
+    "b_conn_RH_sc",
+    "b_conn_NRC_sc",
+    "b_log_total_seeds_sc",
+    "b_log_median_abundance_sc",
+    "b_conn_RC_sc:log_total_seeds_sc",
+    "b_conn_RH_sc:log_total_seeds_sc",
+    "b_conn_NRC_sc:log_total_seeds_sc",
+    "b_conn_RC_sc:log_median_abundance_sc",
+    "b_conn_RH_sc:log_median_abundance_sc",
+    "b_conn_NRC_sc:log_median_abundance_sc")
 
 
 get_table <- function(model) {
@@ -76,61 +87,29 @@ get_table <- function(model) {
     gt()
 }
 
-# plot for Reproductive conspecifics model --------------------------------
 
-rc_t <- get_table(model_rc)
-gtsave(rc_t, here::here("output", "results", "repro_con_20m.png"))
-rc_t_png <- png::readPNG(here::here("output", "results", "repro_con_20m.png"),
+# Assemble figure ---------------------------------------------------------
+
+rc_t <- get_table(mod)
+gtsave(rc_t, here::here("output", "results", "describe_posterior.png"))
+rc_t_png <- png::readPNG(here::here("output", "results", "describe_posterior.png"),
                          native = TRUE)
 
-rc_pp <- plot_pp_check(model_rc)
+rc_pp <- plot_pp_check(mod)
 
 (rc_pp / rc_t_png) +
   plot_annotation(tag_levels = 'a') &
   theme(plot.tag = element_text(size = 20))
 
 png(
-  here::here("output", "figures", "repro_con_si.png"),
+  here::here("output", "figures", "pp_check_si.png"),
   width = 500,
   height = 500,
   units = "px"
 )
 
-# plot for Reproductive conspecifics model --------------------------------
-
-tc_t <- get_table(model_tc)
-gtsave(tc_t, here::here("output", "results", "total_con_20m.png"))
-tc_t_png <- png::readPNG(here::here("output", "results", "total_con_20m.png"),
-                         native = TRUE)
-
-tc_pp <- plot_pp_check(model_tc)
-
-(tc_pp / tc_t_png) +
-  plot_annotation(tag_levels = 'a') &
-  theme(plot.tag = element_text(size = 20))
-
 png(
   here::here("output", "figures", "total_con_si.png"),
-  width = 1476,
-  height = 1000,
-  units = "px"
-)
-
-# plot for Reproductive heterospecifics model --------------------------------
-
-h_t <- get_table(model_h)
-gtsave(h_t, here::here("output", "results", "het_20m.png"))
-h_t_png <- png::readPNG(here::here("output", "results", "het_20m.png"),
-                        native = TRUE)
-
-h_pp <- plot_pp_check(model_h)
-
-(h_pp / h_t_png) +
-  plot_annotation(tag_levels = 'a') &
-  theme(plot.tag = element_text(size = 20))
-
-png(
-  here::here("output", "figures", "repro_het_si.png"),
   width = 1476,
   height = 1000,
   units = "px"
