@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
-## Script: make-map
-## Desc:
+## Script: make-fig-01
+## Desc: make map figure
 ## Date created: 2023-07-18
 
 
@@ -14,12 +14,20 @@ library("ggmap")
 library("sf")
 library("patchwork")
 
+
+# Get data ----------------------------------------------------------------
+
 traps <- read.csv(here::here("data", "clean", "trap_locations.csv"))
+
+plot_50ha <-
+  read_sf(here::here("data", "raw", "BCI_Plot_50ha", "BCI_Plot_50ha.shp")) %>%
+  st_transform(crs = st_crs(4326))
 
 
 # 50ha plot map -----------------------------------------------------------
 
-traps %>%
+traps_map <-
+  traps %>%
   ggplot(aes(x = x, y = y)) +
   geom_point(
     size = 1,
@@ -33,25 +41,23 @@ traps %>%
     axis.title.y = element_text(angle = 90),
     axis.text.y = element_blank(),
     axis.text.x = element_blank(),
-    panel.border = element_rect(colour = "blue", fill=NA, size = 1)
+    panel.border = element_rect(colour = "blue", fill = NA, linewidth = 1)
     ) +
   theme(plot.background = element_rect(colour = NA,
                                     fill = NA,
-                                    linewidth = 1)) -> traps_map
+                                    linewidth = 1))
 
 
 # BCI map -----------------------------------------------------------------
 
-read_sf(here::here("data", "raw", "BCI_Plot_50ha", "BCI_Plot_50ha.shp")) %>%
-  st_transform(plot_50ha, crs = st_crs(4326)) -> plot_50ha
-
 bbox <- make_bbox(c(-79.875, -79.75),
                   c(9.10, 9.185))
 
-bci_basemap <- ggmap::get_map(bbox, source = "stamen",
-                              force = TRUE, maptype = "toner-lite")
+bci_basemap <- ggmap::get_map(bbox, source = "stadia",
+                              force = TRUE, maptype = "stamen_toner_lite")
 
-bci_basemap %>%
+bci_plot <-
+  bci_basemap %>%
   ggmap() +
   geom_sf(data = plot_50ha, inherit.aes = FALSE, fill = NA,
           colour = "blue", linewidth = 0.5) +
@@ -63,14 +69,16 @@ bci_basemap %>%
     axis.line = element_blank(),
     panel.border = element_rect(colour = "black",
                                 fill = NA,
-                                linewidth = 0.5)) -> bci_plot
+                                linewidth = 0.5))
 
 
-# combine -----------------------------------------------------------------
+# Combine -----------------------------------------------------------------
 
-bci_plot + inset_element(traps_map, left = 0.35, bottom = 0.005,
+final_map <-
+  bci_plot +
+  inset_element(traps_map, left = 0.35, bottom = 0.005,
                            right = 0.995, top = 0.6,
-                           align_to = "plot", clip = TRUE) -> final_map
+                           align_to = "plot", clip = TRUE)
 
 ggsave(here::here("output", "figures", "bci_map.png"),
        plot = final_map, device = "png", dpi = 600,
@@ -86,5 +94,5 @@ map_png <- png::readPNG(here::here("output", "figures", "bci_map.png"),
   plot_layout(heights = c(0, 2, 2)) +
   plot_annotation(tag_levels = list(c('', 'a', 'b')))
 
-ggsave(here::here("output", "figures", "bci_map_trap.png"),
+ggsave(here::here("output", "figures", "figure_01.png"),
        device = "png", dpi = 600, width = 110, height = 150, units = "mm")
