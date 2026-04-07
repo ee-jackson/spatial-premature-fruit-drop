@@ -95,4 +95,4 @@ map_png <- png::readPNG(here::here("output", "figures", "bci_map.png"),
   plot_annotation(tag_levels = list(c('', 'a', 'b')))
 
 ggsave(here::here("output", "figures", "figure_01.png"),
-       device = "png", dpi = 600, width = 110, height = 150, units = "mm")
+       device = "png", dpi = 600, width = 82, height = 100, units = "mm")
