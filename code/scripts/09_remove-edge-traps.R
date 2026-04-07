@@ -70,6 +70,7 @@ data_edge %>%
 
 # 32 of 450 traps removed
 
+
 # Save --------------------------------------------------------------------
 
 # add abundance data
@@ -85,10 +86,17 @@ data_edge %>%
   mutate(log_total_seeds = log(total_seeds),
          log_median_abundance = log(median_abundance)) %>%
   mutate(
-    conn_RC_sc = as.numeric(scale(conn_RC)),
-    conn_RH_sc = as.numeric(scale(conn_RH)),
-    conn_NRC_sc = as.numeric(scale(conn_NRC)),
-    log_total_seeds_sc = as.numeric(scale(log_total_seeds)),
-    log_median_abundance_sc = as.numeric(scale(log_median_abundance))
+    conn_RC_sc_mat = scale(conn_RC),
+    conn_RH_sc_mat = scale(conn_RH),
+    conn_NRC_sc_mat = scale(conn_NRC),
+    log_total_seeds_sc_mat = scale(log_total_seeds),
+    log_median_abundance_sc_mat = scale(log_median_abundance)
+  ) %>%
+  mutate(
+    conn_RC_sc = as.numeric(conn_RC_sc_mat),
+    conn_RH_sc = as.numeric(conn_RH_sc_mat),
+    conn_NRC_sc = as.numeric(conn_NRC_sc_mat),
+    log_total_seeds_sc = as.numeric(log_total_seeds_sc_mat),
+    log_median_abundance_sc = as.numeric(log_median_abundance_sc_mat)
   ) %>%
   saveRDS(here::here("data", "clean", "trap_connect_buffer.rds"))
