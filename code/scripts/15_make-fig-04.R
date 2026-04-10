@@ -48,9 +48,12 @@ p1 <-
   geom_ribbon(aes(ymin = lower__, ymax = upper__),
               fill = "#56B4E9", alpha = 0.5) +
   geom_line(linewidth = 1, colour = "#2F6380") +
-  labs(x = "log Species abundance", y = "Proportion of immature seeds") +
+  labs(x = "Species abundance
+       <span style='font-size:5pt'>(log basal area m<sup>2</sup>)</span>",
+       y = "Proportion of immature seeds") +
   coord_cartesian(ylim = c(0,1),
-                  expand = 0)
+                  expand = 0) +
+  theme(axis.title.x = element_markdown())
 
 
 # Make pabel b ------------------------------------------------------------
@@ -142,10 +145,13 @@ p2 <-
                       .width = c(0.95), interval_alpha = 0.8,
                      shape = 21, stroke = 0.5,
                      point_fill = "white") +
-  labs(y = "Stabilising CNDD effect", x = "log Species abundance") +
+  labs(y = "Stabilising CNDD effect",
+       x = "Species abundance
+       <span style='font-size:5pt'>(log basal area m<sup>2</sup>)</span>") +
   geom_hline(yintercept = 0, linetype = 1, colour = "#D55E00", linewidth = 0.5) +
   coord_cartesian(ylim = c(-2.5, 5)) +
-  theme(legend.position = "none")
+  theme(legend.position = "none",
+        axis.title.x = element_markdown())
 
 p2
 
@@ -160,7 +166,6 @@ png(
   type = "cairo",
   res = 600
 )
-
 
 p1 + inset_element(p2, left = 0.05, bottom = 0.4, right = 0.7, top = 0.95,
                    align_to = "panel") +
