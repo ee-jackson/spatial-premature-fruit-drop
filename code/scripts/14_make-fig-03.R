@@ -25,16 +25,38 @@ mod <-
   readRDS(here::here("output", "models", "pheno-repro-adjust",
                      "full_conn_binom_nseeds_abund.rds"))
 
-sample_size <-
-  mod$data %>%
-  group_by(sp4) %>%
-  summarise(n = n())
+# function to return variables to measurement scale
+mod_data <-
+  readRDS("data/clean/trap_connect_buffer.rds")
 
-sp_names <-
-  read_csv(here::here("data", "clean", "species_list.csv")) %>%
-  left_join(sample_size) %>%
-  mutate(genus_species = paste("<i>", genus, species, "</i>", n, sep = " ")) %>%
-  select(sp4, genus_species)
+unscale <- function(x, var_name) {
+  x * attr(mod_data[[var_name]], "scaled:scale") +
+    attr(mod_data[[var_name]], "scaled:center")
+}
+
+
+# Make panel a ------------------------------------------------------------
+
+cond_eff <-
+  conditional_effects(mod, effects = "log_median_abundance_sc")
+
+p1 <-
+  cond_eff[["log_median_abundance_sc"]] %>%
+  mutate(log_median_abundance =
+           unscale(log_median_abundance_sc, "log_median_abundance_sc_mat")) %>%
+  ggplot(aes(x = log_median_abundance, y = estimate__)) +
+  geom_ribbon(aes(ymin = lower__, ymax = upper__),
+              fill = "#56B4E9", alpha = 0.5) +
+  geom_line(linewidth = 1, colour = "#2F6380") +
+  labs(x = "Species abundance
+       <span style='font-size:5pt'>(log basal area m<sup>2</sup>)</span>",
+       y = "Proportion of immature seeds") +
+  coord_cartesian(ylim = c(0,1),
+                  expand = 0) +
+  theme(axis.title.x = element_markdown())
+
+
+# Make pabel b ------------------------------------------------------------
 
 draws <-
   as_draws_df(mod)
@@ -107,46 +129,46 @@ species_rc_rh_draws <-
       (b_RC_abund - b_RH_abund) * log_median_abundance_sc +
       (conn_RC_sc - conn_RH_sc)
   ) %>%
-  select(.draw, sp4, log_median_abundance_sc, rc_rh_contrast)
+  mutate(log_median_abundance =
+           unscale(log_median_abundance_sc, "log_median_abundance_sc_mat")) %>%
+  select(.draw, sp4, log_median_abundance, rc_rh_contrast)
 
-species_rc_rh_draws_medians <-
-  species_rc_rh_draws %>%
-  group_by(sp4) %>%
-  point_interval(rc_rh_contrast) %>%
-  select(sp4, rc_rh_contrast) %>%
-  rename(median = rc_rh_contrast)
 
-p <-
+p2 <-
   species_rc_rh_draws %>%
-  left_join(sp_names) %>%
-  left_join(species_rc_rh_draws_medians) %>%
-  group_by(genus_species) %>%
-  ggplot(aes(y = reorder(genus_species, median),
-             x = rc_rh_contrast,
-             group = genus_species)) +
-  ggdist::stat_gradientinterval(.width = 0.95, fill = "#56B4E9",
-                                stroke = 0.5, linewidth = 0.5,
-                                shape = 21, fatten_point = 0.7,
-                                point_fill = "white",
-                                fill_type = "gradient",
-                                point_interval = median_qi,
-                                slab_linewidth = 0, normalize = "groups"
-                                ) +
-  scale_slab_alpha_continuous(range = c(0, 1), limits = c(0, 0.95)) +
-  labs(x = "Stabilising CNDD effect", y = "") +
-  coord_cartesian(xlim = c(-2.5, 5)) +
-  geom_vline(xintercept = 0, linetype = 1, colour = "#D55E00", linewidth = 0.25) +
-  theme(axis.text.y = element_markdown())
+  ggplot(aes(x = log_median_abundance, group = sp4,
+             y = rc_rh_contrast)) +
+  stat_interval(aes(interval_alpha = after_stat(level)),
+                size = 1.5, slab_alpha = 0.8,
+                interval_colour = "#56B4E9", .width = c(0.95, 0.8, 0.5)) +
+  stat_pointinterval(size = 0.15, colour = "#2F6380",
+                      .width = c(0.95), interval_alpha = 0.8,
+                     shape = 21, stroke = 0.5,
+                     point_fill = "white") +
+  labs(y = "Stabilising CNDD effect",
+       x = "Species abundance
+       <span style='font-size:5pt'>(log basal area m<sup>2</sup>)</span>") +
+  geom_hline(yintercept = 0, linetype = 1, colour = "#D55E00", linewidth = 0.5) +
+  coord_cartesian(ylim = c(-2.5, 5)) +
+  theme(legend.position = "none",
+        axis.title.x = element_markdown())
+
+p2
+
+
+# Combine panels and save -------------------------------------------------
 
 png(
   here::here("output", "figures", "figure_03.png"),
-  width = 82,
-  height = 200,
+  width = 110,
+  height = 90,
   units = "mm",
   type = "cairo",
   res = 600
 )
 
-p
+p1 + inset_element(p2, left = 0.05, bottom = 0.4, right = 0.7, top = 0.95,
+                   align_to = "panel") +
+  plot_annotation(tag_levels = "a")
 
 dev.off()
