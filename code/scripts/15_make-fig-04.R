@@ -133,7 +133,7 @@ p <-
                                 slab_linewidth = 0, normalize = "groups"
                                 ) +
   scale_slab_alpha_continuous(range = c(0, 1), limits = c(0, 0.95)) +
-  labs(x = "Stabilising CNDD effect", y = "") +
+  labs(x = "Stabilising CDD effect", y = "") +
   coord_cartesian(xlim = c(-2.5, 5)) +
   geom_vline(xintercept = 0, linetype = 1, colour = "#D55E00", linewidth = 0.25) +
   theme(axis.text.y = element_markdown())

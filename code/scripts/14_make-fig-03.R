@@ -145,7 +145,7 @@ p2 <-
                       .width = c(0.95), interval_alpha = 0.8,
                      shape = 21, stroke = 0.5,
                      point_fill = "white") +
-  labs(y = "Stabilising CNDD effect",
+  labs(y = "Stabilising CDD effect",
        x = "Species abundance
        <span style='font-size:5pt'>(log basal area m<sup>2</sup>)</span>") +
   geom_hline(yintercept = 0, linetype = 1, colour = "#D55E00", linewidth = 0.5) +
