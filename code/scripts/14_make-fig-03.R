@@ -14,7 +14,7 @@ library("ggtext")
 
 # set the ggplot theme
 theme_set(
-  theme_bw(base_size = 8) +
+  theme_bw(base_size = 10) +
     theme(
       panel.spacing = unit(0, "lines"))
 )
@@ -49,7 +49,7 @@ p1 <-
               fill = "#56B4E9", alpha = 0.5) +
   geom_line(linewidth = 1, colour = "#2F6380") +
   labs(x = "Species abundance
-       <span style='font-size:5pt'>(log basal area m<sup>2</sup>)</span>",
+       <span style='font-size:7pt'>(log basal area m<sup>2</sup>)</span>",
        y = "Proportion of immature seeds") +
   coord_cartesian(ylim = c(0,1),
                   expand = 0) +
@@ -141,19 +141,17 @@ p2 <-
   stat_interval(aes(interval_alpha = after_stat(level)),
                 size = 1.5, slab_alpha = 0.8,
                 interval_colour = "#56B4E9", .width = c(0.95, 0.8, 0.5)) +
-  stat_pointinterval(size = 0.15, colour = "#2F6380",
-                      .width = c(0.95), interval_alpha = 0.8,
+  stat_pointinterval(size = 0.2, colour = "#2F6380",
+                      .width = c(0.95), interval_alpha = 1,
                      shape = 21, stroke = 0.5,
                      point_fill = "white") +
   labs(y = "Stabilising CDD effect",
        x = "Species abundance
-       <span style='font-size:5pt'>(log basal area m<sup>2</sup>)</span>") +
+       <span style='font-size:7pt'>(log basal area m<sup>2</sup>)</span>") +
   geom_hline(yintercept = 0, linetype = 1, colour = "#D55E00", linewidth = 0.5) +
   coord_cartesian(ylim = c(-2.5, 5)) +
   theme(legend.position = "none",
         axis.title.x = element_markdown())
-
-p2
 
 
 # Combine panels and save -------------------------------------------------
@@ -161,14 +159,13 @@ p2
 png(
   here::here("output", "figures", "figure_03.png"),
   width = 110,
-  height = 90,
+  height = 165,
   units = "mm",
   type = "cairo",
   res = 600
 )
 
-p1 + inset_element(p2, left = 0.05, bottom = 0.4, right = 0.7, top = 0.95,
-                   align_to = "panel") +
+p1 / p2 +
   plot_annotation(tag_levels = "a")
 
 dev.off()
