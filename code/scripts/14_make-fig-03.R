@@ -11,6 +11,7 @@ library("brms")
 library("patchwork")
 library("ggdist")
 library("ggtext")
+library("scales")
 
 # set the ggplot theme
 theme_set(
@@ -47,13 +48,14 @@ p1 <-
   ggplot(aes(x = log_median_abundance, y = estimate__)) +
   geom_ribbon(aes(ymin = lower__, ymax = upper__),
               fill = "#56B4E9", alpha = 0.5) +
-  geom_line(linewidth = 1, colour = "#2F6380") +
+  geom_line(linewidth = 1, colour = "#2F6380", alpha = 1) +
   labs(x = "Species abundance
        <span style='font-size:7pt'>(log basal area m<sup>2</sup>)</span>",
-       y = "Proportion of immature seeds") +
+       y = "Immature seed mortality") +
   coord_cartesian(ylim = c(0,1),
                   expand = 0) +
-  theme(axis.title.x = element_markdown())
+  theme(axis.title.x = element_markdown()) +
+  scale_y_continuous(labels = scales::label_percent())
 
 
 # Make pabel b ------------------------------------------------------------

@@ -10,6 +10,7 @@ library("tidyverse")
 library("brms")
 library("patchwork")
 library("thematic")
+library("scales")
 
 # set the ggplot theme
 theme_set(
@@ -134,7 +135,7 @@ p1 <-
   ) +
   geom_ribbon(aes(ymin = lower__, ymax = upper__), alpha = 0.3, linewidth = 0) +
   geom_line(linewidth = 1) +
-  labs(x = "Neighbourhood density", y = "Proportion of immature seeds",
+  labs(x = "Neighbourhood density", y = "Immature seed mortality",
        colour = "", fill = "") +
   scale_colour_manual(
     aesthetics = c("colour", "fill"),
@@ -143,7 +144,8 @@ p1 <-
   coord_cartesian(ylim = c(0,1), expand = 0) +
   theme(legend.position  = "inside",
         legend.position.inside = c(0.25, 0.9),
-        legend.text = element_text(size = 7))
+        legend.text = element_text(size = 7)) +
+  scale_y_continuous(labels = scales::label_percent())
 
 
 # Colour helper function --------------------------------------------------
@@ -198,7 +200,7 @@ make_plot <- function(data, effect, x, x_name, mid_colour) {
     geom_ribbon(aes(ymin = lower__, ymax = upper__,
                     fill = as.factor(effect2__)), alpha = 0.3) +
     geom_line(aes(colour = as.factor(effect2__)), linewidth = 0.5) +
-    labs(x = x_name, y = "Proportion of immature seeds",
+    labs(x = x_name, y = "Immature seed mortality",
          colour = "Total seeds",
          fill = "Total seeds") +
     scale_colour_manual(
@@ -206,7 +208,8 @@ make_plot <- function(data, effect, x, x_name, mid_colour) {
       values = vals
     ) +
     coord_cartesian(ylim = c(0,1),
-                    expand = 0)
+                    expand = 0) +
+    scale_y_continuous(labels = scales::label_percent())
 }
 
 cond_eff <- conditional_effects(mod)
