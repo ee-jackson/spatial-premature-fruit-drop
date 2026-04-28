@@ -1,7 +1,7 @@
 Seed predators model
 ================
 Eleanor Jackson
-24 April, 2026
+28 April, 2026
 
 ``` r
 library("tidyverse")
@@ -78,18 +78,21 @@ print(comp, digits = 3)
     ## mod_orig -0.728     2.004
 
 ``` r
-comp %>% 
+loo_comp <- 
+  comp %>% 
   data.frame() %>% 
   rownames_to_column(var = "model_name") %>% 
-  ggplot(aes(x    = model_name, elpd_diff, 
+  mutate(name= c("Model 2", "Model 1")) %>% 
+  ggplot(aes(x    = name, elpd_diff, 
              y    = elpd_diff, 
              ymin = elpd_diff - se_diff, 
              ymax = elpd_diff + se_diff)) +
   geom_pointrange(shape = 21, fill = "white") +
   coord_flip() +
   geom_hline(yintercept = 0, colour = "blue", linetype = 2) +
-  labs(x = NULL, y = "difference from model with the largest ELPD", 
-       title = "expected log predictive density (ELPD)") 
+  labs(x = NULL, y = "ELPD difference") 
+
+loo_comp
 ```
 
 ![](figures/33_seed-preds-model/loo-compare-1.png)<!-- -->
@@ -98,8 +101,8 @@ comp %>%
 my_coef_tab <-
   tibble(fit = list(mod_orig,
                     mod_new),
-         model = c("mod_orig",
-                   "mod_new")) %>%
+         model = c("Model 1",
+                   "Model 2")) %>%
   mutate(tidy = purrr::map(
     fit,
     tidy,
@@ -120,19 +123,48 @@ my_coef_tab <-
 ## Compare parameter estimates
 
 ``` r
-my_coef_tab %>% 
+names <-
+  c("Intercept",
+    "Reproductive conspecific density",
+    "Reproductive heterospecific density",
+    "Non-reproductive conspecific density",
+    "log Total seeds",
+    "log Species abundance",
+    "Presence of seed predator")
+
+values <-
+  c("(Intercept)",
+    "conn_RC_sc",
+    "conn_RH_sc",
+    "conn_NRC_sc",
+    "log_total_seeds_sc",
+    "log_median_abundance_sc",
+    "SeedPred_pres1")
+
+lookup <- setNames(names, values)
+```
+
+``` r
+param_comp <- 
+  my_coef_tab %>% 
+  mutate(term = str_replace_all(term, lookup)) %>% 
   mutate(term = as.factor(term)) %>% 
   ggplot(aes(x = term, y = estimate, ymin = conf.low, ymax = conf.high)) +
-  geom_pointrange(shape = 21, fill = "white") +
+  geom_pointrange(shape = 21, fill = "white", size = 0.5) +
   labs(x = "Parameters",
        y = "Estimate ± CI [95%]") +
   geom_hline(yintercept = 0,  color = "blue") +
   coord_flip() +
   theme_bw() +
-  facet_grid(term~model, drop=TRUE, scales = "free")
+  facet_grid(~model, drop=TRUE, scales = "free") +
+  theme(strip.text.y = element_blank())
 ```
 
-![](figures/33_seed-preds-model/estimate-compare-1.png)<!-- -->
+``` r
+param_comp + loo_comp
+```
+
+![](figures/33_seed-preds-model/unnamed-chunk-6-1.png)<!-- -->
 
 ## Conditional effects plots for `mod_new`
 
@@ -154,7 +186,7 @@ wrap_plots(
   coord_cartesian(ylim = c(0,1))
 ```
 
-![](figures/33_seed-preds-model/unnamed-chunk-5-1.png)<!-- -->
+![](figures/33_seed-preds-model/unnamed-chunk-7-1.png)<!-- -->
 
 ``` r
 wrap_plots(
@@ -168,7 +200,7 @@ wrap_plots(
   theme(legend.position = "top")
 ```
 
-![](figures/33_seed-preds-model/unnamed-chunk-5-2.png)<!-- -->
+![](figures/33_seed-preds-model/unnamed-chunk-7-2.png)<!-- -->
 
 ``` r
 wrap_plots(
@@ -181,7 +213,7 @@ wrap_plots(
   theme(legend.position = "top")
 ```
 
-![](figures/33_seed-preds-model/unnamed-chunk-5-3.png)<!-- -->
+![](figures/33_seed-preds-model/unnamed-chunk-7-3.png)<!-- -->
 
 ``` r
 wrap_plots(
@@ -194,7 +226,7 @@ wrap_plots(
   theme(legend.position = "top")
 ```
 
-![](figures/33_seed-preds-model/unnamed-chunk-5-4.png)<!-- -->
+![](figures/33_seed-preds-model/unnamed-chunk-7-4.png)<!-- -->
 
 ## Look at stabilising CDD
 
@@ -293,7 +325,7 @@ species_rc_rh_summary %>%
   )
 ```
 
-![](figures/33_seed-preds-model/unnamed-chunk-7-1.png)<!-- -->
+![](figures/33_seed-preds-model/unnamed-chunk-9-1.png)<!-- -->
 
 ``` r
 seedpred_effect_on_rc_rh <- draws %>%
