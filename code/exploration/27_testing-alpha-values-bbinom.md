@@ -1,15 +1,16 @@
 Testing different values of alpha for beta-binomial models
 ================
 Eleanor Jackson
-21 March, 2026
+27 April, 2026
 
 ``` r
-library("tidyverse"); theme_set(theme_bw(base_size = 10))
+library("tidyverse"); theme_set(theme_bw(base_size = 15))
 library("broom.mixed")
 library("brms")
 library("ggdist")
 library("loo") 
 library("patchwork")
+library("ggtext")
 ```
 
 ``` r
@@ -62,6 +63,12 @@ print(comp, digits = 3)
 comp %>% 
   data.frame() %>% 
   rownames_to_column(var = "model_name") %>% 
+  mutate(model_name = str_remove(model_name, "`")) %>% 
+  mutate(model_name = str_remove(model_name, "`")) %>% 
+  mutate(model_name = str_replace(string = model_name, 
+                                  pattern = fixed("model_list$") , 
+                                  replacement = "&alpha; = ")) %>% 
+  
   ggplot(aes(x    = model_name, elpd_diff, 
              y    = elpd_diff, 
              ymin = elpd_diff - se_diff, 
@@ -70,7 +77,8 @@ comp %>%
   coord_flip() +
   geom_hline(yintercept = 0, colour = "blue", linetype = 2) +
   labs(x = NULL, y = "difference from model with the largest ELPD", 
-       title = "expected log predictive density (ELPD)") 
+       title = "expected log predictive density (ELPD)") +
+  theme(axis.text = element_markdown())
 ```
 
 ![](figures/27_testing-alpha-values-bbinom/loo-compare-1.png)<!-- -->

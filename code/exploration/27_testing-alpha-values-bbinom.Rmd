@@ -9,16 +9,16 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(fig.path = "figures/27_testing-alpha-values-bbinom/")
-ggplot2::theme_set(ggplot2::theme_classic(base_size = 10))
 ```
 
 ```{r message=FALSE, warning=FALSE}
-library("tidyverse"); theme_set(theme_bw(base_size = 10))
+library("tidyverse"); theme_set(theme_bw(base_size = 15))
 library("broom.mixed")
 library("brms")
 library("ggdist")
 library("loo") 
 library("patchwork")
+library("ggtext")
 ```
 
 ```{r}
@@ -56,6 +56,12 @@ print(comp, digits = 3)
 comp %>% 
   data.frame() %>% 
   rownames_to_column(var = "model_name") %>% 
+  mutate(model_name = str_remove(model_name, "`")) %>% 
+  mutate(model_name = str_remove(model_name, "`")) %>% 
+  mutate(model_name = str_replace(string = model_name, 
+                                  pattern = fixed("model_list$") , 
+                                  replacement = "&alpha; = ")) %>% 
+  
   ggplot(aes(x    = model_name, elpd_diff, 
              y    = elpd_diff, 
              ymin = elpd_diff - se_diff, 
@@ -64,7 +70,8 @@ comp %>%
   coord_flip() +
   geom_hline(yintercept = 0, colour = "blue", linetype = 2) +
   labs(x = NULL, y = "difference from model with the largest ELPD", 
-       title = "expected log predictive density (ELPD)") 
+       title = "expected log predictive density (ELPD)") +
+  theme(axis.text = element_markdown())
 
 
 ```
