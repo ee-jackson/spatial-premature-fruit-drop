@@ -1,0 +1,125 @@
+---
+title: "Check collinearity"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  github_document:
+    keep_html: false
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/34_collinearity-check/")
+```
+
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse")
+library("brms")
+library("patchwork")
+library("GGally")
+library("bayesplot")
+ggplot2::theme_set(
+  theme_bw() )
+```
+
+```{r}
+mod <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_binom_nseeds_abund.rds"))
+
+data <- mod$data
+
+```
+
+```{r fig.height=8, fig.width=8}
+
+draws <- as_draws_df(mod, variable =
+                       c("b_conn_RC_sc", "b_conn_RH_sc", "b_conn_NRC_sc",
+                        "b_log_total_seeds_sc", "b_log_median_abundance_sc"))
+
+draws_names <- 
+  draws %>% 
+  posterior::rename_variables(
+    "\u03b2 Reproductive\nconspecific density" = "b_conn_RC_sc",
+    "\u03b2 Reproductive\nheterospecific density" = "b_conn_RH_sc",
+    "\u03b2 Non-reproductive\nconspecific density" = "b_conn_NRC_sc",
+    "\u03b2 log Total seeds" = "b_log_total_seeds_sc",
+    "\u03b2 log Species\nabundance" = "b_log_median_abundance_sc" )
+
+bayesplot::mcmc_pairs(draws_names, 
+      diag_fun = "dens") 
+
+```
+
+```{r}
+# https://pascal-martin.netlify.app/post/nicer-scatterplot-in-gggally/
+
+GGscatterPlot <- function(data, mapping, ..., 
+                        method = "spearman") {
+
+#Get correlation coefficient
+    x <- GGally::eval_data_col(data, mapping$x)
+    y <- GGally::eval_data_col(data, mapping$y)
+
+    cor <- cor(x, y, method = method)
+#Assemble data frame
+    df <- data.frame(x = x, y = y)
+# PCA
+    nonNull <- x!=0 & y!=0
+    dfpc <- prcomp(~x+y, df[nonNull,])
+    df$cols <- predict(dfpc, df)[,1]
+# Define the direction of color range based on PC1 orientation:
+    dfsum <- x+y
+    colDirection <- ifelse(dfsum[which.max(df$cols)] < 
+                               dfsum[which.min(df$cols)],
+                           1,
+                           -1)
+#Get 2D density for alpha
+    dens2D <- MASS::kde2d(df$x, df$y)
+    df$density <- fields::interp.surface(dens2D , 
+                                         df[,c("x", "y")])
+
+if (any(df$density==0)) {
+    mini2D = min(df$density[df$density!=0]) #smallest non zero value
+    df$density[df$density==0] <- mini2D
+}
+#Prepare plot
+    pp <- ggplot(df, aes(x=x, y=y, color = cols, alpha = 1/density)) +
+                geom_point(shape=16, show.legend = FALSE) +
+                scale_color_viridis_c(direction = colDirection) +
+#                scale_color_gradient(low = "#0091ff", high = "#f0650e") +
+                scale_alpha(range = c(.05, .6)) +
+                geom_abline(intercept = 0, slope = 1, col="darkred") +
+                geom_label(
+                        data = data.frame(
+                                        xlabel = min(x, na.rm = TRUE),
+                                        ylabel = max(y, na.rm = TRUE),
+                                        lab = round(cor, digits = 3)),
+                        mapping = ggplot2::aes(x = xlabel, 
+                                               y = ylabel, 
+                                               label = lab),
+                        hjust = 0, vjust = 1,
+                        size = 3, fontface = "bold",
+                        inherit.aes = FALSE # do not inherit anything from the ...
+                        ) +
+                theme_minimal()
+
+return(pp)
+}
+```
+
+
+```{r fig.height=8, fig.width=8}
+GGally::ggpairs(select(data, conn_RC_sc, conn_RH_sc, conn_NRC_sc,
+             log_total_seeds_sc, log_median_abundance_sc),
+             lower = list(continuous = GGscatterPlot),
+             upper = "blank",
+             progress = FALSE,
+             columnLabels = c(
+               "Reproductive\nconspecific density",
+               "Reproductive\nheterospecific density",
+               "Non-reproductive\nconspecific density",
+               "log Total seeds",
+               "log Species\nabundance"
+             )) +
+  theme_bw()
+```
+
