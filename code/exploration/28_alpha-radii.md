@@ -1,0 +1,115 @@
+Testing different values of alpha
+================
+Eleanor Jackson
+20 March, 2026
+
+``` r
+library("tidyverse"); theme_set(theme_bw(base_size = 10))
+library("sf")
+library("patchwork")
+```
+
+Use an effective radius that captures almost all kernel weight (so
+anything beyond it contributes negligible connectivity).
+
+effective radius (capturing 95% of influence) = -ln(0.05) / alpha
+
+``` r
+test_data <- 
+  readRDS(here::here("data", "clean", "connect_all_alpha.rds"))
+```
+
+``` r
+eps <- 0.05 #captures 95% of influence
+
+# draw the fdp
+fdplot <- rbind(c(0,0), c(0, 500), c(1000, 500), c(1000, 0), c(0,0))
+
+# make it a polygon
+plot_polygon <- sf::st_polygon(list(fdplot))
+
+plot(plot_polygon)
+```
+
+![](figures/28_alpha-radii/unnamed-chunk-3-1.png)<!-- -->
+
+``` r
+dat_sf <- sf::st_as_sf(test_data, coords = c("x", "y"),
+                       remove = FALSE) 
+
+# distance to boundary
+dist_to_boundary <- st_distance(dat_sf, st_boundary(plot_polygon),
+                                which = "Euclidean")
+
+# st_distance returns units; convert to numeric meters
+dist_to_boundary_m <- as.numeric(dist_to_boundary)
+
+dat_sf$dist_to_edge_m <- dist_to_boundary_m
+
+# effective radii (exponential kernel)
+# the distance where the weight drops to some small threshold
+
+dat_sf <- 
+  dat_sf %>% 
+  mutate(r_eff =  (- log(eps)) / alpha) %>% 
+  mutate(location = ifelse(dist_to_edge_m >= r_eff, "interior",
+                       "edge"))
+
+dat_sf %>% 
+  sf::st_drop_geometry() %>% 
+  mutate(r_eff_m = round(r_eff)) %>% 
+  select(trap, x, y , location, alpha, r_eff_m) %>% 
+  distinct() %>% 
+  ggplot(aes(x = x, y = y, colour = location)) +
+  geom_point() +
+  facet_wrap(~r_eff_m)
+```
+
+![](figures/28_alpha-radii/unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+dat_sf %>% 
+  mutate(r_eff_m = round(r_eff)) %>% 
+  ggplot(aes(x = conn_RH, colour = location)) +
+  geom_density() +
+  facet_wrap(~r_eff_m, scales = "free") +
+  ggtitle("Reproductive heterospecifics")
+```
+
+![](figures/28_alpha-radii/unnamed-chunk-5-1.png)<!-- -->
+
+Traps at the edge generally have connectivity distributions which are
+shifted lower.
+
+``` r
+dat_sf %>% 
+  mutate(r_eff_m = round(r_eff)) %>% 
+  ggplot(aes(x = conn_RC, colour = location)) +
+  geom_density() +
+  facet_wrap(~r_eff_m, scales = "free") +
+  ggtitle("Reproductive conspecifics")
+```
+
+![](figures/28_alpha-radii/unnamed-chunk-6-1.png)<!-- -->
+
+Edge traps also have lower reproductive conspecific density,
+
+``` r
+dat_sf %>% 
+  mutate(r_eff_m = round(r_eff)) %>% 
+  ggplot(aes(x = conn_NRC, colour = location)) +
+  geom_density() +
+  facet_wrap(~r_eff_m, scales = "free") +
+  ggtitle("Non-reproductive conspecifics")
+```
+
+![](figures/28_alpha-radii/unnamed-chunk-7-1.png)<!-- -->
+
+and lower non-reproductive conspecific density.
+
+``` r
+# dat_sf %>%
+#   sf::st_drop_geometry() %>%
+#   mutate(location = as.factor(location)) %>%
+#   saveRDS(here::here("data", "clean", "connect_all_alpha_buffer.rds"))
+```

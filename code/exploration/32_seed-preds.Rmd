@@ -1,0 +1,61 @@
+---
+title: "Seed predators"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  github_document:
+    keep_html: false
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/32_seed-preds/")
+```
+
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse")
+library("brms")
+```
+
+```{r}
+mod <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_binom_nseeds_abund.rds"))
+```
+
+```{r}
+pred_data <- 
+  read_csv(here::here("data", "raw", "TidyTrait.csv")) %>% 
+  mutate(sp4 = str_to_lower(Codigo)) %>% 
+  select(-Codigo) %>% 
+  filter(! is.na(SeedPred_pres))
+```
+
+```{r}
+sp_in_mod <- 
+  mod$data %>% 
+  select(sp4) %>% 
+  distinct() 
+
+nrow(sp_in_mod)
+```
+
+```{r}
+sp_in_mod %>% 
+  inner_join(pred_data) %>% 
+  glimpse
+```
+
+
+```{r}
+sp_in_mod %>% 
+  anti_join(pred_data) %>% 
+  glimpse
+```
+```{r}
+sp_names <-
+  read_csv(here::here("data", "clean", "species_list.csv")) 
+
+sp_in_mod %>% 
+  anti_join(pred_data) %>% 
+  left_join(sp_names)
+```
+

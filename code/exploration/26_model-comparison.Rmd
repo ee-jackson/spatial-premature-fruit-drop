@@ -1,0 +1,144 @@
+---
+title: "Compare models"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  github_document:
+    keep_html: false
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/26_model-comparison/")
+```
+
+Compare models with all 3 connectivity/density measures.
+Do we actually need zero inflation?
+
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse")
+library("brms")
+library("patchwork")
+```
+
+```{r}
+zibb <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_zib.rds"))
+
+bbinom <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_binom.rds"))
+
+zoib <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_simple.rds"))
+```
+
+## `summary()`
+
+```{r}
+summary(zibb)
+```
+
+```{r}
+summary(bbinom)
+```
+
+```{r}
+summary(zoib)
+```
+
+
+## Do we need zero inflation?
+
+```{r}
+pp_check(zibb, type = "stat", stat = function(y) mean(y == 0), ndraws = 500) +
+  pp_check(bbinom, type = "stat", stat = function(y) mean(y == 0), ndraws = 500) +
+  patchwork::plot_layout(guides = "collect")
+  
+```
+
+Looks like the ZIBB didn't fit very well, 
+but the BBinom is slightly under predicting zeros.
+
+```{r}
+# draw posterior predictive samples (matrix draws x observations)
+pp_bbinom <- posterior_predict(bbinom, ndraws = 2000)  
+
+# observed zeros
+obs_zero <- as.integer(bbinom$data$abscised_seeds == 0)
+
+# compute predicted overall zero proportion per draw
+pred_zero_rate <- apply(pp_bbinom, 1, function(draw) mean(draw == 0))
+
+# summary
+obs_zero_rate <- mean(obs_zero)
+median_pred <- median(pred_zero_rate)
+ci_pred <- quantile(pred_zero_rate, c(0.025, 0.975))
+
+tibble(
+  observed = obs_zero_rate,
+  pred_median = median_pred,
+  pred_lo = ci_pred[1],
+  pred_hi = ci_pred[2]
+)
+```
+
+If observed value is within 95% CI, the model can predict the observed zero rate.
+
+Check zeros by `total_seeds`:
+
+```{r}
+# choose bins (quantile binning)
+df2 <- bbinom$data %>%
+  mutate(n_bin = ntile(total_seeds, 50)) %>%   # 5 bins; change as needed
+  group_by(n_bin) %>%
+  mutate(mean_n = mean(total_seeds)) %>%
+  ungroup()
+
+# map original indices to bins
+bins <- df2$n_bin
+
+# compute predicted zero rate per bin for each draw
+pred_zero_by_bin <- apply(pp_bbinom, 1, function(draw) {
+  tapply(draw == 0, bins, mean)
+}) # result: draws x bins (list->matrix)
+
+# summarize per bin
+bin_summary <- as_tibble(t(pred_zero_by_bin)) %>%
+  mutate(draw = row_number()) %>%
+  pivot_longer(-draw, names_to = "n_bin", values_to = "pred_zero") %>%
+  group_by(n_bin) %>%
+  summarise(
+    pred_median = median(pred_zero),
+    pred_lo = quantile(pred_zero, 0.025),
+    pred_hi = quantile(pred_zero, 0.975)
+  ) %>%
+  mutate(n_bin = as.integer(n_bin)) %>% 
+  arrange(n_bin) 
+
+# observed by bin
+obs_by_bin <- df2 %>%
+  group_by(n_bin, mean_n) %>%
+  summarise(obs_zero = mean(abscised_seeds == 0), .groups = "drop") %>%
+  arrange(as.integer(n_bin))
+
+# join and plot
+check_bin <- left_join(obs_by_bin, bin_summary, by = "n_bin")
+
+ggplot(check_bin, aes(x = mean_n)) +
+  geom_ribbon(aes(ymin = pred_lo, ymax = pred_hi), alpha = 0.2) +
+  geom_line(aes(y = pred_median), linetype = "dashed") +
+  geom_point(aes(y = obs_zero), size = 2) +
+  labs(x = "mean total_seeds in bin", y = "proportion zeros",
+       title = "Observed vs predicted zero proportion by total_seeds bin") +
+  theme_minimal()
+```
+
+For very large `total_seeds` the beta-binomial predicts more zeros than actually observed. This suggests the zeros are not structural. 
+If they were, we'd see too many zeros overall and *underprediction* of zeros 
+at large n.
+
+This pattern suggests for large `total_seeds` observing zero abscised seeds 
+is very unlikely.
+
+-> trees which are very productive likely have a larger proportion of abscised seeds 
