@@ -50,7 +50,7 @@ p1 <-
               fill = "#56B4E9", alpha = 0.5) +
   geom_line(linewidth = 1, colour = "#2F6380", alpha = 1) +
   labs(x = "Species abundance
-       <span style='font-size:7pt'>(log basal area m<sup>2</sup>)</span>",
+       <span style='font-size:7pt'>(log count)</span>",
        y = "Immature seed mortality") +
   coord_cartesian(ylim = c(0,1),
                   expand = 0) +
@@ -149,7 +149,7 @@ p2 <-
                      point_fill = "white") +
   labs(y = "Stabilising CDD effect",
        x = "Species abundance
-       <span style='font-size:7pt'>(log basal area m<sup>2</sup>)</span>") +
+       <span style='font-size:7pt'>(log count)</span>") +
   geom_hline(yintercept = 0, linetype = 1, colour = "#D55E00", linewidth = 0.5) +
   coord_cartesian(ylim = c(-2.5, 5)) +
   theme(legend.position = "none",
