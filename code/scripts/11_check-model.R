@@ -2,7 +2,7 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: check-models
-## Desc: perform posterior predictive checks
+## Desc: perform posterior predictive checks and get outputs for SI
 ## Date created: 2023-07-18
 
 # packages ----------------------------------------------------------------
@@ -14,23 +14,67 @@ library("patchwork")
 library("stringr")
 library("bayesplot")
 library("bayestestR")
-library("gt")
 
 mod <-
   readRDS(here::here("output", "models", "pheno-repro-adjust",
                      "full_conn_binom_nseeds_abund.rds"))
 
+
+# Calculate contrast ------------------------------------------------------
+
+# Choose the context at which to evaluate the contrast
+# Because predictors are scaled, 0 = mean value
+newdat <- tibble(
+  conn_RC_sc = c(1, 0),
+  conn_RH_sc = c(0, 1),
+  conn_NRC_sc = 0,
+  total_seeds = 1,
+  log_total_seeds_sc = 0,
+  log_median_abundance_sc = 0,
+  quadrat = NA,
+  trap = NA,
+  year = NA,
+  sp4 = NA
+)
+
+# Posterior draws of the linear predictor
+lp <- posterior_linpred(
+  mod,
+  newdata = newdat,
+  re_formula = NA,
+  transform = FALSE
+)
+
+# Contrast: RC minus RH
+contrast_draws <- lp[, 1] - lp[, 2]
+
+quantile(contrast_draws, probs = c(0.025, 0.5, 0.975))
+median(contrast_draws)
+
+
 # Posterior predictive checks ---------------------------------------------
 
-# For binomial data, plots of y and yrep show the proportion of successes
-# rather than the raw count
+# Check zero inflation
+pp_check(mod, type = "stat", stat = function(y) mean(y == 0), ndraws = 500)
 
-plot_pp_check <- function(model) {
-  pp_check(model, ndraws = 500) +
-    labs(x = "Proportion of immature seeds", y = "Density") +
-    theme_classic(base_size = 20)
-}
+# observed zeros
+obs_zero <- as.integer(mod$data$abscised_seeds == 0)
 
+# compute predicted overall zero proportion per draw
+pp_mod <- posterior_predict(mod, ndraws = 1000)
+pred_zero_rate <- apply(pp_mod, 1, function(draw) mean(draw == 0))
+
+# summary
+obs_zero_rate <- mean(obs_zero)
+median_pred <- median(pred_zero_rate)
+ci_pred <- quantile(pred_zero_rate, c(0.025, 0.975))
+
+tibble(
+  observed = obs_zero_rate,
+  pred_median = median_pred,
+  pred_lo = ci_pred[1],
+  pred_hi = ci_pred[2]
+)
 
 # MCMC diagnostics --------------------------------------------------------
 
@@ -42,6 +86,8 @@ plot_mcmc_check <- function(model) {
     theme_classic(base_size = 15)
 }
 
+plot_mcmc_check(mod)
+
 
 # Get posterior param estimates -------------------------------------------
 
@@ -50,18 +96,18 @@ names <-
     "Reproductive conspecific density",
     "Reproductive heterospecific density",
     "Non-reproductive conspecific density",
-    "log total seeds",
-    "log abundance",
-    "Reproductive conspecific density:log total seeds",
-    "Reproductive heterospecific density:log total seeds",
-    "Non-reproductive conspecific density:log total seeds",
-    "Reproductive conspecific density:log species abundance",
-    "Reproductive heterospecific density:log species abundance",
-    "Non-reproductive conspecific density:log species abundance")
+    "log Total seeds",
+    "log Species abundance",
+    "Reproductive conspecific density:log Total seeds",
+    "Reproductive heterospecific density:log Total seeds",
+    "Non-reproductive conspecific density:log Total seeds",
+    "Reproductive conspecific density:log Species abundance",
+    "Reproductive heterospecific density:log Species abundance",
+    "Non-reproductive conspecific density:log Species abundance")
 
 values <-
   c("(Intercept)",
-    "b_conn_RH_sc",
+    "b_conn_RC_sc",
     "b_conn_RH_sc",
     "b_conn_NRC_sc",
     "b_log_total_seeds_sc",
@@ -73,44 +119,35 @@ values <-
     "b_conn_RH_sc:log_median_abundance_sc",
     "b_conn_NRC_sc:log_median_abundance_sc")
 
-
-get_table <- function(model) {
-  bayestestR::describe_posterior(model,
-                                 effects = "fixed",
+fixed_eff_out <-
+  mod %>%
+  bayestestR::describe_posterior(effects = "fixed",
                                  component = "all",
                                  ci = 0.95,
                                  ci_method = "HDI",
                                  centrality = "median",
                                  test = FALSE) %>%
-    mutate(across(!Rhat & !Parameter, round, 2)) %>%
-    mutate(Parameter = str_replace(Parameter, values, names)) %>%
-    gt()
-}
+    mutate(Parameter = str_replace(Parameter, values, names))
 
+fixed_eff_out %>%
+  mutate(across(!c(Rhat, Parameter), ~ formatC(.x, format = "f", digits = 2))) %>%
+  mutate(Rhat = formatC(Rhat, format = "f", digits = 3)) %>%
+  write_csv(here::here("output", "results", "describe_posterior_fixed.csv"))
 
-# Assemble figure ---------------------------------------------------------
+lookup <- setNames(names, values)
+lookup_r <- setNames(names, gsub("^b_", "", values))
 
-rc_t <- get_table(mod)
-gtsave(rc_t, here::here("output", "results", "describe_posterior.png"))
-rc_t_png <- png::readPNG(here::here("output", "results", "describe_posterior.png"),
-                         native = TRUE)
+rand_eff_out <-
+  mod %>%
+  bayestestR::describe_posterior(effects = "grouplevel",
+                                 component = "all",
+                                 ci = 0.95,
+                                 ci_method = "HDI",
+                                 centrality = "median",
+                                 test = FALSE) %>%
+  mutate(Parameter = str_replace_all(Parameter, lookup_r))
 
-rc_pp <- plot_pp_check(mod)
-
-(rc_pp / rc_t_png) +
-  plot_annotation(tag_levels = 'a') &
-  theme(plot.tag = element_text(size = 20))
-
-png(
-  here::here("output", "figures", "pp_check_si.png"),
-  width = 500,
-  height = 500,
-  units = "px"
-)
-
-png(
-  here::here("output", "figures", "total_con_si.png"),
-  width = 1476,
-  height = 1000,
-  units = "px"
-)
+rand_eff_out %>%
+  mutate(across(!c(Rhat, Parameter), ~ formatC(.x, format = "f", digits = 2))) %>%
+  mutate(Rhat = formatC(Rhat, format = "f", digits = 3)) %>%
+  write_csv(here::here("output", "results", "describe_posterior_random.csv"))
