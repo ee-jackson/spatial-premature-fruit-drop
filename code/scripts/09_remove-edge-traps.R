@@ -78,6 +78,40 @@ data_abun <-
   read_csv(here::here("data", "clean", "species_abundance.csv")) %>%
   select(sp4, median_abundance)
 
+# add seed pred data
+pred_data <-
+  read_csv(here::here("data", "raw", "TidyTrait.csv")) %>%
+  mutate(sp4 = str_to_lower(Codigo)) %>%
+  select(sp4, SeedPred_pres)
+
+# with seed pred data
+data_edge %>%
+  filter(location == "interior") %>%
+  select(- c(dist_to_edge_m, r_eff, location)) %>%
+  left_join(data_abun) %>%
+  left_join(pred_data) %>%
+  drop_na(SeedPred_pres) %>%
+  # transform variables for modelling
+  mutate(log_total_seeds = log(total_seeds),
+         log_median_abundance = log(median_abundance)) %>%
+  mutate(
+    conn_RC_sc_mat = scale(conn_RC),
+    conn_RH_sc_mat = scale(conn_RH),
+    conn_NRC_sc_mat = scale(conn_NRC),
+    log_total_seeds_sc_mat = scale(log_total_seeds),
+    log_median_abundance_sc_mat = scale(log_median_abundance)
+  ) %>%
+  mutate(
+    conn_RC_sc = as.numeric(conn_RC_sc_mat),
+    conn_RH_sc = as.numeric(conn_RH_sc_mat),
+    conn_NRC_sc = as.numeric(conn_NRC_sc_mat),
+    log_total_seeds_sc = as.numeric(log_total_seeds_sc_mat),
+    log_median_abundance_sc = as.numeric(log_median_abundance_sc_mat),
+    SeedPred_pres = as.factor(SeedPred_pres)
+  ) %>%
+  saveRDS(here::here("data", "clean", "trap_connect_buffer_preds.rds"))
+
+# without seed pred data
 data_edge %>%
   filter(location == "interior") %>%
   select(- c(dist_to_edge_m, r_eff, location)) %>%

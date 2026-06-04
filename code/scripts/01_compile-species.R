@@ -242,6 +242,10 @@ species_capsulas_dispersal_dioecious %>%
       animal_disp == TRUE & (capsules == FALSE | is.na(capsules)) ~ F,
       .default = T
     ) ) %>%
+  # only 1 Inga can be identified to sp
+  # seeds of "macg" fall through the trap mesh
+  filter(! sp4 %in% c("insa", "infa", "inum", "inqu", "inth",
+                    "inpu", "inac", "macg")) %>%
   filter(!is.na(seeds_per_fruit)) %>%
   write.csv(here::here("data", "clean", "species_list.csv"),
           row.names = FALSE)

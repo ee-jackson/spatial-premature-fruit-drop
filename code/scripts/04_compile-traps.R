@@ -16,10 +16,6 @@ foreign::read.dbf(
   rename_with(tolower) %>%
   select(-c(mass, seedeqs)) -> seed_rain
 
-# species list
-species_list <-
-  read_csv(here::here("data", "clean", "species_list.csv"))
-
 # trap locations
 trap_locs <-
   read_csv(here::here("data", "clean", "trap_locations.csv"))
