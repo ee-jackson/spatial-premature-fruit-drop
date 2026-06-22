@@ -1,0 +1,69 @@
+---
+title: "Additional figure"
+author: "Eleanor Jackson"
+date: '`r format(Sys.time(), "%d %B, %Y")`'
+output: 
+  github_document:
+    keep_html: false
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.path="figures/36_total-seeds-si-figure/")
+```
+
+```{r, warning=FALSE, message=FALSE}
+library("tidyverse")
+library("brms")
+library("bayesplot")
+```
+
+```{r}
+
+theme_set(
+  theme_bw(base_size = 15)
+)
+
+mod <-
+  readRDS(here::here("output", "models", "pheno-repro-adjust",
+                     "full_conn_binom_nseeds_abund.rds"))
+```
+
+```{r}
+# function to return variables to measurement scale
+mod_data <-
+  readRDS(here::here("data", "clean", "trap_connect_buffer.rds"))
+
+unscale <- function(x, var_name) {
+  x * attr(mod_data[[var_name]], "scaled:scale") +
+    attr(mod_data[[var_name]], "scaled:center")
+}
+```
+
+```{r}
+all_plots <- conditional_effects(mod,
+                                 plot = TRUE)
+```
+
+```{r}
+p <- plot(all_plots, plot = FALSE)[[4]]
+```
+
+```{r}
+
+
+
+```
+
+
+```{r}
+plot(all_plots, plot = FALSE)[[4]] + 
+  ylab("Immature seed mortality") + 
+  xlab("Total conspecific seeds (log count)") + 
+  scale_y_continuous(labels = scales::label_percent()) +
+  scale_x_continuous(
+    breaks = c(0, 2, 4), # Scaled points
+    labels = round(c(0, 2, 4) * 
+                     attr(mod_data$log_total_seeds_sc_mat, "scaled:scale") + 
+                     attr(mod_data$log_total_seeds_sc_mat, "scaled:center"), 1) # Unscaled labels
+  )
+```
+
