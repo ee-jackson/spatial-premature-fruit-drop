@@ -85,7 +85,7 @@ names <-
     "Reproductive conspecific density",
     "Reproductive heterospecific density",
     "Non-reproductive conspecific density",
-    "log Total seeds",
+    "log Total conspecific seeds",
     "log Species abundance",
     "Presence of seed predator")
 
