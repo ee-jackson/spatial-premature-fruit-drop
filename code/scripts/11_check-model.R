@@ -5,7 +5,7 @@
 ## Desc: perform posterior predictive checks and get outputs for SI
 ## Date created: 2023-07-18
 
-# packages ----------------------------------------------------------------
+# Packages ----------------------------------------------------------------
 
 library("tidyverse")
 library("here")
@@ -76,6 +76,7 @@ tibble(
   pred_hi = ci_pred[2]
 )
 
+
 # MCMC diagnostics --------------------------------------------------------
 
 plot_mcmc_check <- function(model) {
@@ -96,17 +97,17 @@ names <-
     "Reproductive conspecific density",
     "Reproductive heterospecific density",
     "Non-reproductive conspecific density",
-    "log Total seeds",
+    "log Total conspecific seeds",
     "log Species abundance",
-    "Reproductive conspecific density:log Total seeds",
-    "Reproductive heterospecific density:log Total seeds",
-    "Non-reproductive conspecific density:log Total seeds",
+    "Reproductive conspecific density:log Total conspecific seeds",
+    "Reproductive heterospecific density:log Total conspecific seeds",
+    "Non-reproductive conspecific density:log Total conspecific seeds",
     "Reproductive conspecific density:log Species abundance",
     "Reproductive heterospecific density:log Species abundance",
     "Non-reproductive conspecific density:log Species abundance")
 
 values <-
-  c("(Intercept)",
+  c("b_Intercept",
     "b_conn_RC_sc",
     "b_conn_RH_sc",
     "b_conn_NRC_sc",
@@ -126,7 +127,8 @@ fixed_eff_out <-
                                  ci = 0.95,
                                  ci_method = "HDI",
                                  centrality = "median",
-                                 test = FALSE) %>%
+                                 test = FALSE,
+                                 diagnostic = c("ESS", "ESS_bulk", "Rhat")) %>%
     mutate(Parameter = str_replace(Parameter, values, names))
 
 fixed_eff_out %>%
@@ -139,12 +141,13 @@ lookup_r <- setNames(names, gsub("^b_", "", values))
 
 rand_eff_out <-
   mod %>%
-  bayestestR::describe_posterior(effects = "grouplevel",
+  bayestestR::describe_posterior(effects = "random",
                                  component = "all",
                                  ci = 0.95,
                                  ci_method = "HDI",
                                  centrality = "median",
-                                 test = FALSE) %>%
+                                 test = FALSE,
+                                 diagnostic = c("ESS", "ESS_bulk", "Rhat")) %>%
   mutate(Parameter = str_replace_all(Parameter, lookup_r))
 
 rand_eff_out %>%
