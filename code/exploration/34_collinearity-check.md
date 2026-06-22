@@ -1,7 +1,7 @@
 Check collinearity
 ================
 Eleanor Jackson
-28 April, 2026
+11 June, 2026
 
 ``` r
 library("tidyverse")
@@ -32,12 +32,20 @@ draws_names <-
     "\u03b2 Reproductive\nconspecific density" = "b_conn_RC_sc",
     "\u03b2 Reproductive\nheterospecific density" = "b_conn_RH_sc",
     "\u03b2 Non-reproductive\nconspecific density" = "b_conn_NRC_sc",
-    "\u03b2 log Total seeds" = "b_log_total_seeds_sc",
+    "\u03b2 log Total\nconspecific seeds" = "b_log_total_seeds_sc",
     "\u03b2 log Species\nabundance" = "b_log_median_abundance_sc" )
 
 bayesplot::mcmc_pairs(draws_names, 
       diag_fun = "dens") 
 ```
+
+    ## Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+    ## ℹ Please use `linewidth` instead.
+    ## ℹ The deprecated feature was likely used in the bayesplot package.
+    ##   Please report the issue at <https://github.com/stan-dev/bayesplot/issues/>.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+    ## generated.
 
 ![](figures/34_collinearity-check/unnamed-chunk-3-1.png)<!-- -->
 
@@ -108,7 +116,7 @@ GGally::ggpairs(select(data, conn_RC_sc, conn_RH_sc, conn_NRC_sc,
                "Reproductive\nconspecific density",
                "Reproductive\nheterospecific density",
                "Non-reproductive\nconspecific density",
-               "log Total seeds",
+               "log Total\nconspecific seeds",
                "log Species\nabundance"
              )) +
   theme_bw()

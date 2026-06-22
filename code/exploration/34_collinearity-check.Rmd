@@ -41,7 +41,7 @@ draws_names <-
     "\u03b2 Reproductive\nconspecific density" = "b_conn_RC_sc",
     "\u03b2 Reproductive\nheterospecific density" = "b_conn_RH_sc",
     "\u03b2 Non-reproductive\nconspecific density" = "b_conn_NRC_sc",
-    "\u03b2 log Total seeds" = "b_log_total_seeds_sc",
+    "\u03b2 log Total\nconspecific seeds" = "b_log_total_seeds_sc",
     "\u03b2 log Species\nabundance" = "b_log_median_abundance_sc" )
 
 bayesplot::mcmc_pairs(draws_names, 
@@ -117,7 +117,7 @@ GGally::ggpairs(select(data, conn_RC_sc, conn_RH_sc, conn_NRC_sc,
                "Reproductive\nconspecific density",
                "Reproductive\nheterospecific density",
                "Non-reproductive\nconspecific density",
-               "log Total seeds",
+               "log Total\nconspecific seeds",
                "log Species\nabundance"
              )) +
   theme_bw()
