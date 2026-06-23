@@ -141,7 +141,7 @@ p <-
 png(
   here::here("output", "figures", "figure_04.png"),
   width = 82,
-  height = 200,
+  height = 185,
   units = "mm",
   type = "cairo",
   res = 600
