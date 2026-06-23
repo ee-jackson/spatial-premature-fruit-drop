@@ -201,8 +201,8 @@ make_plot <- function(data, effect, x, x_name, mid_colour) {
                     fill = as.factor(effect2__)), alpha = 0.3) +
     geom_line(aes(colour = as.factor(effect2__)), linewidth = 0.5) +
     labs(x = x_name, y = "Immature seed mortality",
-         colour = "Total conspecific seeds",
-         fill = "Total conspecific seeds") +
+         colour = "Total conspecific\nseeds",
+         fill = "Total conspecific\nseeds") +
     scale_colour_manual(
       aesthetics = c("colour", "fill"),
       values = vals
