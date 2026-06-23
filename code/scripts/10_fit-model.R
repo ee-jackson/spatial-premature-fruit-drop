@@ -3,7 +3,8 @@
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: fit-model
 ## Desc: Fit models
-## takes ~11 hours to refit each model on HPC cluster!
+## takes ~11 hours to refit each model on HPC cluster
+## with 4 CPUs and 50G memory per CPU
 
 options(mc.cores = 4)
 
