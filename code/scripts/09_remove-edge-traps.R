@@ -28,7 +28,7 @@ eps <- 0.05 #captures 95% of influence
 alphas <- exp(seq(log(0.07), log(0.40), length.out = 6))
 alpha <- alphas[[3]]
 
-# draw the fdp
+# draw the 50-ha plot
 fdplot <- rbind(c(0,0), c(0, 500), c(1000, 500), c(1000, 0), c(0,0))
 
 # make it a polygon
@@ -37,7 +37,7 @@ plot_polygon <- sf::st_polygon(list(fdplot))
 data_sf <- sf::st_as_sf(data, coords = c("x", "y"),
                        remove = FALSE)
 
-# distance from each trap to plot boundary
+# calculate distance from each trap to plot boundary
 dist_to_edge_m <-
   sf::st_distance(data_sf,
                   sf::st_boundary(plot_polygon),
@@ -71,7 +71,24 @@ data_edge %>%
 # 32 of 450 traps removed
 
 
+# Download seed predator data  --------------------------------------------
+
+# download from Dryad
+trait_download <- rdryad::dryad_download(doi = "10.5061/dryad.230j5ch")
+
+# function to put downloaded files in the right place
+move_files <- function(old_path, new_path){
+  file.rename( from = file.path(old_path) ,
+               to = file.path(new_path, basename(old_path)) )
+}
+
+# apply the function to all files
+lapply(trait_download, move_files, new_path = here::here("data", "raw"))
+
+
 # Save --------------------------------------------------------------------
+
+# format data for modelling and save
 
 # add abundance data
 data_abun <-
