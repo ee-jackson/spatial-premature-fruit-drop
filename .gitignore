@@ -1,11 +1,15 @@
 ## Project specific ignores:
-docs/
 data/
 output/
 code/graveyard
 dummyrun/
 code/exploration/*.html
-
+docs/*.html
+docs/*.doc
+docs/*.docx
+docs/*.pdf
+docs/*.csv
+docs/submission/
 job_script*
 
 ## R + RStudio ignores:

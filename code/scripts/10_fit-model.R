@@ -78,7 +78,7 @@ fit_abund <-
     cores = 4,
     seed = 123,
     init_r = 0.1,
-    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds_abund"
+    file = "output/models/full_conn_binom_nseeds_abund"
   )
 
 brms::add_criterion(x = fit_abund, criterion = "loo")
@@ -98,7 +98,7 @@ fit_abund_no_alsb <-
     cores = 4,
     seed = 123,
     init_r = 0.1,
-    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds_abund_no_alsb"
+    file = "output/models/full_conn_binom_nseeds_abund_no_alsb"
   )
 
 brms::add_criterion(x = fit_abund_no_alsb, criterion = "loo")
@@ -118,7 +118,7 @@ fit_abund_preds <-
     cores = 4,
     seed = 123,
     init_r = 0.1,
-    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds_abund_preds"
+    file = "output/models/full_conn_binom_nseeds_abund_preds"
   )
 
 brms::add_criterion(x = fit_abund_preds, criterion = "loo")
@@ -140,7 +140,7 @@ fit_abund_predscomp <-
     cores = 4,
     seed = 123,
     init_r = 0.1,
-    file = "output/models/pheno-repro-adjust/full_conn_binom_nseeds_abund_predscomp"
+    file = "output/models/full_conn_binom_nseeds_abund_predscomp"
   )
 
 brms::add_criterion(x = fit_abund_predscomp, criterion = "loo")

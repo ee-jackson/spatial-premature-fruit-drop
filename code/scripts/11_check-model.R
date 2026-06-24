@@ -16,7 +16,7 @@ library("bayesplot")
 library("bayestestR")
 
 mod <-
-  readRDS(here::here("output", "models", "pheno-repro-adjust",
+  readRDS(here::here("output", "models",
                      "full_conn_binom_nseeds_abund.rds"))
 
 
