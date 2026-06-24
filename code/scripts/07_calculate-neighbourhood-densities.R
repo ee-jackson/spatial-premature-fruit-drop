@@ -189,17 +189,14 @@ all_connectivities <- purrr::map2(
 #   list_rbind() %>%
 #   inner_join(trap_data, by = c("trap", "year", "sp4")) %>%
 #   mutate_at(c("sp4", "trap", "quadrat", "year"), ~as.factor(.))
+#
+# saveRDS(trap_connect_all3,
+#         file = "data/clean/connect_all_alpha.rds")
 
 
 # Add seed rain and trap metadata -----------------------------------------
 
-trap_connect_all3 <-
-  all_connectivities %>%
-  inner_join(trap_data, by = c("trap", "year", "sp4")) %>%
-  mutate_at(c("sp4", "trap", "quadrat", "year"), ~as.factor(.))
+write_csv(all_connectivities,
+        file = "data/clean/tree_connect.csv")
 
-saveRDS(trap_connect_all3,
-        file = "data/clean/trap_connect.rds")
 
-# saveRDS(trap_connect_all3,
-#         file = "data/clean/connect_all_alpha.rds")

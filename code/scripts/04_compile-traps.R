@@ -24,6 +24,10 @@ trap_locs <-
 pheno_years <-
   read_csv(here::here("data", "clean", "phenological_years.csv"))
 
+# species
+species_list <-
+  read.csv(here::here("data", "clean", "species_list.csv"))
+
 
 # clean seed rain data ----------------------------------------------------
 
@@ -179,7 +183,12 @@ abs_dat_abscised_viable %>%
 prop_dat %>%
   left_join(sum_dat, by = c("sp4", "pheno_year", "trap")) %>%
   left_join(trap_locs, by = "trap") %>%
-  rename(year = pheno_year) -> trap_dat
+  rename(year = pheno_year) %>%
+  left_join(species_list) %>%
+  select(sp4, sp6, family, genus, species,
+         year, quadrat, trap, x, y,
+         abscised_seeds, viable_seeds,
+         total_seeds, proportion_abscised) -> trap_dat
 
-saveRDS(trap_dat,
-          here::here("data", "clean", "trap_data.rds"))
+write_csv(trap_dat,
+          here::here("data", "clean", "trap_data.csv"))

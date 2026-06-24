@@ -3,7 +3,7 @@
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: remove-edge-traps.R
 ## Desc: Filter out traps from trap_connect.rds which are too close to the edge
-## of the forest dynamics plot
+## of the forest dynamics plot and get data ready for model fitting
 ## Date created: 2026-03-19
 
 
@@ -15,8 +15,27 @@ library("sf")
 
 # Data --------------------------------------------------------------------
 
+# download trap data from Zenodo
+zen4R::download_zenodo(
+  doi = "https://doi.org/10.5281/zenodo.20814484",
+  path = here::here(
+    "data",
+    "clean"
+  )
+)
+
+trap_data <-
+  read_csv(here::here("data", "clean", "trap_data.csv")) %>%
+  select(-c(sp6, family, genus, species))
+
+tree_data <-
+  read_csv(here::here("data", "clean", "tree_connect.csv"))
+
+# combine tree and trap data
 data <-
-  readRDS(here::here("data", "clean", "trap_connect.rds"))
+  tree_data %>%
+  inner_join(trap_data, by = c("trap", "year", "sp4")) %>%
+  mutate_at(c("sp4", "quadrat", "trap", "year"), ~as.factor(.))
 
 
 # Define edge plots -------------------------------------------------------
