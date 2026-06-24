@@ -1,5 +1,7 @@
 # spatial-premature-fruit-drop
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20828193.svg)](https://doi.org/10.5281/zenodo.20828193)
+
 This repository contains code for our manuscript: 
 
 Eleanor E. Jackson, S. Joseph Wright, Osvaldo Calderón, Patrick G. Cannon, James M. Bullock,
