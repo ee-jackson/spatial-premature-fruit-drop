@@ -1,0 +1,13 @@
+Parameter,Median,CI,CI_low,CI_high,Rhat,ESS_tail,ESS_bulk
+Intercept,-2.21,0.95,-2.81,-1.65,1.002,2887.00,1385.00
+Reproductive conspecific density,0.73,0.95,0.44,1.11,1.001,5066.00,3041.00
+Reproductive heterospecific density,-0.14,0.95,-0.27,-0.00,1.001,7142.00,6242.00
+Non-reproductive conspecific density,0.13,0.95,0.04,0.21,1.000,4472.00,5653.00
+log Total conspecific seeds,1.29,0.95,1.25,1.34,1.000,8279.00,17730.00
+log Species abundance,0.43,0.95,-0.04,0.92,1.002,3327.00,1886.00
+Reproductive conspecific density:log Total conspecific seeds,-0.30,0.95,-0.33,-0.27,1.000,8101.00,19308.00
+Reproductive heterospecific density:log Total conspecific seeds,0.04,0.95,-0.01,0.09,1.000,7780.00,20542.00
+Non-reproductive conspecific density:log Total conspecific seeds,-0.12,0.95,-0.14,-0.09,1.001,8705.00,18822.00
+Reproductive conspecific density:log Species abundance,0.02,0.95,-0.28,0.30,1.001,5182.00,3757.00
+Reproductive heterospecific density:log Species abundance,0.06,0.95,-0.09,0.19,1.000,7193.00,6143.00
+Non-reproductive conspecific density:log Species abundance,0.02,0.95,-0.06,0.09,1.000,5354.00,5967.00

@@ -1,6 +1,7 @@
 ## Project specific ignores:
 data/
-output/
+output/plots/*
+output/models/*
 code/graveyard
 dummyrun/
 code/exploration/*.html

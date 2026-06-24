@@ -1,0 +1,875 @@
+Parameter,Median,CI,CI_low,CI_high,Rhat,ESS_tail,ESS_bulk
+"r_quadrat[quadrat_003,Intercept]",0.02,0.95,-0.24,0.34,1.001,7344.00,14470.00
+"r_quadrat[quadrat_004,Intercept]",-0.05,0.95,-0.33,0.18,1.000,7332.00,11366.00
+"r_quadrat[quadrat_009,Intercept]",0.03,0.95,-0.25,0.36,1.001,6829.00,16549.00
+"r_quadrat[quadrat_010,Intercept]",-0.03,0.95,-0.34,0.26,1.001,7483.00,17760.00
+"r_quadrat[quadrat_016,Intercept]",-0.04,0.95,-0.37,0.23,1.002,6808.00,11795.00
+"r_quadrat[quadrat_020,Intercept]",-0.00,0.95,-0.29,0.25,1.001,7598.00,15482.00
+"r_quadrat[quadrat_024,Intercept]",-0.07,0.95,-0.36,0.18,1.001,7643.00,7950.00
+"r_quadrat[quadrat_025,Intercept]",0.14,0.95,-0.08,0.43,1.002,7355.00,3136.00
+"r_quadrat[quadrat_027,Intercept]",0.06,0.95,-0.21,0.37,1.001,7103.00,10101.00
+"r_quadrat[quadrat_039,Intercept]",-0.06,0.95,-0.38,0.22,1.001,7390.00,10181.00
+"r_quadrat[quadrat_040,Intercept]",0.00,0.95,-0.25,0.25,1.001,7680.00,13498.00
+"r_quadrat[quadrat_043,Intercept]",0.02,0.95,-0.27,0.33,1.001,6539.00,18973.00
+"r_quadrat[quadrat_044,Intercept]",-0.13,0.95,-0.48,0.11,1.001,7421.00,3878.00
+"r_quadrat[quadrat_045,Intercept]",-0.01,0.95,-0.27,0.24,1.001,6759.00,13293.00
+"r_quadrat[quadrat_046,Intercept]",-0.01,0.95,-0.32,0.28,1.001,6744.00,21751.00
+"r_quadrat[quadrat_048,Intercept]",-0.05,0.95,-0.37,0.24,1.000,7398.00,12424.00
+"r_quadrat[quadrat_049,Intercept]",0.09,0.95,-0.14,0.40,1.001,7626.00,5305.00
+"r_quadrat[quadrat_050,Intercept]",-0.01,0.95,-0.28,0.26,1.001,7827.00,16112.00
+"r_quadrat[quadrat_051,Intercept]",-0.02,0.95,-0.33,0.26,1.001,6816.00,18729.00
+"r_quadrat[quadrat_056,Intercept]",0.06,0.95,-0.22,0.39,1.001,7582.00,9881.00
+"r_quadrat[quadrat_059,Intercept]",0.20,0.95,-0.04,0.50,1.002,6505.00,2065.00
+"r_quadrat[quadrat_060,Intercept]",-0.07,0.95,-0.41,0.19,1.001,7017.00,8303.00
+"r_quadrat[quadrat_063,Intercept]",0.02,0.95,-0.26,0.35,1.002,8134.00,20493.00
+"r_quadrat[quadrat_065,Intercept]",-0.03,0.95,-0.30,0.23,1.001,7075.00,12395.00
+"r_quadrat[quadrat_066,Intercept]",0.03,0.95,-0.18,0.27,1.000,7652.00,9932.00
+"r_quadrat[quadrat_068,Intercept]",0.00,0.95,-0.24,0.26,1.001,7413.00,13741.00
+"r_quadrat[quadrat_069,Intercept]",0.06,0.95,-0.19,0.38,1.001,6533.00,8095.00
+"r_quadrat[quadrat_070,Intercept]",-0.10,0.95,-0.43,0.15,1.000,6876.00,5609.00
+"r_quadrat[quadrat_071,Intercept]",0.14,0.95,-0.10,0.44,1.001,6808.00,3205.00
+"r_quadrat[quadrat_072,Intercept]",-0.00,0.95,-0.30,0.26,1.001,7521.00,18365.00
+"r_quadrat[quadrat_079,Intercept]",0.02,0.95,-0.22,0.27,1.001,7228.00,12277.00
+"r_quadrat[quadrat_083,Intercept]",0.00,0.95,-0.29,0.29,1.002,6573.00,18414.00
+"r_quadrat[quadrat_084,Intercept]",-0.00,0.95,-0.29,0.30,1.002,6821.00,23427.00
+"r_quadrat[quadrat_086,Intercept]",0.04,0.95,-0.22,0.31,1.000,7414.00,9711.00
+"r_quadrat[quadrat_087,Intercept]",0.13,0.95,-0.10,0.41,1.001,6433.00,3364.00
+"r_quadrat[quadrat_088,Intercept]",-0.05,0.95,-0.29,0.17,1.001,8236.00,10681.00
+"r_quadrat[quadrat_091,Intercept]",0.01,0.95,-0.27,0.31,1.001,7077.00,17656.00
+"r_quadrat[quadrat_092,Intercept]",-0.03,0.95,-0.29,0.21,1.000,7722.00,11866.00
+"r_quadrat[quadrat_093,Intercept]",0.03,0.95,-0.23,0.35,1.002,6792.00,14713.00
+"r_quadrat[quadrat_098,Intercept]",-0.01,0.95,-0.27,0.23,1.001,8297.00,14301.00
+"r_quadrat[quadrat_099,Intercept]",0.00,0.95,-0.24,0.26,1.002,7635.00,12700.00
+"r_quadrat[quadrat_104,Intercept]",-0.05,0.95,-0.39,0.22,1.001,7069.00,13086.00
+"r_quadrat[quadrat_107,Intercept]",0.01,0.95,-0.30,0.30,1.002,6530.00,21290.00
+"r_quadrat[quadrat_108,Intercept]",-0.00,0.95,-0.25,0.25,1.002,8113.00,14534.00
+"r_quadrat[quadrat_109,Intercept]",0.01,0.95,-0.27,0.31,1.001,6880.00,17131.00
+"r_quadrat[quadrat_112,Intercept]",0.07,0.95,-0.17,0.39,1.001,6890.00,6009.00
+"r_quadrat[quadrat_113,Intercept]",0.04,0.95,-0.17,0.29,1.000,7125.00,8750.00
+"r_quadrat[quadrat_117,Intercept]",0.09,0.95,-0.19,0.46,1.000,6190.00,6677.00
+"r_quadrat[quadrat_118,Intercept]",0.03,0.95,-0.19,0.27,1.001,7428.00,9514.00
+"r_quadrat[quadrat_119,Intercept]",-0.05,0.95,-0.36,0.23,1.000,6795.00,9965.00
+"r_quadrat[quadrat_120,Intercept]",-0.01,0.95,-0.26,0.23,1.003,7633.00,12424.00
+"r_quadrat[quadrat_128,Intercept]",-0.03,0.95,-0.30,0.21,1.001,8413.00,12216.00
+"r_quadrat[quadrat_129,Intercept]",-0.05,0.95,-0.34,0.18,1.000,7775.00,11246.00
+"r_quadrat[quadrat_130,Intercept]",0.02,0.95,-0.25,0.31,1.001,7696.00,16853.00
+"r_quadrat[quadrat_131,Intercept]",0.10,0.95,-0.13,0.42,1.001,6930.00,5511.00
+"r_quadrat[quadrat_134,Intercept]",-0.02,0.95,-0.27,0.20,1.001,7600.00,13353.00
+"r_quadrat[quadrat_137,Intercept]",-0.04,0.95,-0.36,0.23,1.000,6889.00,14890.00
+"r_quadrat[quadrat_138,Intercept]",-0.05,0.95,-0.33,0.18,1.000,7601.00,8478.00
+"r_quadrat[quadrat_139,Intercept]",-0.04,0.95,-0.29,0.20,1.000,7546.00,11023.00
+"r_quadrat[quadrat_140,Intercept]",-0.01,0.95,-0.26,0.27,1.001,7054.00,13251.00
+"r_quadrat[quadrat_141,Intercept]",0.05,0.95,-0.19,0.36,1.001,6397.00,9513.00
+"r_quadrat[quadrat_142,Intercept]",-0.03,0.95,-0.35,0.27,1.003,6122.00,18619.00
+"r_quadrat[quadrat_143,Intercept]",0.01,0.95,-0.29,0.31,1.001,7153.00,21144.00
+"r_quadrat[quadrat_145,Intercept]",0.01,0.95,-0.27,0.33,1.002,7426.00,22849.00
+"r_quadrat[quadrat_146,Intercept]",-0.05,0.95,-0.36,0.23,1.000,7249.00,12128.00
+"r_quadrat[quadrat_147,Intercept]",0.06,0.95,-0.18,0.35,1.000,7922.00,8210.00
+"r_quadrat[quadrat_148,Intercept]",0.06,0.95,-0.16,0.33,1.001,7637.00,8968.00
+"r_quadrat[quadrat_149,Intercept]",-0.07,0.95,-0.35,0.19,1.001,7266.00,8209.00
+"r_quadrat[quadrat_150,Intercept]",-0.01,0.95,-0.31,0.29,1.001,6205.00,21577.00
+"r_quadrat[quadrat_154,Intercept]",-0.02,0.95,-0.28,0.25,1.001,7693.00,13021.00
+"r_quadrat[quadrat_155,Intercept]",0.00,0.95,-0.26,0.26,1.002,8282.00,13924.00
+"r_quadrat[quadrat_157,Intercept]",-0.02,0.95,-0.34,0.23,1.001,6651.00,16654.00
+"r_quadrat[quadrat_158,Intercept]",0.15,0.95,-0.06,0.45,1.002,6229.00,2970.00
+"r_quadrat[quadrat_159,Intercept]",-0.05,0.95,-0.30,0.19,1.000,7805.00,10955.00
+"r_quadrat[quadrat_161,Intercept]",0.00,0.95,-0.29,0.30,1.002,6767.00,24256.00
+"r_quadrat[quadrat_162,Intercept]",0.03,0.95,-0.21,0.26,1.001,8449.00,12929.00
+"r_quadrat[quadrat_163,Intercept]",-0.13,0.95,-0.42,0.10,1.001,7098.00,3506.00
+"r_quadrat[quadrat_164,Intercept]",-0.05,0.95,-0.33,0.17,1.000,6251.00,9545.00
+"r_quadrat[quadrat_165,Intercept]",0.10,0.95,-0.12,0.38,1.001,6471.00,4290.00
+"r_quadrat[quadrat_166,Intercept]",-0.04,0.95,-0.30,0.20,1.001,8233.00,10595.00
+"r_quadrat[quadrat_167,Intercept]",-0.09,0.95,-0.39,0.16,1.001,7067.00,4882.00
+"r_quadrat[quadrat_168,Intercept]",-0.01,0.95,-0.30,0.25,1.000,6878.00,17354.00
+"r_quadrat[quadrat_169,Intercept]",0.08,0.95,-0.16,0.37,1.001,7070.00,5933.00
+"r_quadrat[quadrat_170,Intercept]",0.01,0.95,-0.22,0.26,1.001,8589.00,13306.00
+"r_quadrat[quadrat_171,Intercept]",-0.03,0.95,-0.30,0.21,1.001,7543.00,13902.00
+"r_quadrat[quadrat_172,Intercept]",0.04,0.95,-0.21,0.34,1.001,7752.00,11912.00
+"r_quadrat[quadrat_174,Intercept]",-0.04,0.95,-0.36,0.23,1.000,7440.00,12271.00
+"r_quadrat[quadrat_175,Intercept]",-0.05,0.95,-0.33,0.18,1.001,7106.00,10849.00
+"r_quadrat[quadrat_177,Intercept]",0.04,0.95,-0.20,0.29,1.001,7603.00,8584.00
+"r_quadrat[quadrat_178,Intercept]",-0.08,0.95,-0.34,0.13,1.001,7845.00,5879.00
+"r_quadrat[quadrat_191,Intercept]",-0.03,0.95,-0.35,0.25,1.000,7264.00,16877.00
+"r_quadrat[quadrat_192,Intercept]",-0.16,0.95,-0.47,0.08,1.003,6277.00,2977.00
+"r_quadrat[quadrat_193,Intercept]",-0.02,0.95,-0.30,0.25,1.002,8279.00,18220.00
+"r_quadrat[quadrat_194,Intercept]",0.02,0.95,-0.24,0.32,1.001,7758.00,13507.00
+"r_quadrat[quadrat_195,Intercept]",-0.04,0.95,-0.37,0.22,1.001,6579.00,11095.00
+"r_quadrat[quadrat_197,Intercept]",0.01,0.95,-0.26,0.28,1.002,7826.00,15314.00
+"r_quadrat:trap[quadrat_003_trap_134,Intercept]",0.21,0.95,-0.19,0.63,1.001,7804.00,16428.00
+"r_quadrat:trap[quadrat_004_trap_129,Intercept]",0.35,0.95,-0.08,0.76,1.000,8282.00,17359.00
+"r_quadrat:trap[quadrat_004_trap_130,Intercept]",-0.25,0.95,-0.69,0.18,1.000,8362.00,14106.00
+"r_quadrat:trap[quadrat_004_trap_132,Intercept]",-0.48,0.95,-0.97,0.02,1.000,8216.00,17715.00
+"r_quadrat:trap[quadrat_004_trap_429,Intercept]",0.10,0.95,-0.61,0.75,1.002,6492.00,27116.00
+"r_quadrat:trap[quadrat_004_trap_430,Intercept]",-0.17,0.95,-0.80,0.44,1.000,7344.00,23175.00
+"r_quadrat:trap[quadrat_004_trap_432,Intercept]",0.08,0.95,-0.61,0.77,1.000,6789.00,27905.00
+"r_quadrat:trap[quadrat_009_trap_301,Intercept]",0.26,0.95,-0.26,0.73,1.000,7635.00,17945.00
+"r_quadrat:trap[quadrat_010_trap_302,Intercept]",-0.23,0.95,-0.79,0.30,1.001,7351.00,20831.00
+"r_quadrat:trap[quadrat_016_trap_314,Intercept]",-0.36,0.95,-0.86,0.14,1.000,7944.00,15967.00
+"r_quadrat:trap[quadrat_020_trap_035,Intercept]",-0.01,0.95,-0.43,0.40,1.000,8226.00,17896.00
+"r_quadrat:trap[quadrat_020_trap_235,Intercept]",-0.03,0.95,-0.74,0.69,1.001,7035.00,25702.00
+"r_quadrat:trap[quadrat_020_trap_330,Intercept]",0.03,0.95,-0.46,0.50,1.001,8232.00,22362.00
+"r_quadrat:trap[quadrat_024_trap_126,Intercept]",-0.29,0.95,-0.69,0.13,1.000,7406.00,13661.00
+"r_quadrat:trap[quadrat_024_trap_128,Intercept]",0.30,0.95,-0.14,0.74,1.000,8294.00,16131.00
+"r_quadrat:trap[quadrat_024_trap_426,Intercept]",-0.63,0.95,-1.33,0.05,1.000,7000.00,18119.00
+"r_quadrat:trap[quadrat_024_trap_428,Intercept]",0.06,0.95,-0.59,0.75,1.000,6899.00,26881.00
+"r_quadrat:trap[quadrat_025_trap_125,Intercept]",0.57,0.95,0.17,0.97,1.000,7770.00,7409.00
+"r_quadrat:trap[quadrat_025_trap_127,Intercept]",0.29,0.95,-0.14,0.68,1.000,8054.00,9780.00
+"r_quadrat:trap[quadrat_025_trap_317,Intercept]",0.01,0.95,-0.45,0.44,1.001,6384.00,12199.00
+"r_quadrat:trap[quadrat_025_trap_318,Intercept]",0.35,0.95,-0.09,0.81,1.001,8618.00,9591.00
+"r_quadrat:trap[quadrat_025_trap_337,Intercept]",-0.40,0.95,-0.91,0.12,1.000,7438.00,19031.00
+"r_quadrat:trap[quadrat_025_trap_425,Intercept]",0.22,0.95,-0.44,0.91,1.001,6563.00,24339.00
+"r_quadrat:trap[quadrat_025_trap_427,Intercept]",0.02,0.95,-0.65,0.68,1.001,6996.00,25177.00
+"r_quadrat:trap[quadrat_027_trap_327,Intercept]",0.48,0.95,0.02,0.97,1.000,8056.00,17178.00
+"r_quadrat:trap[quadrat_027_trap_328,Intercept]",-0.06,0.95,-0.55,0.39,1.000,8348.00,18823.00
+"r_quadrat:trap[quadrat_039_trap_031,Intercept]",-0.37,0.95,-0.85,0.08,1.001,7608.00,13543.00
+"r_quadrat:trap[quadrat_039_trap_231,Intercept]",-0.06,0.95,-0.83,0.63,1.001,6333.00,25051.00
+"r_quadrat:trap[quadrat_040_trap_032,Intercept]",0.08,0.95,-0.29,0.48,1.000,8131.00,17676.00
+"r_quadrat:trap[quadrat_040_trap_033,Intercept]",0.36,0.95,-0.05,0.77,1.000,7618.00,17159.00
+"r_quadrat:trap[quadrat_040_trap_034,Intercept]",-0.25,0.95,-0.65,0.18,1.000,8768.00,16875.00
+"r_quadrat:trap[quadrat_040_trap_232,Intercept]",-0.14,0.95,-0.85,0.54,1.000,6732.00,24010.00
+"r_quadrat:trap[quadrat_040_trap_233,Intercept]",0.10,0.95,-0.58,0.75,1.002,6953.00,28321.00
+"r_quadrat:trap[quadrat_040_trap_234,Intercept]",-0.09,0.95,-0.79,0.60,1.001,6778.00,29426.00
+"r_quadrat:trap[quadrat_043_trap_306,Intercept]",0.17,0.95,-0.34,0.70,1.001,8116.00,22663.00
+"r_quadrat:trap[quadrat_044_trap_122,Intercept]",-0.48,0.95,-1.02,0.02,1.001,7268.00,11977.00
+"r_quadrat:trap[quadrat_044_trap_124,Intercept]",-0.29,0.95,-0.73,0.15,1.001,7743.00,9618.00
+"r_quadrat:trap[quadrat_044_trap_422,Intercept]",-0.06,0.95,-0.81,0.62,1.000,6900.00,27744.00
+"r_quadrat:trap[quadrat_044_trap_424,Intercept]",-0.09,0.95,-0.78,0.59,1.000,6408.00,24197.00
+"r_quadrat:trap[quadrat_045_trap_119,Intercept]",0.46,0.95,0.10,0.83,1.001,8017.00,14144.00
+"r_quadrat:trap[quadrat_045_trap_121,Intercept]",-0.47,0.95,-1.06,0.10,1.000,7117.00,21286.00
+"r_quadrat:trap[quadrat_045_trap_123,Intercept]",-0.02,0.95,-0.41,0.39,1.000,8017.00,18288.00
+"r_quadrat:trap[quadrat_045_trap_419,Intercept]",0.13,0.95,-0.60,0.83,1.000,6814.00,27577.00
+"r_quadrat:trap[quadrat_045_trap_421,Intercept]",-0.09,0.95,-0.77,0.62,1.001,6787.00,26913.00
+"r_quadrat:trap[quadrat_045_trap_423,Intercept]",-0.12,0.95,-0.77,0.54,1.001,6428.00,26068.00
+"r_quadrat:trap[quadrat_046_trap_310,Intercept]",-0.06,0.95,-0.56,0.43,1.000,6897.00,22544.00
+"r_quadrat:trap[quadrat_048_trap_300,Intercept]",-0.36,0.95,-0.85,0.17,1.000,7868.00,18734.00
+"r_quadrat:trap[quadrat_049_trap_101,Intercept]",0.35,0.95,-0.05,0.74,1.000,7748.00,10790.00
+"r_quadrat:trap[quadrat_049_trap_299,Intercept]",0.15,0.95,-0.59,0.90,1.001,6512.00,27544.00
+"r_quadrat:trap[quadrat_049_trap_303,Intercept]",-0.00,0.95,-0.47,0.52,1.000,7749.00,18092.00
+"r_quadrat:trap[quadrat_049_trap_304,Intercept]",0.13,0.95,-0.29,0.55,1.000,8400.00,12256.00
+"r_quadrat:trap[quadrat_049_trap_401,Intercept]",0.05,0.95,-0.56,0.72,1.001,6766.00,30577.00
+"r_quadrat:trap[quadrat_050_trap_097,Intercept]",0.21,0.95,-0.16,0.61,1.000,7798.00,16569.00
+"r_quadrat:trap[quadrat_050_trap_099,Intercept]",-0.36,0.95,-0.91,0.15,1.000,6901.00,20668.00
+"r_quadrat:trap[quadrat_050_trap_297,Intercept]",0.09,0.95,-0.57,0.80,1.000,7208.00,23952.00
+"r_quadrat:trap[quadrat_051_trap_095,Intercept]",-0.13,0.95,-0.63,0.37,1.000,7746.00,18871.00
+"r_quadrat:trap[quadrat_051_trap_295,Intercept]",-0.02,0.95,-0.75,0.65,1.000,6498.00,29556.00
+"r_quadrat:trap[quadrat_056_trap_309,Intercept]",0.44,0.95,-0.10,1.00,1.000,7511.00,18978.00
+"r_quadrat:trap[quadrat_059_trap_026,Intercept]",0.45,0.95,0.01,0.89,1.000,7920.00,7360.00
+"r_quadrat:trap[quadrat_059_trap_027,Intercept]",0.44,0.95,0.06,0.79,1.001,7168.00,4429.00
+"r_quadrat:trap[quadrat_059_trap_028,Intercept]",0.20,0.95,-0.21,0.58,1.000,7637.00,5187.00
+"r_quadrat:trap[quadrat_059_trap_029,Intercept]",0.25,0.95,-0.17,0.63,1.000,7387.00,5613.00
+"r_quadrat:trap[quadrat_059_trap_226,Intercept]",-0.04,0.95,-0.70,0.66,1.001,7249.00,24179.00
+"r_quadrat:trap[quadrat_059_trap_227,Intercept]",0.22,0.95,-0.44,0.91,1.001,6533.00,22450.00
+"r_quadrat:trap[quadrat_059_trap_228,Intercept]",-0.10,0.95,-0.78,0.58,1.002,6746.00,26050.00
+"r_quadrat:trap[quadrat_059_trap_229,Intercept]",0.08,0.95,-0.62,0.75,1.001,6287.00,22703.00
+"r_quadrat:trap[quadrat_059_trap_348,Intercept]",-0.08,0.95,-0.70,0.54,1.001,6956.00,25560.00
+"r_quadrat:trap[quadrat_060_trap_030,Intercept]",-0.48,0.95,-1.05,0.05,1.001,7371.00,15907.00
+"r_quadrat:trap[quadrat_060_trap_230,Intercept]",-0.06,0.95,-0.76,0.67,1.002,6846.00,26339.00
+"r_quadrat:trap[quadrat_063_trap_313,Intercept]",0.16,0.95,-0.32,0.67,1.000,7553.00,19941.00
+"r_quadrat:trap[quadrat_065_trap_118,Intercept]",0.08,0.95,-0.34,0.47,1.000,8474.00,17290.00
+"r_quadrat:trap[quadrat_065_trap_120,Intercept]",-0.20,0.95,-0.60,0.20,1.000,8177.00,16837.00
+"r_quadrat:trap[quadrat_065_trap_418,Intercept]",-0.04,0.95,-0.67,0.59,1.000,6913.00,24282.00
+"r_quadrat:trap[quadrat_065_trap_420,Intercept]",-0.07,0.95,-0.76,0.59,1.001,6938.00,26194.00
+"r_quadrat:trap[quadrat_066_trap_114,Intercept]",-0.14,0.95,-0.51,0.23,1.000,8649.00,15266.00
+"r_quadrat:trap[quadrat_066_trap_115,Intercept]",-0.34,0.95,-0.75,0.02,1.000,8204.00,17711.00
+"r_quadrat:trap[quadrat_066_trap_116,Intercept]",0.40,0.95,0.07,0.75,1.000,8568.00,13894.00
+"r_quadrat:trap[quadrat_066_trap_117,Intercept]",0.29,0.95,-0.14,0.67,1.001,7735.00,17192.00
+"r_quadrat:trap[quadrat_066_trap_311,Intercept]",0.12,0.95,-0.42,0.62,1.000,6800.00,26571.00
+"r_quadrat:trap[quadrat_066_trap_312,Intercept]",-0.32,0.95,-0.75,0.14,1.000,7513.00,19414.00
+"r_quadrat:trap[quadrat_066_trap_414,Intercept]",-0.22,0.95,-0.98,0.46,1.001,5814.00,28519.00
+"r_quadrat:trap[quadrat_066_trap_415,Intercept]",-0.08,0.95,-0.74,0.56,1.001,7239.00,27144.00
+"r_quadrat:trap[quadrat_066_trap_416,Intercept]",0.43,0.95,-0.25,1.05,1.000,5793.00,23405.00
+"r_quadrat:trap[quadrat_066_trap_417,Intercept]",0.15,0.95,-0.54,0.85,1.000,6198.00,26300.00
+"r_quadrat:trap[quadrat_068_trap_103,Intercept]",0.02,0.95,-0.47,0.49,1.000,7089.00,20266.00
+"r_quadrat:trap[quadrat_068_trap_104,Intercept]",-0.33,0.95,-0.76,0.10,1.000,7933.00,18185.00
+"r_quadrat:trap[quadrat_068_trap_105,Intercept]",0.28,0.95,-0.08,0.62,1.000,8193.00,15568.00
+"r_quadrat:trap[quadrat_068_trap_403,Intercept]",0.10,0.95,-0.63,0.81,1.001,7042.00,24887.00
+"r_quadrat:trap[quadrat_068_trap_404,Intercept]",0.05,0.95,-0.66,0.76,1.001,7224.00,27759.00
+"r_quadrat:trap[quadrat_068_trap_405,Intercept]",-0.11,0.95,-0.73,0.56,1.001,6763.00,25281.00
+"r_quadrat:trap[quadrat_069_trap_100,Intercept]",-0.70,0.95,-1.22,-0.17,1.000,6974.00,20949.00
+"r_quadrat:trap[quadrat_069_trap_102,Intercept]",0.54,0.95,0.09,1.03,1.000,8733.00,16342.00
+"r_quadrat:trap[quadrat_069_trap_400,Intercept]",0.39,0.95,-0.29,1.13,1.001,7064.00,22576.00
+"r_quadrat:trap[quadrat_069_trap_402,Intercept]",0.27,0.95,-0.45,0.94,1.001,6692.00,26979.00
+"r_quadrat:trap[quadrat_070_trap_096,Intercept]",-0.03,0.95,-0.51,0.47,1.001,7463.00,15418.00
+"r_quadrat:trap[quadrat_070_trap_098,Intercept]",-0.57,0.95,-1.09,-0.05,1.000,7352.00,14129.00
+"r_quadrat:trap[quadrat_070_trap_296,Intercept]",-0.09,0.95,-0.79,0.65,1.001,7188.00,27250.00
+"r_quadrat:trap[quadrat_070_trap_298,Intercept]",-0.03,0.95,-0.73,0.70,1.000,7046.00,25129.00
+"r_quadrat:trap[quadrat_071_trap_091,Intercept]",-0.08,0.95,-0.59,0.44,1.001,6723.00,15138.00
+"r_quadrat:trap[quadrat_071_trap_092,Intercept]",0.42,0.95,-0.02,0.84,1.000,7181.00,9223.00
+"r_quadrat:trap[quadrat_071_trap_093,Intercept]",0.39,0.95,-0.10,0.85,1.001,7821.00,11741.00
+"r_quadrat:trap[quadrat_071_trap_094,Intercept]",0.32,0.95,-0.16,0.76,1.000,7710.00,13623.00
+"r_quadrat:trap[quadrat_071_trap_291,Intercept]",-0.05,0.95,-0.81,0.63,1.002,6840.00,26320.00
+"r_quadrat:trap[quadrat_071_trap_292,Intercept]",-0.03,0.95,-0.74,0.60,1.001,6452.00,26736.00
+"r_quadrat:trap[quadrat_071_trap_293,Intercept]",0.02,0.95,-0.69,0.75,1.002,6997.00,29343.00
+"r_quadrat:trap[quadrat_071_trap_294,Intercept]",0.01,0.95,-0.67,0.67,1.001,7258.00,25572.00
+"r_quadrat:trap[quadrat_072_trap_340,Intercept]",-0.11,0.95,-0.59,0.36,1.000,8275.00,19934.00
+"r_quadrat:trap[quadrat_072_trap_341,Intercept]",0.08,0.95,-0.45,0.58,1.000,7355.00,23567.00
+"r_quadrat:trap[quadrat_079_trap_023,Intercept]",-0.26,0.95,-0.66,0.11,1.001,8123.00,16577.00
+"r_quadrat:trap[quadrat_079_trap_024,Intercept]",0.22,0.95,-0.30,0.74,1.000,6567.00,21258.00
+"r_quadrat:trap[quadrat_079_trap_025,Intercept]",0.22,0.95,-0.16,0.57,1.000,8580.00,14170.00
+"r_quadrat:trap[quadrat_079_trap_223,Intercept]",-0.00,0.95,-0.62,0.63,1.000,6654.00,30113.00
+"r_quadrat:trap[quadrat_079_trap_224,Intercept]",-0.04,0.95,-0.77,0.67,1.000,7143.00,29088.00
+"r_quadrat:trap[quadrat_079_trap_225,Intercept]",0.02,0.95,-0.62,0.63,1.001,7036.00,25699.00
+"r_quadrat:trap[quadrat_083_trap_332,Intercept]",0.03,0.95,-0.41,0.44,1.001,8634.00,20532.00
+"r_quadrat:trap[quadrat_084_trap_331,Intercept]",-0.04,0.95,-0.56,0.52,1.000,8130.00,23404.00
+"r_quadrat:trap[quadrat_086_trap_112,Intercept]",0.24,0.95,-0.14,0.59,1.001,8558.00,14822.00
+"r_quadrat:trap[quadrat_086_trap_113,Intercept]",-0.16,0.95,-0.57,0.25,1.000,8550.00,18475.00
+"r_quadrat:trap[quadrat_086_trap_412,Intercept]",0.22,0.95,-0.48,0.90,1.001,7219.00,27001.00
+"r_quadrat:trap[quadrat_086_trap_413,Intercept]",0.01,0.95,-0.68,0.70,1.001,6681.00,25974.00
+"r_quadrat:trap[quadrat_087_trap_109,Intercept]",0.41,0.95,0.03,0.76,1.000,8649.00,6217.00
+"r_quadrat:trap[quadrat_087_trap_110,Intercept]",0.47,0.95,0.02,0.90,1.000,7628.00,9459.00
+"r_quadrat:trap[quadrat_087_trap_111,Intercept]",-0.11,0.95,-0.49,0.25,1.000,7565.00,7407.00
+"r_quadrat:trap[quadrat_087_trap_139,Intercept]",0.21,0.95,-0.24,0.71,1.001,7235.00,11687.00
+"r_quadrat:trap[quadrat_087_trap_409,Intercept]",-0.08,0.95,-0.66,0.54,1.000,7108.00,22751.00
+"r_quadrat:trap[quadrat_087_trap_410,Intercept]",-0.01,0.95,-0.71,0.70,1.000,6844.00,29094.00
+"r_quadrat:trap[quadrat_087_trap_411,Intercept]",0.12,0.95,-0.51,0.75,1.000,7469.00,24495.00
+"r_quadrat:trap[quadrat_087_trap_439,Intercept]",-0.03,0.95,-0.73,0.70,1.000,7095.00,26596.00
+"r_quadrat:trap[quadrat_088_trap_106,Intercept]",-0.23,0.95,-0.67,0.18,1.001,8020.00,16000.00
+"r_quadrat:trap[quadrat_088_trap_107,Intercept]",-0.03,0.95,-0.41,0.35,1.000,8422.00,16258.00
+"r_quadrat:trap[quadrat_088_trap_108,Intercept]",-0.28,0.95,-0.71,0.13,1.000,7570.00,15805.00
+"r_quadrat:trap[quadrat_088_trap_138,Intercept]",-0.18,0.95,-0.56,0.20,1.000,8015.00,13125.00
+"r_quadrat:trap[quadrat_088_trap_140,Intercept]",0.57,0.95,0.12,1.00,1.001,8539.00,17134.00
+"r_quadrat:trap[quadrat_088_trap_406,Intercept]",-0.09,0.95,-0.86,0.60,1.001,6875.00,27912.00
+"r_quadrat:trap[quadrat_088_trap_407,Intercept]",-0.12,0.95,-0.76,0.53,1.000,6806.00,28654.00
+"r_quadrat:trap[quadrat_088_trap_408,Intercept]",0.12,0.95,-0.53,0.80,1.001,6406.00,26300.00
+"r_quadrat:trap[quadrat_088_trap_438,Intercept]",-0.12,0.95,-0.80,0.51,1.000,6774.00,24053.00
+"r_quadrat:trap[quadrat_091_trap_090,Intercept]",-0.00,0.95,-0.43,0.39,1.000,6940.00,18665.00
+"r_quadrat:trap[quadrat_091_trap_290,Intercept]",0.09,0.95,-0.57,0.80,1.001,7388.00,27034.00
+"r_quadrat:trap[quadrat_092_trap_087,Intercept]",0.01,0.95,-0.42,0.42,1.000,8079.00,17252.00
+"r_quadrat:trap[quadrat_092_trap_088,Intercept]",0.04,0.95,-0.43,0.49,1.000,7314.00,19939.00
+"r_quadrat:trap[quadrat_092_trap_089,Intercept]",-0.25,0.95,-0.63,0.12,1.000,8432.00,15862.00
+"r_quadrat:trap[quadrat_092_trap_287,Intercept]",0.08,0.95,-0.62,0.80,1.001,6863.00,28565.00
+"r_quadrat:trap[quadrat_092_trap_288,Intercept]",0.30,0.95,-0.41,0.99,1.001,5933.00,24642.00
+"r_quadrat:trap[quadrat_092_trap_289,Intercept]",-0.09,0.95,-0.78,0.59,1.001,6203.00,27016.00
+"r_quadrat:trap[quadrat_092_trap_339,Intercept]",-0.30,0.95,-0.81,0.16,1.000,7710.00,18627.00
+"r_quadrat:trap[quadrat_093_trap_085,Intercept]",0.16,0.95,-0.24,0.52,1.000,7850.00,15164.00
+"r_quadrat:trap[quadrat_093_trap_285,Intercept]",0.09,0.95,-0.56,0.75,1.000,7029.00,24913.00
+"r_quadrat:trap[quadrat_098_trap_017,Intercept]",0.22,0.95,-0.20,0.65,1.000,8776.00,17858.00
+"r_quadrat:trap[quadrat_098_trap_018,Intercept]",0.05,0.95,-0.40,0.47,1.000,8089.00,19038.00
+"r_quadrat:trap[quadrat_098_trap_019,Intercept]",-0.52,0.95,-0.95,-0.12,1.000,8707.00,19158.00
+"r_quadrat:trap[quadrat_098_trap_217,Intercept]",-0.10,0.95,-0.80,0.58,1.001,7223.00,28519.00
+"r_quadrat:trap[quadrat_098_trap_218,Intercept]",0.24,0.95,-0.42,0.96,1.001,6825.00,26471.00
+"r_quadrat:trap[quadrat_098_trap_219,Intercept]",0.03,0.95,-0.64,0.67,1.001,7118.00,25417.00
+"r_quadrat:trap[quadrat_099_trap_020,Intercept]",0.14,0.95,-0.26,0.53,1.000,8121.00,16209.00
+"r_quadrat:trap[quadrat_099_trap_021,Intercept]",0.18,0.95,-0.22,0.59,1.000,7714.00,18257.00
+"r_quadrat:trap[quadrat_099_trap_022,Intercept]",-0.31,0.95,-0.68,0.06,1.000,8009.00,15745.00
+"r_quadrat:trap[quadrat_099_trap_220,Intercept]",0.11,0.95,-0.54,0.77,1.001,6560.00,26813.00
+"r_quadrat:trap[quadrat_099_trap_221,Intercept]",0.08,0.95,-0.63,0.84,1.001,6613.00,24157.00
+"r_quadrat:trap[quadrat_099_trap_222,Intercept]",-0.16,0.95,-0.87,0.47,1.000,6997.00,26121.00
+"r_quadrat:trap[quadrat_104_trap_335,Intercept]",-0.38,0.95,-0.93,0.16,1.000,8148.00,19020.00
+"r_quadrat:trap[quadrat_107_trap_338,Intercept]",0.08,0.95,-0.41,0.55,1.001,7367.00,22226.00
+"r_quadrat:trap[quadrat_108_trap_141,Intercept]",-0.26,0.95,-0.80,0.26,1.000,7610.00,21872.00
+"r_quadrat:trap[quadrat_108_trap_142,Intercept]",0.12,0.95,-0.31,0.58,1.000,8015.00,21917.00
+"r_quadrat:trap[quadrat_108_trap_143,Intercept]",-0.02,0.95,-0.42,0.37,1.000,8248.00,17831.00
+"r_quadrat:trap[quadrat_108_trap_440,Intercept]",0.08,0.95,-0.63,0.77,1.000,7158.00,25239.00
+"r_quadrat:trap[quadrat_108_trap_441,Intercept]",0.00,0.95,-0.67,0.74,1.000,6728.00,27172.00
+"r_quadrat:trap[quadrat_108_trap_442,Intercept]",-0.02,0.95,-0.72,0.62,1.001,6562.00,27557.00
+"r_quadrat:trap[quadrat_108_trap_443,Intercept]",0.10,0.95,-0.55,0.75,1.001,7073.00,28880.00
+"r_quadrat:trap[quadrat_109_trap_144,Intercept]",0.33,0.95,-0.09,0.75,1.002,7422.00,18488.00
+"r_quadrat:trap[quadrat_109_trap_444,Intercept]",-0.28,0.95,-0.95,0.42,1.000,7415.00,25920.00
+"r_quadrat:trap[quadrat_112_trap_086,Intercept]",0.09,0.95,-0.28,0.47,1.000,7507.00,11294.00
+"r_quadrat:trap[quadrat_112_trap_286,Intercept]",0.09,0.95,-0.57,0.77,1.002,7193.00,25785.00
+"r_quadrat:trap[quadrat_112_trap_347,Intercept]",0.41,0.95,-0.13,0.90,1.001,6848.00,17513.00
+"r_quadrat:trap[quadrat_113_trap_080,Intercept]",0.35,0.95,0.01,0.70,1.000,8471.00,12557.00
+"r_quadrat:trap[quadrat_113_trap_081,Intercept]",0.15,0.95,-0.24,0.50,1.000,8235.00,14205.00
+"r_quadrat:trap[quadrat_113_trap_082,Intercept]",-0.31,0.95,-0.82,0.17,1.001,7385.00,22059.00
+"r_quadrat:trap[quadrat_113_trap_083,Intercept]",0.45,0.95,0.12,0.77,1.000,8495.00,11577.00
+"r_quadrat:trap[quadrat_113_trap_084,Intercept]",-0.12,0.95,-0.49,0.25,1.001,8246.00,13320.00
+"r_quadrat:trap[quadrat_113_trap_280,Intercept]",0.13,0.95,-0.55,0.81,1.000,6912.00,27119.00
+"r_quadrat:trap[quadrat_113_trap_281,Intercept]",-0.15,0.95,-0.82,0.53,1.001,7224.00,28294.00
+"r_quadrat:trap[quadrat_113_trap_282,Intercept]",-0.01,0.95,-0.73,0.72,1.002,6460.00,26493.00
+"r_quadrat:trap[quadrat_113_trap_283,Intercept]",0.03,0.95,-0.56,0.64,1.000,6905.00,25667.00
+"r_quadrat:trap[quadrat_113_trap_284,Intercept]",-0.18,0.95,-0.82,0.46,1.001,6953.00,26470.00
+"r_quadrat:trap[quadrat_117_trap_342,Intercept]",0.67,0.95,0.10,1.18,1.001,7104.00,11830.00
+"r_quadrat:trap[quadrat_118_trap_013,Intercept]",0.26,0.95,-0.07,0.57,1.001,8075.00,11552.00
+"r_quadrat:trap[quadrat_118_trap_014,Intercept]",-0.01,0.95,-0.37,0.36,1.000,8835.00,15976.00
+"r_quadrat:trap[quadrat_118_trap_015,Intercept]",-0.04,0.95,-0.43,0.35,1.000,7811.00,15318.00
+"r_quadrat:trap[quadrat_118_trap_016,Intercept]",0.02,0.95,-0.42,0.46,1.000,7632.00,15212.00
+"r_quadrat:trap[quadrat_118_trap_213,Intercept]",0.27,0.95,-0.33,0.88,1.000,6645.00,20870.00
+"r_quadrat:trap[quadrat_118_trap_214,Intercept]",-0.03,0.95,-0.68,0.63,1.001,6943.00,24271.00
+"r_quadrat:trap[quadrat_118_trap_215,Intercept]",-0.07,0.95,-0.73,0.60,1.002,6857.00,26486.00
+"r_quadrat:trap[quadrat_118_trap_216,Intercept]",-0.11,0.95,-0.84,0.60,1.000,6519.00,28584.00
+"r_quadrat:trap[quadrat_119_trap_043,Intercept]",-0.30,0.95,-0.79,0.21,1.000,7826.00,17224.00
+"r_quadrat:trap[quadrat_119_trap_243,Intercept]",-0.07,0.95,-0.81,0.65,1.000,7749.00,23889.00
+"r_quadrat:trap[quadrat_120_trap_039,Intercept]",0.21,0.95,-0.18,0.60,1.001,8121.00,16481.00
+"r_quadrat:trap[quadrat_120_trap_041,Intercept]",-0.20,0.95,-0.53,0.16,1.001,8360.00,13517.00
+"r_quadrat:trap[quadrat_120_trap_042,Intercept]",-0.25,0.95,-0.66,0.13,1.000,8192.00,16275.00
+"r_quadrat:trap[quadrat_120_trap_239,Intercept]",0.21,0.95,-0.49,0.88,1.000,6702.00,25259.00
+"r_quadrat:trap[quadrat_120_trap_241,Intercept]",-0.10,0.95,-0.75,0.57,1.000,6490.00,26892.00
+"r_quadrat:trap[quadrat_120_trap_242,Intercept]",0.06,0.95,-0.63,0.72,1.001,7020.00,24690.00
+"r_quadrat:trap[quadrat_128_trap_145,Intercept]",0.02,0.95,-0.49,0.51,1.001,7207.00,22140.00
+"r_quadrat:trap[quadrat_128_trap_147,Intercept]",-0.54,0.95,-1.07,0.01,1.000,7653.00,18429.00
+"r_quadrat:trap[quadrat_128_trap_149,Intercept]",0.09,0.95,-0.29,0.47,1.000,8821.00,17080.00
+"r_quadrat:trap[quadrat_128_trap_445,Intercept]",0.29,0.95,-0.42,1.04,1.000,6353.00,24391.00
+"r_quadrat:trap[quadrat_128_trap_447,Intercept]",-0.04,0.95,-0.75,0.70,1.002,6757.00,24200.00
+"r_quadrat:trap[quadrat_128_trap_449,Intercept]",-0.09,0.95,-0.85,0.58,1.001,6652.00,26559.00
+"r_quadrat:trap[quadrat_129_trap_146,Intercept]",0.11,0.95,-0.29,0.52,1.000,8545.00,15806.00
+"r_quadrat:trap[quadrat_129_trap_148,Intercept]",-0.24,0.95,-0.72,0.18,1.000,8416.00,18466.00
+"r_quadrat:trap[quadrat_129_trap_344,Intercept]",-0.19,0.95,-0.68,0.34,1.001,8274.00,17061.00
+"r_quadrat:trap[quadrat_129_trap_446,Intercept]",-0.12,0.95,-0.78,0.51,1.001,6731.00,27170.00
+"r_quadrat:trap[quadrat_129_trap_448,Intercept]",0.03,0.95,-0.66,0.77,1.001,6718.00,25479.00
+"r_quadrat:trap[quadrat_130_trap_305,Intercept]",0.27,0.95,-0.24,0.76,1.000,7938.00,22241.00
+"r_quadrat:trap[quadrat_130_trap_320,Intercept]",-0.12,0.95,-0.64,0.34,1.000,8053.00,21367.00
+"r_quadrat:trap[quadrat_131_trap_321,Intercept]",0.98,0.95,0.46,1.58,1.001,7025.00,10735.00
+"r_quadrat:trap[quadrat_131_trap_322,Intercept]",-0.23,0.95,-0.72,0.24,1.001,7326.00,18125.00
+"r_quadrat:trap[quadrat_131_trap_323,Intercept]",-0.13,0.95,-0.65,0.44,1.001,8029.00,23348.00
+"r_quadrat:trap[quadrat_131_trap_324,Intercept]",0.14,0.95,-0.45,0.70,1.001,7326.00,21769.00
+"r_quadrat:trap[quadrat_134_trap_075,Intercept]",-0.23,0.95,-0.65,0.22,1.000,7286.00,20207.00
+"r_quadrat:trap[quadrat_134_trap_076,Intercept]",-0.03,0.95,-0.51,0.40,1.000,7740.00,21401.00
+"r_quadrat:trap[quadrat_134_trap_077,Intercept]",0.13,0.95,-0.35,0.61,1.000,7017.00,21598.00
+"r_quadrat:trap[quadrat_134_trap_078,Intercept]",0.12,0.95,-0.34,0.58,1.000,7957.00,21929.00
+"r_quadrat:trap[quadrat_134_trap_079,Intercept]",-0.21,0.95,-0.61,0.20,1.000,7343.00,18230.00
+"r_quadrat:trap[quadrat_134_trap_276,Intercept]",-0.07,0.95,-0.79,0.61,1.001,6974.00,27283.00
+"r_quadrat:trap[quadrat_134_trap_277,Intercept]",-0.07,0.95,-0.77,0.66,1.000,6944.00,24412.00
+"r_quadrat:trap[quadrat_134_trap_278,Intercept]",0.14,0.95,-0.58,0.82,1.000,6778.00,25104.00
+"r_quadrat:trap[quadrat_134_trap_279,Intercept]",0.08,0.95,-0.59,0.72,1.000,6832.00,27136.00
+"r_quadrat:trap[quadrat_137_trap_009,Intercept]",-0.29,0.95,-0.79,0.20,1.000,7957.00,19417.00
+"r_quadrat:trap[quadrat_137_trap_209,Intercept]",-0.01,0.95,-0.80,0.69,1.000,6559.00,26792.00
+"r_quadrat:trap[quadrat_138_trap_008,Intercept]",0.09,0.95,-0.33,0.53,1.001,7475.00,17508.00
+"r_quadrat:trap[quadrat_138_trap_010,Intercept]",-0.48,0.95,-1.04,0.10,1.001,6907.00,19159.00
+"r_quadrat:trap[quadrat_138_trap_011,Intercept]",-0.04,0.95,-0.43,0.34,1.000,8191.00,14020.00
+"r_quadrat:trap[quadrat_138_trap_012,Intercept]",0.09,0.95,-0.28,0.44,1.000,8449.00,12867.00
+"r_quadrat:trap[quadrat_138_trap_210,Intercept]",-0.00,0.95,-0.76,0.76,1.000,6628.00,27279.00
+"r_quadrat:trap[quadrat_138_trap_211,Intercept]",0.02,0.95,-0.65,0.65,1.000,7286.00,26232.00
+"r_quadrat:trap[quadrat_138_trap_212,Intercept]",-0.09,0.95,-0.77,0.58,1.002,6530.00,24379.00
+"r_quadrat:trap[quadrat_139_trap_045,Intercept]",0.38,0.95,-0.05,0.81,1.000,7621.00,19113.00
+"r_quadrat:trap[quadrat_139_trap_047,Intercept]",-0.59,0.95,-1.11,-0.12,1.001,7996.00,20197.00
+"r_quadrat:trap[quadrat_139_trap_049,Intercept]",-0.32,0.95,-0.73,0.12,1.001,8834.00,16224.00
+"r_quadrat:trap[quadrat_139_trap_245,Intercept]",0.17,0.95,-0.59,0.86,1.000,6675.00,30207.00
+"r_quadrat:trap[quadrat_139_trap_247,Intercept]",0.10,0.95,-0.64,0.80,1.000,6843.00,26313.00
+"r_quadrat:trap[quadrat_139_trap_249,Intercept]",0.01,0.95,-0.66,0.70,1.001,7229.00,27712.00
+"r_quadrat:trap[quadrat_139_trap_316,Intercept]",-0.03,0.95,-0.51,0.47,1.000,7862.00,18516.00
+"r_quadrat:trap[quadrat_140_trap_044,Intercept]",0.06,0.95,-0.33,0.46,1.000,8672.00,17236.00
+"r_quadrat:trap[quadrat_140_trap_046,Intercept]",-0.27,0.95,-0.63,0.08,1.000,7727.00,15019.00
+"r_quadrat:trap[quadrat_140_trap_244,Intercept]",0.07,0.95,-0.60,0.73,1.000,6946.00,26498.00
+"r_quadrat:trap[quadrat_140_trap_246,Intercept]",0.05,0.95,-0.62,0.66,1.001,7316.00,25486.00
+"r_quadrat:trap[quadrat_141_trap_199,Intercept]",0.20,0.95,-0.23,0.65,1.000,7774.00,17678.00
+"r_quadrat:trap[quadrat_141_trap_200,Intercept]",0.04,0.95,-0.34,0.44,1.000,8543.00,15348.00
+"r_quadrat:trap[quadrat_141_trap_499,Intercept]",0.17,0.95,-0.53,0.88,1.001,6837.00,27205.00
+"r_quadrat:trap[quadrat_142_trap_197,Intercept]",-0.21,0.95,-0.81,0.37,1.001,6996.00,23056.00
+"r_quadrat:trap[quadrat_142_trap_497,Intercept]",-0.03,0.95,-0.77,0.72,1.000,6778.00,28432.00
+"r_quadrat:trap[quadrat_143_trap_334,Intercept]",0.07,0.95,-0.42,0.54,1.000,7873.00,23199.00
+"r_quadrat:trap[quadrat_145_trap_336,Intercept]",0.09,0.95,-0.44,0.60,1.000,7382.00,22146.00
+"r_quadrat:trap[quadrat_146_trap_179,Intercept]",-0.36,0.95,-0.92,0.14,1.000,8136.00,19811.00
+"r_quadrat:trap[quadrat_146_trap_479,Intercept]",0.07,0.95,-0.65,0.76,1.000,7209.00,24777.00
+"r_quadrat:trap[quadrat_146_trap_481,Intercept]",-0.07,0.95,-0.74,0.59,1.001,6890.00,24901.00
+"r_quadrat:trap[quadrat_147_trap_175,Intercept]",0.44,0.95,0.00,0.85,1.000,7561.00,13666.00
+"r_quadrat:trap[quadrat_147_trap_177,Intercept]",0.21,0.95,-0.25,0.66,1.001,7815.00,16345.00
+"r_quadrat:trap[quadrat_147_trap_346,Intercept]",-0.25,0.95,-0.76,0.25,1.000,7572.00,20804.00
+"r_quadrat:trap[quadrat_147_trap_475,Intercept]",0.01,0.95,-0.66,0.67,1.000,7345.00,25474.00
+"r_quadrat:trap[quadrat_147_trap_477,Intercept]",0.07,0.95,-0.64,0.79,1.001,7382.00,26517.00
+"r_quadrat:trap[quadrat_148_trap_151,Intercept]",-0.04,0.95,-0.45,0.37,1.001,8280.00,15729.00
+"r_quadrat:trap[quadrat_148_trap_171,Intercept]",-0.21,0.95,-0.60,0.16,1.001,8780.00,17057.00
+"r_quadrat:trap[quadrat_148_trap_173,Intercept]",0.35,0.95,-0.03,0.73,1.000,8660.00,12642.00
+"r_quadrat:trap[quadrat_148_trap_451,Intercept]",0.01,0.95,-0.69,0.72,1.001,7133.00,26741.00
+"r_quadrat:trap[quadrat_148_trap_471,Intercept]",0.05,0.95,-0.58,0.71,1.001,7083.00,30000.00
+"r_quadrat:trap[quadrat_148_trap_473,Intercept]",0.29,0.95,-0.37,0.94,1.001,6433.00,21232.00
+"r_quadrat:trap[quadrat_149_trap_150,Intercept]",-0.50,0.95,-1.06,0.01,1.000,7393.00,15812.00
+"r_quadrat:trap[quadrat_149_trap_169,Intercept]",-0.08,0.95,-0.48,0.34,1.000,8185.00,13493.00
+"r_quadrat:trap[quadrat_149_trap_319,Intercept]",0.07,0.95,-0.42,0.52,1.001,7910.00,18484.00
+"r_quadrat:trap[quadrat_149_trap_450,Intercept]",0.02,0.95,-0.72,0.70,1.001,6909.00,28955.00
+"r_quadrat:trap[quadrat_149_trap_467,Intercept]",-0.03,0.95,-0.75,0.72,1.001,6872.00,24414.00
+"r_quadrat:trap[quadrat_150_trap_167,Intercept]",-0.05,0.95,-0.67,0.48,1.000,7596.00,24228.00
+"r_quadrat:trap[quadrat_154_trap_072,Intercept]",0.23,0.95,-0.15,0.59,1.000,8465.00,15163.00
+"r_quadrat:trap[quadrat_154_trap_074,Intercept]",-0.47,0.95,-0.88,-0.06,1.000,7903.00,14279.00
+"r_quadrat:trap[quadrat_154_trap_272,Intercept]",0.20,0.95,-0.47,0.88,1.001,6956.00,25487.00
+"r_quadrat:trap[quadrat_154_trap_274,Intercept]",-0.01,0.95,-0.69,0.65,1.000,7141.00,28550.00
+"r_quadrat:trap[quadrat_154_trap_275,Intercept]",-0.14,0.95,-0.85,0.59,1.001,6638.00,25077.00
+"r_quadrat:trap[quadrat_155_trap_071,Intercept]",0.34,0.95,-0.06,0.72,1.001,7788.00,15678.00
+"r_quadrat:trap[quadrat_155_trap_073,Intercept]",-0.19,0.95,-0.57,0.19,1.001,7765.00,15347.00
+"r_quadrat:trap[quadrat_155_trap_271,Intercept]",-0.29,0.95,-0.91,0.30,1.000,7446.00,22595.00
+"r_quadrat:trap[quadrat_155_trap_273,Intercept]",0.17,0.95,-0.51,0.82,1.001,5760.00,25459.00
+"r_quadrat:trap[quadrat_157_trap_005,Intercept]",-0.12,0.95,-0.55,0.28,1.000,8641.00,17661.00
+"r_quadrat:trap[quadrat_157_trap_205,Intercept]",-0.04,0.95,-0.69,0.60,1.001,6843.00,26898.00
+"r_quadrat:trap[quadrat_158_trap_006,Intercept]",0.73,0.95,0.35,1.09,1.001,7613.00,5797.00
+"r_quadrat:trap[quadrat_158_trap_007,Intercept]",0.06,0.95,-0.35,0.43,1.000,7120.00,8369.00
+"r_quadrat:trap[quadrat_158_trap_051,Intercept]",0.12,0.95,-0.33,0.54,1.001,7861.00,11629.00
+"r_quadrat:trap[quadrat_158_trap_053,Intercept]",-0.07,0.95,-0.51,0.39,1.001,7541.00,10734.00
+"r_quadrat:trap[quadrat_158_trap_206,Intercept]",0.29,0.95,-0.39,0.96,1.001,6938.00,20053.00
+"r_quadrat:trap[quadrat_158_trap_207,Intercept]",-0.07,0.95,-0.80,0.61,1.001,6583.00,25607.00
+"r_quadrat:trap[quadrat_158_trap_208,Intercept]",0.00,0.95,-0.71,0.69,1.002,6963.00,27306.00
+"r_quadrat:trap[quadrat_158_trap_251,Intercept]",0.16,0.95,-0.56,0.85,1.000,7103.00,26508.00
+"r_quadrat:trap[quadrat_158_trap_253,Intercept]",-0.12,0.95,-0.78,0.62,1.002,6899.00,24252.00
+"r_quadrat:trap[quadrat_159_trap_048,Intercept]",0.16,0.95,-0.20,0.55,1.000,8318.00,15023.00
+"r_quadrat:trap[quadrat_159_trap_050,Intercept]",-0.03,0.95,-0.45,0.38,1.000,8120.00,17935.00
+"r_quadrat:trap[quadrat_159_trap_052,Intercept]",-0.34,0.95,-0.73,0.05,1.000,8934.00,15212.00
+"r_quadrat:trap[quadrat_159_trap_248,Intercept]",-0.07,0.95,-0.77,0.61,1.000,7341.00,25114.00
+"r_quadrat:trap[quadrat_159_trap_250,Intercept]",-0.09,0.95,-0.82,0.66,1.001,6881.00,25080.00
+"r_quadrat:trap[quadrat_159_trap_252,Intercept]",0.03,0.95,-0.63,0.66,1.001,7441.00,26454.00
+"r_quadrat:trap[quadrat_159_trap_349,Intercept]",-0.04,0.95,-0.60,0.47,1.000,7246.00,24092.00
+"r_quadrat:trap[quadrat_161_trap_345,Intercept]",-0.26,0.95,-0.86,0.30,1.001,6767.00,21028.00
+"r_quadrat:trap[quadrat_161_trap_500,Intercept]",0.31,0.95,-0.38,1.01,1.000,7190.00,27513.00
+"r_quadrat:trap[quadrat_162_trap_194,Intercept]",0.27,0.95,-0.10,0.66,1.000,8081.00,17659.00
+"r_quadrat:trap[quadrat_162_trap_195,Intercept]",0.06,0.95,-0.46,0.53,1.000,7616.00,24135.00
+"r_quadrat:trap[quadrat_162_trap_196,Intercept]",-0.20,0.95,-0.58,0.15,1.000,8389.00,16538.00
+"r_quadrat:trap[quadrat_162_trap_198,Intercept]",-0.11,0.95,-0.60,0.33,1.002,7500.00,23310.00
+"r_quadrat:trap[quadrat_162_trap_494,Intercept]",0.15,0.95,-0.48,0.84,1.000,6984.00,26547.00
+"r_quadrat:trap[quadrat_162_trap_495,Intercept]",-0.04,0.95,-0.69,0.64,1.000,6863.00,26945.00
+"r_quadrat:trap[quadrat_162_trap_496,Intercept]",0.04,0.95,-0.63,0.70,1.000,7545.00,25913.00
+"r_quadrat:trap[quadrat_162_trap_498,Intercept]",0.05,0.95,-0.65,0.77,1.001,6527.00,27196.00
+"r_quadrat:trap[quadrat_163_trap_191,Intercept]",-0.09,0.95,-0.51,0.36,1.000,6469.00,10437.00
+"r_quadrat:trap[quadrat_163_trap_192,Intercept]",-0.22,0.95,-0.66,0.21,1.000,8004.00,9342.00
+"r_quadrat:trap[quadrat_163_trap_193,Intercept]",-0.20,0.95,-0.62,0.22,1.000,7488.00,9376.00
+"r_quadrat:trap[quadrat_163_trap_491,Intercept]",0.19,0.95,-0.42,0.85,1.001,6918.00,24273.00
+"r_quadrat:trap[quadrat_163_trap_492,Intercept]",-0.33,0.95,-1.03,0.33,1.001,6971.00,20614.00
+"r_quadrat:trap[quadrat_163_trap_493,Intercept]",-0.27,0.95,-0.94,0.39,1.001,7213.00,23395.00
+"r_quadrat:trap[quadrat_164_trap_187,Intercept]",0.37,0.95,-0.10,0.82,1.001,7553.00,18604.00
+"r_quadrat:trap[quadrat_164_trap_188,Intercept]",-0.62,0.95,-1.18,-0.09,1.000,7518.00,16209.00
+"r_quadrat:trap[quadrat_164_trap_189,Intercept]",-0.24,0.95,-0.64,0.17,1.000,7602.00,15645.00
+"r_quadrat:trap[quadrat_164_trap_190,Intercept]",-0.03,0.95,-0.43,0.38,1.000,8072.00,16589.00
+"r_quadrat:trap[quadrat_164_trap_487,Intercept]",-0.05,0.95,-0.79,0.66,1.001,7090.00,27580.00
+"r_quadrat:trap[quadrat_164_trap_488,Intercept]",-0.12,0.95,-0.85,0.58,1.000,6468.00,26489.00
+"r_quadrat:trap[quadrat_164_trap_489,Intercept]",0.06,0.95,-0.67,0.70,1.000,6893.00,27929.00
+"r_quadrat:trap[quadrat_164_trap_490,Intercept]",0.26,0.95,-0.45,0.94,1.001,7003.00,26983.00
+"r_quadrat:trap[quadrat_165_trap_183,Intercept]",-0.08,0.95,-0.49,0.29,1.000,8815.00,12498.00
+"r_quadrat:trap[quadrat_165_trap_184,Intercept]",0.15,0.95,-0.26,0.54,1.000,7993.00,11474.00
+"r_quadrat:trap[quadrat_165_trap_185,Intercept]",-0.26,0.95,-0.69,0.19,1.000,7794.00,15741.00
+"r_quadrat:trap[quadrat_165_trap_186,Intercept]",0.76,0.95,0.33,1.20,1.000,7532.00,10164.00
+"r_quadrat:trap[quadrat_165_trap_483,Intercept]",0.03,0.95,-0.63,0.69,1.000,7278.00,26495.00
+"r_quadrat:trap[quadrat_165_trap_484,Intercept]",-0.01,0.95,-0.67,0.66,1.001,6790.00,26947.00
+"r_quadrat:trap[quadrat_165_trap_485,Intercept]",0.13,0.95,-0.56,0.83,1.000,6190.00,25730.00
+"r_quadrat:trap[quadrat_165_trap_486,Intercept]",0.08,0.95,-0.66,0.76,1.000,7004.00,26959.00
+"r_quadrat:trap[quadrat_166_trap_180,Intercept]",-0.25,0.95,-0.72,0.16,1.001,7061.00,16586.00
+"r_quadrat:trap[quadrat_166_trap_181,Intercept]",-0.40,0.95,-0.78,-0.00,1.000,8361.00,13152.00
+"r_quadrat:trap[quadrat_166_trap_182,Intercept]",0.51,0.95,0.15,0.87,1.000,8699.00,11662.00
+"r_quadrat:trap[quadrat_166_trap_480,Intercept]",-0.26,0.95,-0.96,0.42,1.000,6568.00,24333.00
+"r_quadrat:trap[quadrat_166_trap_482,Intercept]",0.09,0.95,-0.54,0.70,1.001,6500.00,25315.00
+"r_quadrat:trap[quadrat_167_trap_176,Intercept]",-0.51,0.95,-0.94,-0.07,1.001,8400.00,9952.00
+"r_quadrat:trap[quadrat_167_trap_178,Intercept]",-0.41,0.95,-0.83,-0.00,1.000,7577.00,8569.00
+"r_quadrat:trap[quadrat_167_trap_476,Intercept]",0.08,0.95,-0.56,0.73,1.000,6880.00,25873.00
+"r_quadrat:trap[quadrat_167_trap_478,Intercept]",0.17,0.95,-0.55,0.85,1.000,6825.00,23249.00
+"r_quadrat:trap[quadrat_168_trap_172,Intercept]",-0.40,0.95,-0.91,0.08,1.000,7972.00,21350.00
+"r_quadrat:trap[quadrat_168_trap_174,Intercept]",0.42,0.95,-0.03,0.88,1.001,7552.00,19685.00
+"r_quadrat:trap[quadrat_168_trap_472,Intercept]",-0.10,0.95,-0.82,0.61,1.001,7083.00,28766.00
+"r_quadrat:trap[quadrat_168_trap_474,Intercept]",-0.03,0.95,-0.77,0.68,1.002,6867.00,27860.00
+"r_quadrat:trap[quadrat_169_trap_168,Intercept]",0.16,0.95,-0.21,0.51,1.000,7683.00,9375.00
+"r_quadrat:trap[quadrat_169_trap_170,Intercept]",0.22,0.95,-0.21,0.58,1.000,7486.00,11959.00
+"r_quadrat:trap[quadrat_169_trap_468,Intercept]",0.17,0.95,-0.50,0.85,1.001,6840.00,23713.00
+"r_quadrat:trap[quadrat_169_trap_469,Intercept]",-0.16,0.95,-0.87,0.56,1.000,7435.00,24550.00
+"r_quadrat:trap[quadrat_169_trap_470,Intercept]",0.26,0.95,-0.40,0.90,1.001,7129.00,22488.00
+"r_quadrat:trap[quadrat_170_trap_164,Intercept]",-0.18,0.95,-0.71,0.32,1.001,7050.00,24101.00
+"r_quadrat:trap[quadrat_170_trap_165,Intercept]",0.39,0.95,0.01,0.73,1.000,8439.00,15579.00
+"r_quadrat:trap[quadrat_170_trap_166,Intercept]",-0.21,0.95,-0.65,0.21,1.000,8217.00,20620.00
+"r_quadrat:trap[quadrat_170_trap_325,Intercept]",0.29,0.95,-0.13,0.69,1.001,7929.00,20783.00
+"r_quadrat:trap[quadrat_170_trap_464,Intercept]",0.05,0.95,-0.66,0.78,1.000,6991.00,26669.00
+"r_quadrat:trap[quadrat_170_trap_465,Intercept]",-0.07,0.95,-0.73,0.58,1.000,6595.00,25628.00
+"r_quadrat:trap[quadrat_170_trap_466,Intercept]",-0.17,0.95,-0.87,0.56,1.001,6501.00,22852.00
+"r_quadrat:trap[quadrat_171_trap_161,Intercept]",-0.22,0.95,-0.78,0.32,1.001,6993.00,23695.00
+"r_quadrat:trap[quadrat_171_trap_162,Intercept]",0.03,0.95,-0.49,0.53,1.001,7589.00,22330.00
+"r_quadrat:trap[quadrat_171_trap_163,Intercept]",-0.00,0.95,-0.39,0.39,1.000,7203.00,15952.00
+"r_quadrat:trap[quadrat_171_trap_461,Intercept]",0.04,0.95,-0.71,0.72,1.001,6894.00,24335.00
+"r_quadrat:trap[quadrat_171_trap_462,Intercept]",0.08,0.95,-0.61,0.77,1.000,7101.00,23853.00
+"r_quadrat:trap[quadrat_171_trap_463,Intercept]",-0.13,0.95,-0.82,0.60,1.001,6845.00,28872.00
+"r_quadrat:trap[quadrat_172_trap_159,Intercept]",-0.03,0.95,-0.47,0.46,1.000,7591.00,18295.00
+"r_quadrat:trap[quadrat_172_trap_343,Intercept]",0.35,0.95,-0.13,0.81,1.000,8022.00,16346.00
+"r_quadrat:trap[quadrat_174_trap_070,Intercept]",-0.32,0.95,-0.75,0.11,1.000,7552.00,14618.00
+"r_quadrat:trap[quadrat_175_trap_067,Intercept]",-0.32,0.95,-0.76,0.16,1.000,7823.00,16042.00
+"r_quadrat:trap[quadrat_175_trap_068,Intercept]",-0.04,0.95,-0.52,0.45,1.000,7982.00,20614.00
+"r_quadrat:trap[quadrat_175_trap_069,Intercept]",0.13,0.95,-0.24,0.52,1.000,7565.00,13601.00
+"r_quadrat:trap[quadrat_175_trap_267,Intercept]",0.13,0.95,-0.55,0.86,1.000,7226.00,24957.00
+"r_quadrat:trap[quadrat_175_trap_268,Intercept]",-0.09,0.95,-0.86,0.61,1.001,7097.00,27099.00
+"r_quadrat:trap[quadrat_175_trap_269,Intercept]",-0.11,0.95,-0.81,0.54,1.000,6968.00,23708.00
+"r_quadrat:trap[quadrat_175_trap_270,Intercept]",-0.12,0.95,-0.86,0.59,1.000,6762.00,26553.00
+"r_quadrat:trap[quadrat_177_trap_001,Intercept]",-0.16,0.95,-0.56,0.25,1.000,8284.00,19924.00
+"r_quadrat:trap[quadrat_177_trap_002,Intercept]",-0.16,0.95,-0.61,0.27,1.000,8315.00,19979.00
+"r_quadrat:trap[quadrat_177_trap_003,Intercept]",0.49,0.95,0.10,0.84,1.000,9096.00,15138.00
+"r_quadrat:trap[quadrat_177_trap_004,Intercept]",0.16,0.95,-0.30,0.60,1.001,8311.00,16607.00
+"r_quadrat:trap[quadrat_177_trap_059,Intercept]",-0.05,0.95,-0.54,0.41,1.001,7608.00,20227.00
+"r_quadrat:trap[quadrat_177_trap_201,Intercept]",0.06,0.95,-0.66,0.77,1.000,6670.00,27724.00
+"r_quadrat:trap[quadrat_177_trap_202,Intercept]",0.02,0.95,-0.66,0.71,1.000,7007.00,28435.00
+"r_quadrat:trap[quadrat_177_trap_203,Intercept]",0.20,0.95,-0.44,0.89,1.001,7302.00,25296.00
+"r_quadrat:trap[quadrat_177_trap_204,Intercept]",-0.15,0.95,-0.83,0.54,1.000,7017.00,24865.00
+"r_quadrat:trap[quadrat_177_trap_259,Intercept]",-0.09,0.95,-0.76,0.64,1.001,6759.00,26530.00
+"r_quadrat:trap[quadrat_178_trap_054,Intercept]",0.53,0.95,0.18,0.86,1.000,8146.00,11641.00
+"r_quadrat:trap[quadrat_178_trap_055,Intercept]",-0.01,0.95,-0.37,0.34,1.001,8013.00,9394.00
+"r_quadrat:trap[quadrat_178_trap_056,Intercept]",-0.84,0.95,-1.25,-0.47,1.000,7891.00,9901.00
+"r_quadrat:trap[quadrat_178_trap_057,Intercept]",-0.65,0.95,-1.25,-0.08,1.001,7306.00,14988.00
+"r_quadrat:trap[quadrat_178_trap_058,Intercept]",0.18,0.95,-0.22,0.58,1.000,8210.00,13607.00
+"r_quadrat:trap[quadrat_178_trap_254,Intercept]",0.07,0.95,-0.58,0.68,1.001,6460.00,27551.00
+"r_quadrat:trap[quadrat_178_trap_255,Intercept]",0.16,0.95,-0.49,0.80,1.001,6540.00,23615.00
+"r_quadrat:trap[quadrat_178_trap_256,Intercept]",-0.21,0.95,-0.86,0.45,1.000,7019.00,26274.00
+"r_quadrat:trap[quadrat_178_trap_257,Intercept]",-0.04,0.95,-0.73,0.64,1.001,6796.00,30649.00
+"r_quadrat:trap[quadrat_178_trap_258,Intercept]",0.18,0.95,-0.51,0.80,1.001,6398.00,23142.00
+"r_quadrat:trap[quadrat_191_trap_160,Intercept]",-0.23,0.95,-0.76,0.23,1.000,7834.00,18821.00
+"r_quadrat:trap[quadrat_191_trap_460,Intercept]",-0.01,0.95,-0.73,0.73,1.000,6662.00,27952.00
+"r_quadrat:trap[quadrat_192_trap_156,Intercept]",-0.16,0.95,-0.55,0.26,1.001,7774.00,6199.00
+"r_quadrat:trap[quadrat_192_trap_157,Intercept]",-0.75,0.95,-1.28,-0.27,1.000,7531.00,9914.00
+"r_quadrat:trap[quadrat_192_trap_158,Intercept]",-0.01,0.95,-0.48,0.44,1.000,7649.00,9232.00
+"r_quadrat:trap[quadrat_192_trap_456,Intercept]",-0.02,0.95,-0.67,0.64,1.000,6562.00,27939.00
+"r_quadrat:trap[quadrat_192_trap_457,Intercept]",-0.11,0.95,-0.82,0.60,1.002,6565.00,29334.00
+"r_quadrat:trap[quadrat_192_trap_458,Intercept]",-0.10,0.95,-0.79,0.60,1.001,6737.00,26077.00
+"r_quadrat:trap[quadrat_192_trap_459,Intercept]",0.01,0.95,-0.71,0.67,1.001,7138.00,28587.00
+"r_quadrat:trap[quadrat_193_trap_153,Intercept]",-0.12,0.95,-0.60,0.40,1.001,7981.00,21701.00
+"r_quadrat:trap[quadrat_193_trap_155,Intercept]",-0.13,0.95,-0.63,0.36,1.001,7837.00,19565.00
+"r_quadrat:trap[quadrat_193_trap_453,Intercept]",0.11,0.95,-0.63,0.84,1.000,7186.00,26892.00
+"r_quadrat:trap[quadrat_193_trap_455,Intercept]",-0.02,0.95,-0.76,0.68,1.001,7797.00,26119.00
+"r_quadrat:trap[quadrat_194_trap_064,Intercept]",-0.05,0.95,-0.48,0.39,1.000,7813.00,18809.00
+"r_quadrat:trap[quadrat_194_trap_066,Intercept]",0.20,0.95,-0.21,0.62,1.000,7547.00,16811.00
+"r_quadrat:trap[quadrat_194_trap_264,Intercept]",-0.05,0.95,-0.77,0.67,1.001,6315.00,25954.00
+"r_quadrat:trap[quadrat_194_trap_266,Intercept]",0.09,0.95,-0.61,0.83,1.000,7120.00,25391.00
+"r_quadrat:trap[quadrat_195_trap_065,Intercept]",-0.27,0.95,-0.74,0.20,1.001,7303.00,15515.00
+"r_quadrat:trap[quadrat_195_trap_265,Intercept]",-0.08,0.95,-0.83,0.62,1.000,7142.00,25314.00
+"r_quadrat:trap[quadrat_197_trap_060,Intercept]",0.22,0.95,-0.19,0.61,1.000,8612.00,16743.00
+"r_quadrat:trap[quadrat_197_trap_061,Intercept]",-0.26,0.95,-0.72,0.23,1.001,7791.00,21929.00
+"r_quadrat:trap[quadrat_197_trap_260,Intercept]",0.21,0.95,-0.48,0.90,1.001,6424.00,24087.00
+"r_quadrat:trap[quadrat_197_trap_261,Intercept]",-0.04,0.95,-0.77,0.68,1.000,7029.00,25730.00
+"r_quadrat:trap[quadrat_197_trap_262,Intercept]",-0.01,0.95,-0.72,0.78,1.001,6729.00,25886.00
+"r_sp4[adet,Intercept]",-1.23,0.95,-3.27,0.45,1.001,7172.00,12984.00
+"r_sp4[alcc,Intercept]",-0.09,0.95,-0.74,0.55,1.002,4612.00,2523.00
+"r_sp4[alsb,Intercept]",-6.12,0.95,-7.14,-5.14,1.002,3141.00,1582.00
+"r_sp4[anap,Intercept]",-0.12,0.95,-1.48,1.23,1.000,7157.00,6093.00
+"r_sp4[anna,Intercept]",-1.84,0.95,-4.68,0.49,1.000,7427.00,14296.00
+"r_sp4[aspc,Intercept]",-0.94,0.95,-2.40,0.45,1.001,6561.00,7009.00
+"r_sp4[astg,Intercept]",1.86,0.95,1.09,2.61,1.001,5719.00,3578.00
+"r_sp4[asts,Intercept]",1.28,0.95,0.46,2.09,1.000,6025.00,4380.00
+"r_sp4[attb,Intercept]",0.08,0.95,-1.66,1.72,1.001,7287.00,7593.00
+"r_sp4[boms,Intercept]",-1.20,0.95,-4.37,1.40,1.001,7583.00,19080.00
+"r_sp4[capf,Intercept]",1.45,0.95,0.35,2.55,1.001,4534.00,2645.00
+"r_sp4[cas1,Intercept]",1.05,0.95,-0.24,2.34,1.000,6412.00,6988.00
+"r_sp4[cas2,Intercept]",0.47,0.95,-0.11,1.08,1.003,4868.00,2237.00
+"r_sp4[cas3,Intercept]",0.26,0.95,-0.60,1.15,1.001,4810.00,2533.00
+"r_sp4[casg,Intercept]",-1.58,0.95,-4.55,0.97,1.000,6525.00,14873.00
+"r_sp4[cavp,Intercept]",2.22,0.95,1.11,3.34,1.001,6342.00,4555.00
+"r_sp4[cedo,Intercept]",-1.22,0.95,-4.37,1.44,1.000,7292.00,16098.00
+"r_sp4[ces1,Intercept]",-1.82,0.95,-4.65,0.66,1.000,7374.00,10983.00
+"r_sp4[cora,Intercept]",0.37,0.95,-0.17,0.94,1.002,3957.00,1957.00
+"r_sp4[cupr,Intercept]",0.60,0.95,-1.12,2.13,1.000,7426.00,10735.00
+"r_sp4[cups,Intercept]",0.84,0.95,-0.25,1.92,1.001,5710.00,3789.00
+"r_sp4[dipp,Intercept]",1.93,0.95,1.32,2.56,1.003,3914.00,2153.00
+"r_sp4[eryc,Intercept]",-0.79,0.95,-2.82,1.01,1.000,7455.00,10978.00
+"r_sp4[gua1,Intercept]",-0.06,0.95,-0.74,0.67,1.002,5313.00,2794.00
+"r_sp4[gua2,Intercept]",-0.28,0.95,-1.03,0.42,1.002,3454.00,1560.00
+"r_sp4[guau,Intercept]",-0.69,0.95,-1.36,-0.01,1.002,5102.00,2502.00
+"r_sp4[ham2,Intercept]",-2.25,0.95,-4.89,-0.04,1.001,6761.00,15003.00
+"r_sp4[hurc,Intercept]",-0.88,0.95,-1.59,-0.15,1.002,5949.00,3046.00
+"r_sp4[hybp,Intercept]",-1.04,0.95,-2.36,0.23,1.002,3181.00,1696.00
+"r_sp4[inma,Intercept]",-0.13,0.95,-0.77,0.52,1.002,3645.00,1777.00
+"r_sp4[jacc,Intercept]",-3.12,0.95,-3.63,-2.63,1.003,2923.00,1586.00
+"r_sp4[laep,Intercept]",-0.39,0.95,-1.17,0.39,1.003,4605.00,2431.00
+"r_sp4[laet,Intercept]",-1.33,0.95,-2.29,-0.40,1.000,6086.00,3908.00
+"r_sp4[lafp,Intercept]",2.90,0.95,1.35,4.32,1.001,6201.00,4367.00
+"r_sp4[linl,Intercept]",1.74,0.95,0.82,2.65,1.001,5928.00,3782.00
+"r_sp4[lonl,Intercept]",2.12,0.95,1.41,2.82,1.001,4492.00,2124.00
+"r_sp4[lue1,Intercept]",-3.23,0.95,-3.72,-2.74,1.003,3192.00,1630.00
+"r_sp4[mays,Intercept]",-0.24,0.95,-3.65,3.14,1.000,6769.00,24248.00
+"r_sp4[necc,Intercept]",0.94,0.95,-0.16,1.98,1.001,6785.00,6163.00
+"r_sp4[necl,Intercept]",1.04,0.95,-0.06,2.07,1.001,6886.00,5806.00
+"r_sp4[ochp,Intercept]",-5.09,0.95,-7.10,-3.30,1.000,7286.00,6994.00
+"r_sp4[ococ,Intercept]",-1.32,0.95,-3.32,0.34,1.000,7643.00,11154.00
+"r_sp4[ocoo,Intercept]",2.33,0.95,1.51,3.10,1.001,5024.00,3013.00
+"r_sp4[ocos,Intercept]",2.76,0.95,1.96,3.52,1.001,5982.00,3134.00
+"r_sp4[oenm,Intercept]",1.77,0.95,0.79,2.72,1.001,4916.00,2261.00
+"r_sp4[perx,Intercept]",0.81,0.95,-1.50,2.70,1.000,6486.00,12892.00
+"r_sp4[phom,Intercept]",0.53,0.95,-0.89,1.86,1.001,6544.00,6701.00
+"r_sp4[plae,Intercept]",2.04,0.95,1.47,2.62,1.002,4194.00,2228.00
+"r_sp4[plap,Intercept]",2.64,0.95,2.10,3.20,1.003,4400.00,2027.00
+"r_sp4[prop,Intercept]",0.82,0.95,-0.66,2.05,1.001,6398.00,4056.00
+"r_sp4[prot,Intercept]",0.83,0.95,0.03,1.61,1.002,3304.00,1560.00
+"r_sp4[pse1,Intercept]",0.02,0.95,-1.64,1.64,1.000,6698.00,7448.00
+"r_sp4[pter,Intercept]",0.52,0.95,-0.65,1.69,1.001,5728.00,3977.00
+"r_sp4[qua1,Intercept]",-0.66,0.95,-1.36,0.08,1.002,3069.00,1456.00
+"r_sp4[qua2,Intercept]",2.01,0.95,0.18,3.77,1.000,6968.00,12620.00
+"r_sp4[sapg,Intercept]",-0.44,0.95,-1.43,0.53,1.001,5927.00,3936.00
+"r_sp4[slot,Intercept]",0.93,0.95,0.12,1.73,1.001,6351.00,3183.00
+"r_sp4[soce,Intercept]",2.26,0.95,1.58,3.00,1.001,4221.00,2330.00
+"r_sp4[stea,Intercept]",-0.46,0.95,-2.54,1.42,1.000,6886.00,11435.00
+"r_sp4[swa2,Intercept]",0.67,0.95,-0.48,1.86,1.001,5859.00,2979.00
+"r_sp4[taba,Intercept]",-3.11,0.95,-3.97,-2.25,1.001,4566.00,2215.00
+"r_sp4[tabg,Intercept]",-3.10,0.95,-4.11,-2.17,1.002,6211.00,4413.00
+"r_sp4[tabr,Intercept]",-3.66,0.95,-4.67,-2.76,1.001,6875.00,4810.00
+"r_sp4[tacv,Intercept]",0.70,0.95,-0.51,1.78,1.000,5610.00,3237.00
+"r_sp4[tero,Intercept]",3.18,0.95,2.58,3.80,1.003,4858.00,2303.00
+"r_sp4[tet2,Intercept]",-0.38,0.95,-1.27,0.50,1.002,3172.00,1580.00
+"r_sp4[tri1,Intercept]",0.79,0.95,-0.06,1.68,1.000,5182.00,3482.00
+"r_sp4[tri3,Intercept]",-0.86,0.95,-1.94,0.16,1.002,2859.00,1560.00
+"r_sp4[tri6,Intercept]",0.13,0.95,-1.41,1.61,1.002,4919.00,3118.00
+"r_sp4[tric,Intercept]",2.75,0.95,2.27,3.28,1.003,3194.00,1701.00
+"r_sp4[vir1,Intercept]",0.35,0.95,-0.34,1.02,1.002,3540.00,1541.00
+"r_sp4[vir2,Intercept]",-0.00,0.95,-0.60,0.58,1.002,4645.00,2193.00
+"r_sp4[vir3,Intercept]",0.62,0.95,-0.40,1.55,1.001,6363.00,4008.00
+"r_sp4[vocf,Intercept]",1.09,0.95,0.03,2.14,1.001,6568.00,3941.00
+"r_sp4[xylm,Intercept]",-0.53,0.95,-1.46,0.48,1.001,5297.00,2985.00
+"r_sp4[zan1,Intercept]",0.22,0.95,-0.60,1.07,1.001,6283.00,4195.00
+"r_sp4[zan2,Intercept]",0.84,0.95,-0.04,1.73,1.002,6209.00,3532.00
+"r_sp4[zueg,Intercept]",-2.29,0.95,-4.93,0.01,1.001,6418.00,14667.00
+"r_sp4[adet,Reproductive conspecific density]",0.11,0.95,-1.39,1.71,1.000,7165.00,20287.00
+"r_sp4[alcc,Reproductive conspecific density]",-0.08,0.95,-0.48,0.31,1.000,6400.00,3782.00
+"r_sp4[alsb,Reproductive conspecific density]",0.32,0.95,-0.25,0.89,1.002,5478.00,3731.00
+"r_sp4[anap,Reproductive conspecific density]",0.05,0.95,-1.54,1.62,1.000,7084.00,19539.00
+"r_sp4[anna,Reproductive conspecific density]",0.24,0.95,-1.36,1.77,1.001,7258.00,23221.00
+"r_sp4[aspc,Reproductive conspecific density]",0.53,0.95,-0.76,1.93,1.000,7669.00,13632.00
+"r_sp4[astg,Reproductive conspecific density]",0.10,0.95,-1.04,1.18,1.000,7710.00,16564.00
+"r_sp4[asts,Reproductive conspecific density]",-0.15,0.95,-1.59,1.28,1.000,6716.00,15180.00
+"r_sp4[attb,Reproductive conspecific density]",0.31,0.95,-1.04,1.75,1.000,6916.00,16543.00
+"r_sp4[boms,Reproductive conspecific density]",0.12,0.95,-1.49,1.69,1.002,7569.00,22771.00
+"r_sp4[capf,Reproductive conspecific density]",0.12,0.95,-1.35,1.65,1.000,7477.00,12635.00
+"r_sp4[cas1,Reproductive conspecific density]",-0.16,0.95,-1.71,1.38,1.000,7686.00,18041.00
+"r_sp4[cas2,Reproductive conspecific density]",-0.74,0.95,-1.27,-0.24,1.000,6810.00,4823.00
+"r_sp4[cas3,Reproductive conspecific density]",-0.16,0.95,-1.53,1.23,1.000,6846.00,13626.00
+"r_sp4[casg,Reproductive conspecific density]",0.19,0.95,-1.39,1.79,1.000,7770.00,24653.00
+"r_sp4[cavp,Reproductive conspecific density]",-0.48,0.95,-1.02,-0.01,1.000,5554.00,3552.00
+"r_sp4[cedo,Reproductive conspecific density]",0.16,0.95,-1.43,1.73,1.000,7116.00,24208.00
+"r_sp4[ces1,Reproductive conspecific density]",0.22,0.95,-1.32,1.81,1.001,6796.00,20679.00
+"r_sp4[cora,Reproductive conspecific density]",-1.57,0.95,-2.36,-0.84,1.000,6525.00,4670.00
+"r_sp4[cupr,Reproductive conspecific density]",0.04,0.95,-1.44,1.69,1.000,7540.00,20632.00
+"r_sp4[cups,Reproductive conspecific density]",-0.15,0.95,-1.66,1.41,1.000,6706.00,17552.00
+"r_sp4[dipp,Reproductive conspecific density]",-0.56,0.95,-0.98,-0.18,1.000,5057.00,3121.00
+"r_sp4[eryc,Reproductive conspecific density]",0.05,0.95,-1.45,1.58,1.001,7189.00,20783.00
+"r_sp4[gua1,Reproductive conspecific density]",-0.74,0.95,-1.70,0.16,1.000,7758.00,6452.00
+"r_sp4[gua2,Reproductive conspecific density]",0.11,0.95,-0.57,0.78,1.000,6622.00,8752.00
+"r_sp4[guau,Reproductive conspecific density]",-0.49,0.95,-1.04,0.03,1.000,7213.00,5012.00
+"r_sp4[ham2,Reproductive conspecific density]",0.27,0.95,-1.33,1.76,1.000,7028.00,22165.00
+"r_sp4[hurc,Reproductive conspecific density]",-0.47,0.95,-0.86,-0.16,1.000,5171.00,3105.00
+"r_sp4[hybp,Reproductive conspecific density]",0.09,0.95,-0.93,1.13,1.000,7576.00,11240.00
+"r_sp4[inma,Reproductive conspecific density]",0.46,0.95,-0.38,1.34,1.000,8117.00,14015.00
+"r_sp4[jacc,Reproductive conspecific density]",0.59,0.95,0.26,0.89,1.000,5179.00,3031.00
+"r_sp4[laep,Reproductive conspecific density]",0.74,0.95,-0.10,1.63,1.001,8069.00,10392.00
+"r_sp4[laet,Reproductive conspecific density]",-0.48,0.95,-2.22,1.20,1.000,6873.00,8147.00
+"r_sp4[lafp,Reproductive conspecific density]",0.00,0.95,-1.58,1.64,1.000,6525.00,16244.00
+"r_sp4[linl,Reproductive conspecific density]",0.32,0.95,-1.00,1.91,1.001,7015.00,8151.00
+"r_sp4[lonl,Reproductive conspecific density]",0.16,0.95,-0.87,1.27,1.001,7814.00,14279.00
+"r_sp4[lue1,Reproductive conspecific density]",0.36,0.95,0.01,0.66,1.000,5316.00,3029.00
+"r_sp4[mays,Reproductive conspecific density]",0.03,0.95,-1.50,1.69,1.001,6458.00,25842.00
+"r_sp4[necc,Reproductive conspecific density]",-0.04,0.95,-1.41,1.46,1.001,7609.00,23018.00
+"r_sp4[necl,Reproductive conspecific density]",0.47,0.95,-0.84,2.11,1.000,7283.00,13979.00
+"r_sp4[ochp,Reproductive conspecific density]",0.27,0.95,-0.56,1.00,1.000,7383.00,5530.00
+"r_sp4[ococ,Reproductive conspecific density]",0.11,0.95,-1.44,1.59,1.000,7979.00,18449.00
+"r_sp4[ocoo,Reproductive conspecific density]",1.51,0.95,0.13,3.04,1.000,7409.00,4400.00
+"r_sp4[ocos,Reproductive conspecific density]",-0.54,0.95,-1.03,-0.08,1.000,7261.00,4933.00
+"r_sp4[oenm,Reproductive conspecific density]",-0.15,0.95,-1.56,1.29,1.001,7219.00,8693.00
+"r_sp4[perx,Reproductive conspecific density]",-0.10,0.95,-1.70,1.39,1.001,7384.00,22382.00
+"r_sp4[phom,Reproductive conspecific density]",0.78,0.95,-0.65,2.60,1.001,6724.00,7155.00
+"r_sp4[plae,Reproductive conspecific density]",-0.51,0.95,-0.87,-0.18,1.000,5051.00,3095.00
+"r_sp4[plap,Reproductive conspecific density]",-0.51,0.95,-1.00,-0.03,1.000,7263.00,5302.00
+"r_sp4[prop,Reproductive conspecific density]",-0.08,0.95,-1.51,1.48,1.001,7217.00,17932.00
+"r_sp4[prot,Reproductive conspecific density]",0.74,0.95,0.05,1.51,1.000,7910.00,7363.00
+"r_sp4[pse1,Reproductive conspecific density]",0.26,0.95,-1.14,1.74,1.001,7070.00,21506.00
+"r_sp4[pter,Reproductive conspecific density]",0.28,0.95,-1.22,1.78,1.000,7612.00,17002.00
+"r_sp4[qua1,Reproductive conspecific density]",-0.13,0.95,-0.55,0.26,1.001,5017.00,3310.00
+"r_sp4[qua2,Reproductive conspecific density]",-0.26,0.95,-1.85,1.28,1.000,7452.00,19389.00
+"r_sp4[sapg,Reproductive conspecific density]",0.33,0.95,-0.91,1.73,1.001,6434.00,13230.00
+"r_sp4[slot,Reproductive conspecific density]",-0.43,0.95,-0.86,-0.01,1.000,6313.00,4447.00
+"r_sp4[soce,Reproductive conspecific density]",-0.32,0.95,-1.63,1.09,1.000,7268.00,9523.00
+"r_sp4[stea,Reproductive conspecific density]",0.31,0.95,-1.03,1.76,1.000,7382.00,18573.00
+"r_sp4[swa2,Reproductive conspecific density]",0.47,0.95,-0.95,2.09,1.001,5890.00,11880.00
+"r_sp4[taba,Reproductive conspecific density]",0.02,0.95,-0.58,0.54,1.000,7218.00,5595.00
+"r_sp4[tabg,Reproductive conspecific density]",-0.12,0.95,-0.56,0.25,1.000,5507.00,3406.00
+"r_sp4[tabr,Reproductive conspecific density]",0.33,0.95,-0.89,1.53,1.000,7640.00,18773.00
+"r_sp4[tacv,Reproductive conspecific density]",-0.72,0.95,-1.62,0.02,1.000,6753.00,7930.00
+"r_sp4[tero,Reproductive conspecific density]",-1.07,0.95,-1.92,-0.24,1.000,7139.00,7595.00
+"r_sp4[tet2,Reproductive conspecific density]",0.01,0.95,-0.49,0.50,1.001,5747.00,3451.00
+"r_sp4[tri1,Reproductive conspecific density]",0.30,0.95,-1.05,1.78,1.001,6999.00,13213.00
+"r_sp4[tri3,Reproductive conspecific density]",-0.06,0.95,-0.70,0.51,1.001,5166.00,3527.00
+"r_sp4[tri6,Reproductive conspecific density]",-0.00,0.95,-1.53,1.48,1.000,7274.00,22260.00
+"r_sp4[tric,Reproductive conspecific density]",-0.89,0.95,-1.56,-0.27,1.000,7662.00,6228.00
+"r_sp4[vir1,Reproductive conspecific density]",0.91,0.95,0.12,1.74,1.001,7276.00,7676.00
+"r_sp4[vir2,Reproductive conspecific density]",-0.18,0.95,-0.56,0.15,1.000,5504.00,3410.00
+"r_sp4[vir3,Reproductive conspecific density]",0.71,0.95,-0.36,1.72,1.000,6914.00,13779.00
+"r_sp4[vocf,Reproductive conspecific density]",-0.23,0.95,-1.42,0.86,1.001,8103.00,13586.00
+"r_sp4[xylm,Reproductive conspecific density]",-0.21,0.95,-1.63,1.18,1.001,7242.00,14373.00
+"r_sp4[zan1,Reproductive conspecific density]",0.52,0.95,-0.70,1.84,1.001,6814.00,10811.00
+"r_sp4[zan2,Reproductive conspecific density]",-1.07,0.95,-2.83,0.34,1.000,5957.00,4819.00
+"r_sp4[zueg,Reproductive conspecific density]",0.28,0.95,-1.29,1.83,1.001,7640.00,21038.00
+"r_sp4[adet,Reproductive heterospecific density]",-0.03,0.95,-0.68,0.62,1.000,7651.00,21733.00
+"r_sp4[alcc,Reproductive heterospecific density]",-0.45,0.95,-0.92,-0.04,1.000,7925.00,12971.00
+"r_sp4[alsb,Reproductive heterospecific density]",-0.14,0.95,-0.47,0.15,1.000,7989.00,8172.00
+"r_sp4[anap,Reproductive heterospecific density]",-0.04,0.95,-0.70,0.67,1.000,7225.00,23494.00
+"r_sp4[anna,Reproductive heterospecific density]",-0.04,0.95,-0.70,0.62,1.000,7764.00,24559.00
+"r_sp4[aspc,Reproductive heterospecific density]",0.04,0.95,-0.52,0.69,1.000,7942.00,19578.00
+"r_sp4[astg,Reproductive heterospecific density]",-0.21,0.95,-0.69,0.27,1.000,8471.00,15954.00
+"r_sp4[asts,Reproductive heterospecific density]",-0.04,0.95,-0.56,0.45,1.000,7528.00,22505.00
+"r_sp4[attb,Reproductive heterospecific density]",-0.01,0.95,-0.64,0.67,1.000,7691.00,23213.00
+"r_sp4[boms,Reproductive heterospecific density]",-0.05,0.95,-0.69,0.63,1.000,7704.00,20892.00
+"r_sp4[capf,Reproductive heterospecific density]",-0.28,0.95,-0.66,0.09,1.000,8244.00,12664.00
+"r_sp4[cas1,Reproductive heterospecific density]",0.09,0.95,-0.58,0.78,1.000,7206.00,22455.00
+"r_sp4[cas2,Reproductive heterospecific density]",0.27,0.95,-0.10,0.69,1.000,8304.00,14117.00
+"r_sp4[cas3,Reproductive heterospecific density]",0.27,0.95,-0.02,0.60,1.000,8360.00,13235.00
+"r_sp4[casg,Reproductive heterospecific density]",-0.02,0.95,-0.72,0.67,1.001,7273.00,23168.00
+"r_sp4[cavp,Reproductive heterospecific density]",-0.06,0.95,-0.64,0.45,1.001,7735.00,17620.00
+"r_sp4[cedo,Reproductive heterospecific density]",-0.03,0.95,-0.73,0.60,1.000,7616.00,22094.00
+"r_sp4[ces1,Reproductive heterospecific density]",-0.06,0.95,-0.74,0.64,1.000,7826.00,21314.00
+"r_sp4[cora,Reproductive heterospecific density]",0.42,0.95,0.21,0.63,1.000,9522.00,9407.00
+"r_sp4[cupr,Reproductive heterospecific density]",-0.07,0.95,-0.73,0.61,1.000,7157.00,23934.00
+"r_sp4[cups,Reproductive heterospecific density]",0.10,0.95,-0.48,0.61,1.001,7984.00,19869.00
+"r_sp4[dipp,Reproductive heterospecific density]",0.51,0.95,0.24,0.79,1.000,8515.00,9373.00
+"r_sp4[eryc,Reproductive heterospecific density]",0.03,0.95,-0.63,0.74,1.000,7509.00,22994.00
+"r_sp4[gua1,Reproductive heterospecific density]",0.04,0.95,-0.41,0.46,1.000,8354.00,12672.00
+"r_sp4[gua2,Reproductive heterospecific density]",0.16,0.95,-0.12,0.44,1.000,7711.00,10888.00
+"r_sp4[guau,Reproductive heterospecific density]",0.22,0.95,-0.15,0.58,1.000,8337.00,13088.00
+"r_sp4[ham2,Reproductive heterospecific density]",-0.04,0.95,-0.69,0.65,1.000,7123.00,20959.00
+"r_sp4[hurc,Reproductive heterospecific density]",0.07,0.95,-0.38,0.55,1.001,7889.00,17092.00
+"r_sp4[hybp,Reproductive heterospecific density]",0.07,0.95,-0.27,0.36,1.001,6566.00,5373.00
+"r_sp4[inma,Reproductive heterospecific density]",-0.19,0.95,-0.59,0.19,1.001,8412.00,15918.00
+"r_sp4[jacc,Reproductive heterospecific density]",-0.40,0.95,-0.66,-0.14,1.000,9151.00,12683.00
+"r_sp4[laep,Reproductive heterospecific density]",-0.03,0.95,-0.48,0.45,1.000,8636.00,12799.00
+"r_sp4[laet,Reproductive heterospecific density]",0.74,0.95,0.15,1.34,1.000,6943.00,9157.00
+"r_sp4[lafp,Reproductive heterospecific density]",-0.02,0.95,-0.71,0.67,1.000,7405.00,18354.00
+"r_sp4[linl,Reproductive heterospecific density]",0.03,0.95,-0.44,0.52,1.000,7958.00,17098.00
+"r_sp4[lonl,Reproductive heterospecific density]",0.11,0.95,-0.31,0.52,1.000,7582.00,16978.00
+"r_sp4[lue1,Reproductive heterospecific density]",-0.04,0.95,-0.27,0.19,1.000,9113.00,10682.00
+"r_sp4[mays,Reproductive heterospecific density]",-0.01,0.95,-0.63,0.72,1.001,7454.00,23071.00
+"r_sp4[necc,Reproductive heterospecific density]",0.06,0.95,-0.56,0.67,1.001,8266.00,20770.00
+"r_sp4[necl,Reproductive heterospecific density]",-0.20,0.95,-0.82,0.40,1.000,7860.00,18188.00
+"r_sp4[ochp,Reproductive heterospecific density]",0.02,0.95,-0.63,0.74,1.001,7747.00,15354.00
+"r_sp4[ococ,Reproductive heterospecific density]",0.06,0.95,-0.53,0.68,1.001,6966.00,19344.00
+"r_sp4[ocoo,Reproductive heterospecific density]",-0.49,0.95,-0.98,-0.03,1.001,8493.00,11287.00
+"r_sp4[ocos,Reproductive heterospecific density]",-0.22,0.95,-0.70,0.21,1.000,8067.00,14702.00
+"r_sp4[oenm,Reproductive heterospecific density]",0.10,0.95,-0.11,0.31,1.001,8011.00,7247.00
+"r_sp4[perx,Reproductive heterospecific density]",-0.03,0.95,-0.75,0.60,1.000,7468.00,24288.00
+"r_sp4[phom,Reproductive heterospecific density]",-0.18,0.95,-0.85,0.40,1.001,7387.00,16899.00
+"r_sp4[plae,Reproductive heterospecific density]",0.07,0.95,-0.35,0.47,1.001,7387.00,18445.00
+"r_sp4[plap,Reproductive heterospecific density]",0.44,0.95,0.15,0.76,1.000,8808.00,12162.00
+"r_sp4[prop,Reproductive heterospecific density]",0.05,0.95,-0.53,0.59,1.001,7294.00,22196.00
+"r_sp4[prot,Reproductive heterospecific density]",-0.32,0.95,-0.67,0.03,1.000,8691.00,11047.00
+"r_sp4[pse1,Reproductive heterospecific density]",-0.19,0.95,-0.83,0.37,1.000,7525.00,18250.00
+"r_sp4[pter,Reproductive heterospecific density]",-0.12,0.95,-0.77,0.54,1.000,7100.00,24974.00
+"r_sp4[qua1,Reproductive heterospecific density]",-0.16,0.95,-0.34,0.03,1.001,7693.00,6257.00
+"r_sp4[qua2,Reproductive heterospecific density]",0.08,0.95,-0.57,0.76,1.000,8024.00,22107.00
+"r_sp4[sapg,Reproductive heterospecific density]",0.14,0.95,-0.42,0.68,1.001,7271.00,17988.00
+"r_sp4[slot,Reproductive heterospecific density]",-0.04,0.95,-0.54,0.41,1.001,7163.00,19426.00
+"r_sp4[soce,Reproductive heterospecific density]",0.55,0.95,0.29,0.78,1.000,8749.00,9959.00
+"r_sp4[stea,Reproductive heterospecific density]",-0.09,0.95,-0.71,0.50,1.000,7738.00,22111.00
+"r_sp4[swa2,Reproductive heterospecific density]",-0.23,0.95,-0.80,0.29,1.000,7046.00,17920.00
+"r_sp4[taba,Reproductive heterospecific density]",-0.05,0.95,-0.49,0.32,1.000,8359.00,15651.00
+"r_sp4[tabg,Reproductive heterospecific density]",0.10,0.95,-0.49,0.68,1.001,7075.00,19914.00
+"r_sp4[tabr,Reproductive heterospecific density]",-0.08,0.95,-0.68,0.46,1.001,7079.00,22017.00
+"r_sp4[tacv,Reproductive heterospecific density]",0.22,0.95,-0.32,0.73,1.001,7794.00,19580.00
+"r_sp4[tero,Reproductive heterospecific density]",0.26,0.95,-0.01,0.53,1.000,8787.00,10937.00
+"r_sp4[tet2,Reproductive heterospecific density]",-0.10,0.95,-0.42,0.19,1.001,8676.00,10016.00
+"r_sp4[tri1,Reproductive heterospecific density]",-0.16,0.95,-0.56,0.24,1.001,7826.00,16737.00
+"r_sp4[tri3,Reproductive heterospecific density]",-0.07,0.95,-0.33,0.20,1.001,6683.00,5473.00
+"r_sp4[tri6,Reproductive heterospecific density]",-0.01,0.95,-0.69,0.64,1.000,7518.00,23429.00
+"r_sp4[tric,Reproductive heterospecific density]",-0.04,0.95,-0.28,0.22,1.000,9030.00,12127.00
+"r_sp4[vir1,Reproductive heterospecific density]",0.26,0.95,0.05,0.47,1.000,8309.00,7122.00
+"r_sp4[vir2,Reproductive heterospecific density]",-0.01,0.95,-0.30,0.27,1.000,8497.00,15660.00
+"r_sp4[vir3,Reproductive heterospecific density]",-0.29,0.95,-0.89,0.23,1.000,7509.00,16850.00
+"r_sp4[vocf,Reproductive heterospecific density]",-0.12,0.95,-0.76,0.51,1.001,7191.00,16975.00
+"r_sp4[xylm,Reproductive heterospecific density]",0.07,0.95,-0.50,0.63,1.000,7843.00,20871.00
+"r_sp4[zan1,Reproductive heterospecific density]",0.04,0.95,-0.48,0.56,1.000,7531.00,16074.00
+"r_sp4[zan2,Reproductive heterospecific density]",-0.06,0.95,-0.69,0.52,1.001,8258.00,13828.00
+"r_sp4[zueg,Reproductive heterospecific density]",-0.04,0.95,-0.75,0.65,1.000,7500.00,18609.00
+"r_sp4[adet,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.11,1.000,8282.00,11635.00
+"r_sp4[alcc,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.11,1.000,7779.00,12004.00
+"r_sp4[alsb,Non-reproductive conspecific density]",0.00,0.95,-0.14,0.18,1.001,8340.00,13037.00
+"r_sp4[anap,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.10,1.000,8060.00,10739.00
+"r_sp4[anna,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.12,1.000,7825.00,10743.00
+"r_sp4[aspc,Non-reproductive conspecific density]",0.00,0.95,-0.08,0.13,1.000,8337.00,11480.00
+"r_sp4[astg,Non-reproductive conspecific density]",0.01,0.95,-0.05,0.08,1.000,8931.00,10956.00
+"r_sp4[asts,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.10,1.000,8104.00,11409.00
+"r_sp4[attb,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.12,1.001,7734.00,9989.00
+"r_sp4[boms,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.12,1.000,7756.00,11014.00
+"r_sp4[capf,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.11,1.000,7717.00,11983.00
+"r_sp4[cas1,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.10,1.000,7613.00,10931.00
+"r_sp4[cas2,Non-reproductive conspecific density]",-0.01,0.95,-0.11,0.05,1.000,8759.00,9936.00
+"r_sp4[cas3,Non-reproductive conspecific density]",-0.00,0.95,-0.10,0.10,1.000,7944.00,12014.00
+"r_sp4[casg,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.13,1.000,8281.00,11171.00
+"r_sp4[cavp,Non-reproductive conspecific density]",-0.00,0.95,-0.12,0.09,1.000,7818.00,10915.00
+"r_sp4[cedo,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.11,1.000,8359.00,8948.00
+"r_sp4[ces1,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.12,1.000,7982.00,9932.00
+"r_sp4[cora,Non-reproductive conspecific density]",-0.02,0.95,-0.17,0.08,1.001,8027.00,9378.00
+"r_sp4[cupr,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.11,1.000,8486.00,10607.00
+"r_sp4[cups,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.09,1.000,8040.00,9969.00
+"r_sp4[dipp,Non-reproductive conspecific density]",-0.01,0.95,-0.13,0.08,1.000,8085.00,12549.00
+"r_sp4[eryc,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.10,1.000,8204.00,10509.00
+"r_sp4[gua1,Non-reproductive conspecific density]",-0.01,0.95,-0.12,0.06,1.000,8481.00,8660.00
+"r_sp4[gua2,Non-reproductive conspecific density]",-0.00,0.95,-0.08,0.09,1.001,8103.00,14811.00
+"r_sp4[guau,Non-reproductive conspecific density]",-0.00,0.95,-0.07,0.06,1.000,8385.00,10468.00
+"r_sp4[ham2,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.13,1.000,7519.00,11571.00
+"r_sp4[hurc,Non-reproductive conspecific density]",-0.00,0.95,-0.09,0.08,1.001,8070.00,10924.00
+"r_sp4[hybp,Non-reproductive conspecific density]",0.00,0.95,-0.09,0.09,1.000,7490.00,12873.00
+"r_sp4[inma,Non-reproductive conspecific density]",0.00,0.95,-0.08,0.10,1.001,7791.00,11720.00
+"r_sp4[jacc,Non-reproductive conspecific density]",0.01,0.95,-0.10,0.13,1.000,8072.00,12598.00
+"r_sp4[laep,Non-reproductive conspecific density]",0.01,0.95,-0.08,0.13,1.000,7975.00,10412.00
+"r_sp4[laet,Non-reproductive conspecific density]",-0.01,0.95,-0.16,0.11,1.000,8695.00,10816.00
+"r_sp4[lafp,Non-reproductive conspecific density]",0.00,0.95,-0.12,0.12,1.000,7621.00,11417.00
+"r_sp4[linl,Non-reproductive conspecific density]",0.01,0.95,-0.07,0.14,1.000,7466.00,7079.00
+"r_sp4[lonl,Non-reproductive conspecific density]",-0.00,0.95,-0.09,0.09,1.000,7942.00,11703.00
+"r_sp4[lue1,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.12,1.000,7492.00,13824.00
+"r_sp4[mays,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.12,1.000,8449.00,9013.00
+"r_sp4[necc,Non-reproductive conspecific density]",-0.00,0.95,-0.10,0.11,1.000,7721.00,10962.00
+"r_sp4[necl,Non-reproductive conspecific density]",0.00,0.95,-0.09,0.13,1.000,7684.00,10360.00
+"r_sp4[ochp,Non-reproductive conspecific density]",0.00,0.95,-0.15,0.15,1.000,7631.00,11375.00
+"r_sp4[ococ,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.11,1.000,7829.00,9927.00
+"r_sp4[ocoo,Non-reproductive conspecific density]",0.02,0.95,-0.08,0.15,1.001,8237.00,8023.00
+"r_sp4[ocos,Non-reproductive conspecific density]",-0.00,0.95,-0.13,0.11,1.000,8281.00,10874.00
+"r_sp4[oenm,Non-reproductive conspecific density]",0.00,0.95,-0.07,0.12,1.000,5050.00,5029.00
+"r_sp4[perx,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.10,1.000,8076.00,10112.00
+"r_sp4[phom,Non-reproductive conspecific density]",0.01,0.95,-0.08,0.14,1.000,7129.00,8330.00
+"r_sp4[plae,Non-reproductive conspecific density]",-0.00,0.95,-0.12,0.07,1.001,8120.00,10868.00
+"r_sp4[plap,Non-reproductive conspecific density]",-0.01,0.95,-0.11,0.05,1.001,9086.00,11390.00
+"r_sp4[prop,Non-reproductive conspecific density]",-0.00,0.95,-0.10,0.10,1.001,7765.00,10135.00
+"r_sp4[prot,Non-reproductive conspecific density]",0.01,0.95,-0.07,0.12,1.000,8080.00,10488.00
+"r_sp4[pse1,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.11,1.000,8372.00,10616.00
+"r_sp4[pter,Non-reproductive conspecific density]",0.00,0.95,-0.09,0.12,1.000,8046.00,9428.00
+"r_sp4[qua1,Non-reproductive conspecific density]",-0.00,0.95,-0.08,0.08,1.000,7673.00,14214.00
+"r_sp4[qua2,Non-reproductive conspecific density]",-0.00,0.95,-0.12,0.11,1.000,7134.00,10578.00
+"r_sp4[sapg,Non-reproductive conspecific density]",0.00,0.95,-0.09,0.12,1.000,8170.00,11248.00
+"r_sp4[slot,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.08,1.001,8652.00,11143.00
+"r_sp4[soce,Non-reproductive conspecific density]",-0.00,0.95,-0.14,0.11,1.000,7902.00,12521.00
+"r_sp4[stea,Non-reproductive conspecific density]",0.00,0.95,-0.09,0.12,1.000,7336.00,9592.00
+"r_sp4[swa2,Non-reproductive conspecific density]",0.00,0.95,-0.09,0.12,1.001,7523.00,10276.00
+"r_sp4[taba,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.11,1.000,7899.00,12760.00
+"r_sp4[tabg,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.10,1.000,8734.00,12211.00
+"r_sp4[tabr,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.15,1.000,8465.00,11534.00
+"r_sp4[tacv,Non-reproductive conspecific density]",-0.01,0.95,-0.12,0.07,1.000,8325.00,10370.00
+"r_sp4[tero,Non-reproductive conspecific density]",-0.01,0.95,-0.16,0.10,1.000,7836.00,11216.00
+"r_sp4[tet2,Non-reproductive conspecific density]",0.00,0.95,-0.08,0.08,1.001,7906.00,13927.00
+"r_sp4[tri1,Non-reproductive conspecific density]",0.00,0.95,-0.09,0.10,1.000,7853.00,10793.00
+"r_sp4[tri3,Non-reproductive conspecific density]",-0.00,0.95,-0.09,0.07,1.001,7782.00,12432.00
+"r_sp4[tri6,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.10,1.000,8168.00,10233.00
+"r_sp4[tric,Non-reproductive conspecific density]",-0.01,0.95,-0.15,0.10,1.000,7668.00,10338.00
+"r_sp4[vir1,Non-reproductive conspecific density]",0.00,0.95,-0.10,0.14,1.000,7876.00,9090.00
+"r_sp4[vir2,Non-reproductive conspecific density]",-0.00,0.95,-0.09,0.07,1.000,7547.00,13506.00
+"r_sp4[vir3,Non-reproductive conspecific density]",0.01,0.95,-0.08,0.12,1.001,7890.00,9910.00
+"r_sp4[vocf,Non-reproductive conspecific density]",-0.00,0.95,-0.11,0.10,1.000,8434.00,10650.00
+"r_sp4[xylm,Non-reproductive conspecific density]",-0.00,0.95,-0.10,0.09,1.000,7351.00,11080.00
+"r_sp4[zan1,Non-reproductive conspecific density]",0.00,0.95,-0.08,0.12,1.000,7774.00,10644.00
+"r_sp4[zan2,Non-reproductive conspecific density]",-0.01,0.95,-0.16,0.08,1.000,8179.00,8317.00
+"r_sp4[zueg,Non-reproductive conspecific density]",0.00,0.95,-0.11,0.14,1.000,7623.00,11076.00
+"r_year[1989,Intercept]",-0.30,0.95,-0.53,-0.08,1.000,6912.00,12892.00
+"r_year[1990,Intercept]",-0.04,0.95,-0.21,0.13,1.000,7037.00,10782.00
+"r_year[1991,Intercept]",0.23,0.95,0.06,0.40,1.000,7742.00,9619.00
+"r_year[1992,Intercept]",-0.15,0.95,-0.31,0.01,1.000,7536.00,8444.00
+"r_year[1993,Intercept]",0.09,0.95,-0.09,0.28,1.000,7776.00,11986.00
+"r_year[1994,Intercept]",0.05,0.95,-0.12,0.21,1.000,7104.00,10470.00
+"r_year[1995,Intercept]",0.21,0.95,0.03,0.40,1.000,6945.00,9841.00
+"r_year[1996,Intercept]",0.16,0.95,-0.01,0.34,1.001,7348.00,10761.00
+"r_year[1997,Intercept]",-0.13,0.95,-0.29,0.03,1.000,7725.00,9924.00
+"r_year[1998,Intercept]",-0.07,0.95,-0.25,0.12,1.000,7688.00,10793.00
+"r_year[1999,Intercept]",0.16,0.95,-0.02,0.35,1.001,7548.00,11022.00
+"r_year[2000,Intercept]",0.22,0.95,0.05,0.39,1.000,7762.00,9882.00
+"r_year[2001,Intercept]",-0.06,0.95,-0.23,0.09,1.000,7480.00,9803.00
+"r_year[2002,Intercept]",0.38,0.95,0.20,0.55,1.001,7796.00,8320.00
+"r_year[2003,Intercept]",-0.01,0.95,-0.17,0.15,1.000,6892.00,9041.00
+"r_year[2004,Intercept]",0.20,0.95,0.03,0.39,1.000,7600.00,11022.00
+"r_year[2005,Intercept]",0.34,0.95,0.18,0.52,1.001,7790.00,9077.00
+"r_year[2006,Intercept]",0.18,0.95,0.01,0.34,1.000,7535.00,9260.00
+"r_year[2007,Intercept]",0.18,0.95,0.02,0.35,1.000,7608.00,9686.00
+"r_year[2008,Intercept]",0.04,0.95,-0.12,0.21,1.000,6852.00,9039.00
+"r_year[2009,Intercept]",-0.22,0.95,-0.38,-0.05,1.000,7451.00,9070.00
+"r_year[2010,Intercept]",0.18,0.95,0.03,0.35,1.000,7627.00,8719.00
+"r_year[2011,Intercept]",-0.14,0.95,-0.27,0.01,1.000,7573.00,6762.00
+"r_year[2012,Intercept]",-0.08,0.95,-0.23,0.08,1.000,7455.00,7549.00
+"r_year[2013,Intercept]",0.17,0.95,-0.00,0.33,1.000,6687.00,9238.00
+"r_year[2014,Intercept]",-0.31,0.95,-0.47,-0.16,1.000,7850.00,7985.00
+"r_year[2015,Intercept]",-0.02,0.95,-0.18,0.15,1.000,6713.00,9883.00
+"r_year[2016,Intercept]",-0.60,0.95,-0.77,-0.43,1.000,8086.00,7408.00
+"r_year[2017,Intercept]",-0.15,0.95,-0.34,0.05,1.000,6912.00,10646.00
+"r_year[2018,Intercept]",0.06,0.95,-0.10,0.23,1.000,7532.00,10255.00
+"r_year[2019,Intercept]",-0.25,0.95,-0.42,-0.09,1.001,6804.00,8717.00
+"r_year[2020,Intercept]",0.12,0.95,-0.05,0.30,1.000,7712.00,10340.00
+"r_year[2021,Intercept]",-0.31,0.95,-0.49,-0.13,1.000,7318.00,10418.00
+"r_year[2022,Intercept]",0.09,0.95,-0.10,0.26,1.001,6785.00,10426.00
+"r_year[2023,Intercept]",-0.21,0.95,-0.39,-0.05,1.001,7682.00,9827.00
+sd_quadrat__Intercept,0.15,0.95,0.03,0.24,1.006,1245.00,987.00
+sd_quadrat:trap__Intercept,0.38,0.95,0.32,0.44,1.002,5904.00,2775.00
+sd_sp4__Intercept,1.97,0.95,1.64,2.38,1.002,4068.00,2402.00
+sd_sp4__Reproductive conspecific density,0.76,0.95,0.43,1.18,1.001,4332.00,2166.00
+sd_sp4__Reproductive heterospecific density,0.34,0.95,0.23,0.46,1.000,7569.00,4531.00
+sd_sp4__Non-reproductive conspecific density,0.04,0.95,0.00,0.10,1.000,6428.00,4273.00
+sd_year__Intercept,0.23,0.95,0.17,0.31,1.001,6419.00,3768.00
+cor_sp4__Intercept__Reproductive conspecific density,-0.14,0.95,-0.46,0.18,1.001,5476.00,3354.00
+cor_sp4__Intercept__Reproductive heterospecific density,0.07,0.95,-0.28,0.40,1.000,7402.00,7713.00
+cor_sp4__Reproductive conspecific density__Reproductive heterospecific density,-0.37,0.95,-0.75,0.07,1.000,5704.00,3565.00
+cor_sp4__Intercept__Non-reproductive conspecific density,-0.05,0.95,-0.81,0.75,1.001,7508.00,14638.00
+cor_sp4__Reproductive conspecific density__Non-reproductive conspecific density,0.32,0.95,-0.53,0.95,1.001,8371.00,10122.00
+cor_sp4__Reproductive heterospecific density__Non-reproductive conspecific density,-0.19,0.95,-0.88,0.61,1.000,8711.00,12977.00
