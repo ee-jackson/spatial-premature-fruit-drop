@@ -37,7 +37,7 @@ The [`output/`](output/) directory contains the subdirectories:
 
 [`results/`](output/results/), which contains any other output, e.g. result tables.
 
-[`docs/`](output/dcos/), which contains the docs/data-dictionary.md i.e., metadata.
+[`docs/`](output/dcos/), which contains `data-dictionary.md` i.e., metadata.
 
 ## Usage
 To reproduce results and figures from this project in the [RStudio IDE](https://posit.co/download/rstudio-desktop/), 
