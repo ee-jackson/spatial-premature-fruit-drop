@@ -19,6 +19,7 @@ theme_set(
       panel.spacing = unit(0, "lines"))
 )
 
+
 # Get model ---------------------------------------------------------------
 
 mod <-
@@ -31,7 +32,9 @@ sample_size <-
   summarise(n = n())
 
 sp_names <-
-  read_csv(here::here("data", "clean", "species_list.csv")) %>%
+  read_csv(here::here("data", "clean", "trap_data.csv")) %>%
+  select(sp4, sp6, genus, species) %>%
+  distinct() %>%
   left_join(sample_size) %>%
   mutate(genus_species = paste("<i>", genus, species, "</i>", n, sep = " ")) %>%
   select(sp4, genus_species)
