@@ -2,7 +2,7 @@
 
 ## Author: E E Jackson, eleanor.elizabeth.j@gmail.com
 ## Script: fit-zoib
-## Desc: Fit final model
+## Desc: Fit 6 models to test different alpha values
 
 options(mc.cores = 4)
 options(brms.file_refit = "always")
