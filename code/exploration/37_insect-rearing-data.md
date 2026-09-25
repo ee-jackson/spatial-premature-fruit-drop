@@ -143,8 +143,7 @@ insects_by_pot <-
 data_join <-
   data_seed |> 
   left_join(insects_by_pot, by = join_by("pot_id" == "seed_pot")) |> 
-  mutate(n_insects = replace_na(n_insects, 0)) |> 
-  filter(nr_equ_seeds > 0) 
+  mutate(n_insects = replace_na(n_insects, 0)) 
 
 data_join |> 
   ggplot(aes(x = n_insects, fill = maturity_type)) +
@@ -171,16 +170,123 @@ data_join |>
     ## # A tibble: 2 × 6
     ##   maturity_type sum_seeds n_insects sum_fruits seed_emergence_rate
     ##   <chr>             <dbl>     <dbl>      <dbl>               <dbl>
-    ## 1 inmaduro       1368844.      9329     100604             0.00682
-    ## 2 maduro          580245.     13266      39280             0.0229 
+    ## 1 inmaduro       1368844.     10481     112791             0.00766
+    ## 2 maduro          580245.     13474      42300             0.0232 
     ##   fruit_emergence_rate
     ##                  <dbl>
-    ## 1               0.0927
-    ## 2               0.338
+    ## 1               0.0929
+    ## 2               0.319
 
 Emergence rate is higher for mature material, this would mean 0.02
 insects emerged per mature seed on average vs 0.007 per immature seed
 and 0.33 per mature fruit vs 0.09 per immature fruit.
+
+Try fitting a model to account for differences in sampling effort and
+species.
+
+## Fruits only
+
+``` r
+data_fit <- data_join %>%
+  mutate(
+    maturity_type = factor(maturity_type),
+    maturity_type = relevel(maturity_type, ref = "maduro")
+  )
+
+mfruit <- glmmTMB(
+  n_insects ~ maturity_type +
+    offset(log(nr_fruits)) +
+    (1 | codigo),
+  family = nbinom2,
+  data = filter(data_fit, nr_fruits > 0)
+)
+
+summary(mfruit)
+```
+
+    ##  Family: nbinom2  ( log )
+    ## Formula:          
+    ## n_insects ~ maturity_type + offset(log(nr_fruits)) + (1 | codigo)
+    ## Data: filter(data_fit, nr_fruits > 0)
+    ## 
+    ##       AIC       BIC    logLik -2*log(L)  df.resid 
+    ##   18959.4   18986.6   -9475.7   18951.4      6591 
+    ## 
+    ## Random effects:
+    ## 
+    ## Conditional model:
+    ##  Groups Name        Variance Std.Dev.
+    ##  codigo (Intercept) 5.461    2.337   
+    ## Number of obs: 6595, groups:  codigo, 451
+    ## 
+    ## Dispersion parameter for nbinom2 family (): 0.237 
+    ## 
+    ## Conditional model:
+    ##                       Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept)           -2.60759    0.15781  -16.52  < 2e-16 ***
+    ## maturity_typeinmaduro -0.50679    0.08096   -6.26 3.85e-10 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+``` r
+exp(confint(mfruit, parm = "maturity_typeinmaduro"))
+```
+
+    ##                           2.5 %    97.5 %  Estimate
+    ## maturity_typeinmaduro 0.5140348 0.7060107 0.6024235
+
+The fitted insect emergence rate per fruit in immature material is about
+40% lower than in mature fruits.
+
+## Estimated seeds
+
+``` r
+mseeds <- glmmTMB(
+  n_insects ~ maturity_type +
+    offset(log(nr_equ_seeds)) +
+    (1 | codigo),
+  family = nbinom2,
+  data = drop_na(data_fit, seeds_per_fruit)
+)
+
+summary(mseeds)
+```
+
+    ##  Family: nbinom2  ( log )
+    ## Formula:          n_insects ~ maturity_type + offset(log(nr_equ_seeds)) + (1 |  
+    ##     codigo)
+    ## Data: drop_na(data_fit, seeds_per_fruit)
+    ## 
+    ##       AIC       BIC    logLik -2*log(L)  df.resid 
+    ##   22192.2   22220.5  -11092.1   22184.2      8670 
+    ## 
+    ## Random effects:
+    ## 
+    ## Conditional model:
+    ##  Groups Name        Variance Std.Dev.
+    ##  codigo (Intercept) 5.305    2.303   
+    ## Number of obs: 8674, groups:  codigo, 359
+    ## 
+    ## Dispersion parameter for nbinom2 family (): 0.237 
+    ## 
+    ## Conditional model:
+    ##                       Estimate Std. Error z value Pr(>|z|)    
+    ## (Intercept)           -3.91314    0.15581 -25.115  < 2e-16 ***
+    ## maturity_typeinmaduro -0.40548    0.06987  -5.804 6.49e-09 ***
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+``` r
+exp(confint(mseeds, parm = "maturity_typeinmaduro"))
+```
+
+    ##                           2.5 %    97.5 %  Estimate
+    ## maturity_typeinmaduro 0.5813382 0.7644903 0.6666539
+
+The fitted insect emergence rate per seed in immature material is about
+33% lower than in mature fruits.
+
+## Seed predators only, fruits only
 
 Try restricting to only seed predators:
 
@@ -221,9 +327,6 @@ data_join_seedpreds |>
     ## 1               0.0412
     ## 2               0.171
 
-Try fitting a model to account for differences in sampling effort and
-species.
-
 First for fruits only:
 
 ``` r
@@ -233,7 +336,7 @@ data_fit <- data_join_seedpreds %>%
     maturity_type = relevel(maturity_type, ref = "maduro")
   )
 
-mfruit <- glmmTMB(
+mfruit_sp <- glmmTMB(
   n_insects ~ maturity_type +
     offset(log(nr_fruits)) +
     (1 | codigo),
@@ -241,7 +344,7 @@ mfruit <- glmmTMB(
   data = filter(data_fit, nr_fruits > 0)
 )
 
-summary(mfruit)
+summary(mfruit_sp)
 ```
 
     ##  Family: nbinom2  ( log )
@@ -269,7 +372,7 @@ summary(mfruit)
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 ``` r
-exp(confint(mfruit, parm = "maturity_typeinmaduro"))
+exp(confint(mfruit_sp, parm = "maturity_typeinmaduro"))
 ```
 
     ##                          2.5 %    97.5 %  Estimate
@@ -278,11 +381,13 @@ exp(confint(mfruit, parm = "maturity_typeinmaduro"))
 The fitted insect emergence rate per fruit in immature material is about
 52% lower than in mature fruits.
 
+## Seed predators only, estimated seeds
+
 Now including seeds plus the estimated seeds within fruits
 (nr_equ_seeds):
 
 ``` r
-m1 <- glmmTMB(
+mseeds_sp <- glmmTMB(
   n_insects ~ maturity_type +
     offset(log(nr_equ_seeds)) +
     (1 | codigo),
@@ -290,7 +395,7 @@ m1 <- glmmTMB(
   data = drop_na(data_fit, seeds_per_fruit)
 )
 
-summary(m1)
+summary(mseeds_sp)
 ```
 
     ##  Family: nbinom2  ( log )
@@ -318,7 +423,7 @@ summary(m1)
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 
 ``` r
-exp(confint(m1, parm = "maturity_typeinmaduro"))
+exp(confint(mseeds_sp, parm = "maturity_typeinmaduro"))
 ```
 
     ##                           2.5 %    97.5 %  Estimate
@@ -328,9 +433,11 @@ The estimated insect emergence rate for immature material is 0.58 times
 the rate for mature material. i.e., the emergence rate is about 42%
 lower in immature material, and it’s a significant effect
 
+## Estimated seeds, only species with both maturity types
+
 ``` r
 data_seed %>%
-  filter(nr_equ_seeds > 0) |> # only pots containing seeds
+  filter(nr_equ_seeds > 0) |> 
   group_by(codigo) %>%
   summarise(
     n_maturity = n_distinct(maturity_type),
@@ -416,6 +523,8 @@ exp(confint(m_both, parm = "maturity_typeinmaduro"))
 This is similar to the previous model result: the estimated insect
 emergence rate for immature material is 0.58 times the rate for mature
 material.
+
+## Seeds with insect damage
 
 What about seeds which show signs of insect attack/ emergence holes?
 
